@@ -1,0 +1,21 @@
+[
+  "header.js",
+  "Sprite_Base.js",
+  "Sprite_Button.js",
+  "Sprite_Character.js",
+  "Sprite_Battler.js",
+  "Sprite_Actor.js",
+  "Sprite_Enemy.js",
+  "Sprite_Animation.js",
+  "Sprite_Damage.js",
+  "Sprite_StateIcon.js",
+  "Sprite_StateOverlay.js",
+  "Sprite_Weapon.js",
+  "Sprite_Balloon.js",
+  "Sprite_Picture.js",
+  "Sprite_Timer.js",
+  "Sprite_Destination.js",
+  "Spriteset_Base.js",
+  "Spriteset_Map.js",
+  "Spriteset_Battle.js"
+]

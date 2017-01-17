@@ -1,0 +1,22 @@
+{
+  "name": "openmv",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "build:core": "node ./build.js rpg_core",
+    "build:managers": "node ./build.js rpg_managers",
+    "build:objects": "node ./build.js rpg_objects",
+    "build:scenes": "node ./build.js rpg_scenes",
+    "build:sprites": "node ./build.js rpg_sprites",
+    "build:windows": "node ./build.js rpg_windows",
+    "build": "run-s build:*"
+  },
+  "author": "rpgtkoolmv team",
+  "license": "MIT",
+  "devDependencies": {
+    "concat-with-sourcemaps": "^1.0.4",
+    "npm-run-all": "^4.0.0"
+  }
+}

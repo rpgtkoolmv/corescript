@@ -1,0 +1,13 @@
+[
+  "header.js",
+  "DataManager.js",
+  "ConfigManager.js",
+  "StorageManager.js",
+  "ImageManager.js",
+  "AudioManager.js",
+  "SoundManager.js",
+  "TextManager.js",
+  "SceneManager.js",
+  "BattleManager.js",
+  "PluginManager.js"
+]
