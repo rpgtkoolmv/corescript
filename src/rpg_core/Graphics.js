@@ -800,6 +800,9 @@ Graphics._createRenderer = function() {
     } catch (e) {
         this._renderer = null;
     }
+
+    if(this._renderer && this._renderer.textureGC)
+        this._renderer.textureGC.maxIdle = 1;
 };
 
 /**

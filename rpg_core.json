@@ -4,6 +4,7 @@
   "Utils.js",
   "CacheEntry.js",
   "CacheMap.js",
+  "ImageCache.js",
   "Point.js",
   "Rectangle.js",
   "Bitmap.js",

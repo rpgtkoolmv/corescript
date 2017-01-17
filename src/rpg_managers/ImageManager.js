@@ -10,6 +10,13 @@ function ImageManager() {
 
 ImageManager.cache = new CacheMap(ImageManager);
 
+ImageManager._imageCache = new ImageCache();
+ImageManager._systemReservationId = Utils.generateRuntimeId();
+
+ImageManager._generateCacheKey = function(path, hue){
+    return  path + ':' + hue;
+};
+
 ImageManager.loadAnimation = function(filename, hue) {
     return this.loadBitmap('img/animations/', filename, hue, true);
 };
@@ -78,42 +85,40 @@ ImageManager.loadBitmap = function(folder, filename, hue, smooth) {
 };
 
 ImageManager.loadEmptyBitmap = function() {
-    var empty = this.cache.getItem('empty');
-    if (!empty) {
+    var empty = this._imageCache.get('empty');
+    if(!empty){
         empty = new Bitmap();
-        this.cache.setItem('empty', empty);
+        this._imageCache.add('empty', empty);
+        this._imageCache.reserve('empty', this._systemReservationId);
     }
+
     return empty;
 };
 
 ImageManager.loadNormalBitmap = function(path, hue) {
-    var key = path + ':' + hue;
-    var bitmap = this.cache.getItem(key);
-    if (!bitmap) {
+    var key = this._generateCacheKey(path, hue);
+    var bitmap = this._imageCache.get(key);
+    if(!bitmap){
         bitmap = Bitmap.load(path);
-        bitmap.addLoadListener(function() {
+        bitmap.addLoadListener(function(){
             bitmap.rotateHue(hue);
         });
-        this.cache.setItem(key, bitmap);
+        this._imageCache.add(key, bitmap);
     }
+
     return bitmap;
 };
 
 ImageManager.clear = function() {
-    this.cache.clear();
+    this._imageCache = new ImageCache();
 };
 
 ImageManager.isReady = function() {
-    for (var key in this.cache._inner) {
-        var bitmap = this.cache._inner[key].item;
-        if (bitmap.isError()) {
-            throw new Error('Failed to load: ' + bitmap.url);
-        }
-        if (!bitmap.isReady()) {
-            return false;
-        }
+    var bitmap = null;
+    if(bitmap = this._imageCache.getErrorBitmap()){
+        throw new Error('Failed to load: ' + bitmap.url);
     }
-    return true;
+    return this._imageCache.isReady();
 };
 
 ImageManager.isObjectCharacter = function(filename) {
@@ -128,4 +133,87 @@ ImageManager.isBigCharacter = function(filename) {
 
 ImageManager.isZeroParallax = function(filename) {
     return filename.charAt(0) === '!';
+};
+
+
+ImageManager.reserveAnimation = function(filename, hue, reserveId) {
+    return this.reserveBitmap('img/animations/', filename, hue, true, reserveId);
+};
+
+ImageManager.reserveBattleback1 = function(filename, hue, reserveId) {
+    return this.reserveBitmap('img/battlebacks1/', filename, hue, true, reserveId);
+};
+
+ImageManager.reserveBattleback2 = function(filename, hue, reservationId) {
+    return this.reserveBitmap('img/battlebacks2/', filename, hue, true, reservationId);
+};
+
+ImageManager.reserveEnemy = function(filename, hue, reservationId) {
+    return this.reserveBitmap('img/enemies/', filename, hue, true, reservationId);
+};
+
+ImageManager.reserveCharacter = function(filename, hue, reservationId) {
+    return this.reserveBitmap('img/characters/', filename, hue, false, reservationId);
+};
+
+ImageManager.reserveFace = function(filename, hue, reservationId) {
+    return this.reserveBitmap('img/faces/', filename, hue, true, reservationId);
+};
+
+ImageManager.reserveParallax = function(filename, hue, reservationId) {
+    return this.reserveBitmap('img/parallaxes/', filename, hue, true, reservationId);
+};
+
+ImageManager.reservePicture = function(filename, hue, reservationId) {
+    return this.reserveBitmap('img/pictures/', filename, hue, true, reservationId);
+};
+
+ImageManager.reserveSvActor = function(filename, hue, reservationId) {
+    return this.reserveBitmap('img/sv_actors/', filename, hue, false, reservationId);
+};
+
+ImageManager.reserveSvEnemy = function(filename, hue, reservationId) {
+    return this.reserveBitmap('img/sv_enemies/', filename, hue, true, reservationId);
+};
+
+ImageManager.reserveSystem = function(filename, hue, reservationId) {
+    return this.reserveBitmap('img/system/', filename, hue, false, reservationId || this._systemReservationId);
+};
+
+ImageManager.reserveTileset = function(filename, hue, reservationId) {
+    return this.reserveBitmap('img/tilesets/', filename, hue, false, reservationId);
+};
+
+ImageManager.reserveTitle1 = function(filename, hue, reservationId) {
+    return this.reserveBitmap('img/titles1/', filename, hue, true, reservationId);
+};
+
+ImageManager.reserveTitle2 = function(filename, hue, reservationId) {
+    return this.reserveBitmap('img/titles2/', filename, hue, true, reservationId);
+};
+
+ImageManager.reserveBitmap = function(folder, filename, hue, smooth, reservationId) {
+    if (filename) {
+        var path = folder + encodeURIComponent(filename) + '.png';
+        var bitmap = this.reserveNormalBitmap(path, hue || 0, reservationId || this._defaultReservationId);
+        bitmap.smooth = smooth;
+        return bitmap;
+    } else {
+        return this.loadEmptyBitmap();
+    }
+};
+
+ImageManager.reserveNormalBitmap = function(path, hue, reservationId){
+    var bitmap = this.loadNormalBitmap(path, hue);
+    this._imageCache.reserve(this._generateCacheKey(path, hue), reservationId);
+
+    return bitmap;
+};
+
+ImageManager.releaseReservation = function(reservationId){
+    this._imageCache.releaseReservation(reservationId);
+};
+
+ImageManager.setDefaultReservationId = function(reservationId){
+    this._defaultReservationId = reservationId;
 };
