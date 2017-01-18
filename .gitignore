@@ -52,3 +52,4 @@ jspm_packages
 dist
 *.iml
 game/
+todo.md
