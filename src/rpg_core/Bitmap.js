@@ -41,7 +41,7 @@ Bitmap.prototype.initialize = function(width, height) {
     this._smooth = false;
     this._loadListeners = [];
     this._loadingState = 'none';
-    this._loadAfterRequest = false;
+    this._decodeAfterRequest = false;
 
     /**
      * Cache entry, for images. In all cases _url is the same as cacheEntry.key
@@ -750,22 +750,22 @@ Bitmap.prototype._onLoad = function() {
     switch(this._loadingState){
         case 'requesting':
             this._loadingState = 'requestCompleted';
-            if(this._loadAfterRequest){
-                this.load();
+            if(this._decodeAfterRequest){
+                this.decode();
             }
             break;
 
         case 'decrypting':
             window.URL.revokeObjectURL(this._image.src);
             this._loadingState = 'decryptCompleted';
-            if(this._loadAfterRequest){
-                this.load();
+            if(this._decodeAfterRequest){
+                this.decode();
             }
             break;
     }
 };
 
-Bitmap.prototype.load = function(){
+Bitmap.prototype.decode = function(){
     switch(this._loadingState){
         case 'requestCompleted': case 'decryptCompleted':
             this.resize(this._image.width, this._image.height);
@@ -776,8 +776,9 @@ Bitmap.prototype.load = function(){
             this._callLoadListeners();
             break;
 
-        default:
-            throw new Error('cannot load');
+        case 'requesting': case 'decrypting':
+            this._decodeAfterRequest = true;
+            break;
     }
 };
 
@@ -831,7 +832,7 @@ Bitmap.prototype._loadImage = function(url, autoLoad){
         this._image = new Image();
         this._url = url;
         this._loadingState = 'requesting';
-        this._loadAfterRequest = autoLoad;
+        this._decodeAfterRequest = autoLoad;
 
         if(!Decrypter.checkImgIgnore(url) && Decrypter.hasEncryptedImages) {
             this._loadingState = 'decrypting';

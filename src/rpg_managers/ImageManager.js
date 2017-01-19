@@ -104,6 +104,8 @@ ImageManager.loadNormalBitmap = function(path, hue) {
             bitmap.rotateHue(hue);
         });
         this._imageCache.add(key, bitmap);
+    }else if(!bitmap.isReady()){
+        bitmap.decode();
     }
 
     return bitmap;
@@ -216,4 +218,82 @@ ImageManager.releaseReservation = function(reservationId){
 
 ImageManager.setDefaultReservationId = function(reservationId){
     this._defaultReservationId = reservationId;
+};
+
+
+ImageManager.requestAnimation = function(filename, hue) {
+    return this.requestBitmap('img/animations/', filename, hue, true);
+};
+
+ImageManager.requestBattleback1 = function(filename, hue) {
+    return this.requestBitmap('img/battlebacks1/', filename, hue, true);
+};
+
+ImageManager.requestBattleback2 = function(filename, hue) {
+    return this.requestBitmap('img/battlebacks2/', filename, hue, true);
+};
+
+ImageManager.requestEnemy = function(filename, hue) {
+    return this.requestBitmap('img/enemies/', filename, hue, true);
+};
+
+ImageManager.requestCharacter = function(filename, hue) {
+    return this.requestBitmap('img/characters/', filename, hue, false);
+};
+
+ImageManager.requestFace = function(filename, hue) {
+    return this.requestBitmap('img/faces/', filename, hue, true);
+};
+
+ImageManager.requestParallax = function(filename, hue) {
+    return this.requestBitmap('img/parallaxes/', filename, hue, true);
+};
+
+ImageManager.requestPicture = function(filename, hue) {
+    return this.requestBitmap('img/pictures/', filename, hue, true);
+};
+
+ImageManager.requestSvActor = function(filename, hue) {
+    return this.requestBitmap('img/sv_actors/', filename, hue, false);
+};
+
+ImageManager.requestSvEnemy = function(filename, hue) {
+    return this.requestBitmap('img/sv_enemies/', filename, hue, true);
+};
+
+ImageManager.requestSystem = function(filename, hue) {
+    return this.requestBitmap('img/system/', filename, hue, false);
+};
+
+ImageManager.requestTileset = function(filename, hue) {
+    return this.requestBitmap('img/tilesets/', filename, hue, false);
+};
+
+ImageManager.requestTitle1 = function(filename, hue) {
+    return this.requestBitmap('img/titles1/', filename, hue, true);
+};
+
+ImageManager.requestTitle2 = function(filename, hue) {
+    return this.requestBitmap('img/titles2/', filename, hue, true);
+};
+
+ImageManager.requestBitmap = function(folder, filename, hue, smooth) {
+        var path = folder + encodeURIComponent(filename) + '.png';
+        var bitmap = Bitmap.requestNormalBitmap(path, hue);
+        bitmap.smooth = smooth;
+        return bitmap;
+};
+
+ImageManager.requestNormalBitmap = function(path, hue){
+    var key = this._generateCacheKey(path, hue);
+    var bitmap = this._imageCache.get(key);
+    if(!bitmap){
+        bitmap = Bitmap.request(path);
+        bitmap.addLoadListener(function(){
+            bitmap.rotateHue(hue);
+        });
+        this._imageCache.add(key, bitmap);
+    }
+
+    return bitmap;
 };
