@@ -113,6 +113,8 @@ Scene_Map.prototype.terminate = function() {
         SceneManager.snapForBackground();
     }
     $gameScreen.clearZoom();
+    ImageManager.clearRequest();
+
     //TODO: Ivan: investigate why is it working, what keeps Scene_Map from freeing stuff
     this.removeChild(this._fadeSprite);
     this.removeChild(this._mapNameWindow);

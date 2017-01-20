@@ -37,3 +37,7 @@ RequestQueue.prototype.raisePriority = function(key){
         }
     }
 };
+
+RequestQueue.prototype.clear = function(){
+    this._queue.splice(0);
+};
