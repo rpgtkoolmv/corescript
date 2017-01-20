@@ -42,7 +42,7 @@ Game_Interpreter.prototype.setup = function(list, eventId) {
     this._mapId = $gameMap.mapId();
     this._eventId = eventId || 0;
     this._list = list;
-    this._requestImages(list);
+    Game_Interpreter.requestImages(list);
 };
 
 Game_Interpreter.prototype.eventId = function() {
@@ -1741,7 +1741,7 @@ Game_Interpreter.prototype.pluginCommand = function(command, args) {
     // to be overridden by plugins
 };
 
-Game_Interpreter.prototype._requestImages = function(list){
+Game_Interpreter.requestImages = function(list){
     list.forEach(function(command){
         var params = command.parameters;
         switch(command.code){

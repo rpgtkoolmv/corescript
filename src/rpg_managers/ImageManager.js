@@ -11,6 +11,7 @@ function ImageManager() {
 ImageManager.cache = new CacheMap(ImageManager);
 
 ImageManager._imageCache = new ImageCache();
+ImageManager._requestQueue = new RequestQueue();
 ImageManager._systemReservationId = Utils.generateRuntimeId();
 
 ImageManager._generateCacheKey = function(path, hue){
@@ -293,7 +294,14 @@ ImageManager.requestNormalBitmap = function(path, hue){
             bitmap.rotateHue(hue);
         });
         this._imageCache.add(key, bitmap);
+        this._requestQueue.enqueue(key, bitmap);
+    }else{
+        this._requestQueue.raisePriority(key);
     }
 
     return bitmap;
+};
+
+ImageManager.update = function(){
+    this._requestQueue.update();
 };
