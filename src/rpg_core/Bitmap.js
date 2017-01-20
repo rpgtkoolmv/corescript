@@ -1,18 +1,30 @@
 //-----------------------------------------------------------------------------
 
-//_loadingState
-//none
-//
-//loaded
-//
-//pending
-//requesting
-//requestCompleted
-//
-//decrypting
-//decryptCompleted
-//
-//error
+/**
+ * Bitmap states(Bitmap._loadingState):
+ *
+ * none:
+ * Empty Bitmap
+ *
+ * pending:
+ * Url requested, but pending to load until startRequest called
+ *
+ * requesting:
+ * Requesting supplied URI now.
+ *
+ * requestCompleted:
+ * Request completed
+ *
+ * decrypting:
+ * requesting encrypted data from supplied URI or decrypting it.
+ *
+ * decryptCompleted:
+ * Decrypt completed
+ *
+ * error:
+ * error occurred
+ *
+ */
 
 
 /**
@@ -852,7 +864,7 @@ Bitmap.prototype._loadImage = function(url, pending){
 
 Bitmap.prototype._requestImage = function(url, autoDecode){
     if(this._image){
-        this._autoDecode = autoDecode;
+        this._decodeAfterRequest = autoDecode;
         return;
     }
 
