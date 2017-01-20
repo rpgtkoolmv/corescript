@@ -42,6 +42,7 @@ Game_Interpreter.prototype.setup = function(list, eventId) {
     this._mapId = $gameMap.mapId();
     this._eventId = eventId || 0;
     this._list = list;
+    this._requestImages(list);
 };
 
 Game_Interpreter.prototype.eventId = function() {
@@ -1738,4 +1739,43 @@ Game_Interpreter.prototype.command356 = function() {
 
 Game_Interpreter.prototype.pluginCommand = function(command, args) {
     // to be overridden by plugins
+};
+
+Game_Interpreter.prototype._requestImages = function(list){
+    list.forEach(function(command){
+        var params = command.parameters;
+        switch(command.code){
+            case 101:
+                if(params[0]) ImageManager.requestFace(params[0]);
+                break;
+
+            case 231:
+                if(params[1]) ImageManager.requestPicture(params[1]);
+                break;
+
+            case 282:
+                var tileset = $dataTilesets[params[0]];
+                tileset.tilesetNames.forEach(function(tilesetName){
+                    if(tilesetName) ImageManager.requestTileset(tilesetName);
+                });
+                break;
+
+            case 322:
+                if(params[1]) ImageManager.requestCharacter(params[1]);
+                if(params[3]) ImageManager.requestFace(params[3]);
+                if(params[5]) ImageManager.requestEnemy(params[5]);
+                break;
+
+            case 323:
+                var vehicle = $gameMap.vehicle(params[0]);
+                if(vehicle && params[1]){
+                    ImageManager.requestCharacter(params[1]);
+                }
+                break;
+
+            case 337:
+                if(params[1]) ImageManager.requestAnimation(params[1]);
+                break;
+        }
+    });
 };

@@ -279,13 +279,13 @@ ImageManager.requestTitle2 = function(filename, hue) {
 
 ImageManager.requestBitmap = function(folder, filename, hue, smooth) {
         var path = folder + encodeURIComponent(filename) + '.png';
-        var bitmap = Bitmap.requestNormalBitmap(path, hue);
+        var bitmap = ImageManager.requestNormalBitmap(path, hue);
         bitmap.smooth = smooth;
         return bitmap;
 };
 
 ImageManager.requestNormalBitmap = function(path, hue){
-    var key = this._generateCacheKey(path, hue);
+    var key = this._generateCacheKey(path, hue || 0);
     var bitmap = this._imageCache.get(key);
     if(!bitmap){
         bitmap = Bitmap.request(path);

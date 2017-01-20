@@ -77,7 +77,7 @@ ImageCache.prototype.getSize = function(){
 ImageCache.prototype.isReady = function(){
     var items = this._items;
     return !Object.keys(items).some(function(key){
-        return !items[key].bitmap.isReady();
+        return !items[key].bitmap.isRequestOnly() && !items[key].bitmap.isReady();
     });
 };
 

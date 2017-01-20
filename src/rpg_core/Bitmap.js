@@ -846,3 +846,7 @@ Bitmap.prototype._loadImage = function(url, autoLoad){
         throw new Error('invalid state in _loadImage');
     }
 };
+
+Bitmap.prototype.isRequestOnly = function(){
+    return !(this._decodeAfterRequest || this.isReady());
+};
