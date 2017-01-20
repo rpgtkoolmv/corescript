@@ -827,12 +827,12 @@ Bitmap.request = function(url){
     return bitmap;
 };
 
-Bitmap.prototype._loadImage = function(url, autoLoad){
+Bitmap.prototype._loadImage = function(url, autoDecode){
     if(this._loadingState === 'none'){
         this._image = new Image();
         this._url = url;
         this._loadingState = 'requesting';
-        this._decodeAfterRequest = autoLoad;
+        this._decodeAfterRequest = autoDecode;
 
         if(!Decrypter.checkImgIgnore(url) && Decrypter.hasEncryptedImages) {
             this._loadingState = 'decrypting';
