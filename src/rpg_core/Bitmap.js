@@ -21,6 +21,9 @@
  * decryptCompleted:
  * Decrypt completed
  *
+ * loaded:
+ * loaded. isReady() === true, so It's usable.
+ *
  * error:
  * error occurred
  *
