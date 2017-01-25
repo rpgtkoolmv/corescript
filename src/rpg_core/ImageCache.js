@@ -74,6 +74,21 @@ ImageCache.prototype.getSize = function(){
     return totalSize;
 };
 
+ImageCache.prototype.countBitmap = function(){
+    return Object.keys(this._items).length;
+};
+
+ImageCache.prototype.countRequest = function(){
+    var items = this._items;
+
+    return Object.keys(this._items)
+        .map(function(key){
+            return items[key].bitmap;
+        }).filter(function(bitmap){
+            return bitmap.isRequestOnly();
+        }).length;
+};
+
 ImageCache.prototype.isReady = function(){
     var items = this._items;
     return !Object.keys(items).some(function(key){
