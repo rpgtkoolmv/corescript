@@ -1749,6 +1749,17 @@ Game_Interpreter.requestImages = function(list){
                 if(params[0]) ImageManager.requestFace(params[0]);
                 break;
 
+            case 205:
+                if(params[1]){
+                    params[1].list.forEach(function(command){
+                        var params = command.parameters;
+                        if(command.code === Game_Character.ROUTE_CHANGE_IMAGE){
+                            ImageManager.requestCharacter(params[0]);
+                        }
+                    });
+                }
+                break;
+
             case 231:
                 if(params[1]) ImageManager.requestPicture(params[1]);
                 break;
