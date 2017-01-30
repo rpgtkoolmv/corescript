@@ -64,7 +64,7 @@ JsonEx.parse = function(json) {
     var registry = {};
     var contents = this._decode(JSON.parse(json), circular, registry);
     this._linkCircularReference(contents, circular, registry);
-    JsonEx._saveCount = contents['@m'];
+    JsonEx._saveCount = contents['@m'] || 0;
 
     return contents;
 };
