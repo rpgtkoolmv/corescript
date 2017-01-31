@@ -35,7 +35,9 @@ JsonEx._generateId = function(){
  */
 JsonEx.stringify = function(object) {
     var circular = [];
-    var json = JSON.stringify(this._encode(object, circular, ++JsonEx._saveCount, 0));
+    JsonEx._id = 1;
+    var json = JSON.stringify(this._encode(object, circular, 0));
+    this._cleanMetadata(object);
     this._restoreCircularReference(circular);
 
     return json;
@@ -63,8 +65,8 @@ JsonEx.parse = function(json) {
     var circular = [];
     var registry = {};
     var contents = this._decode(JSON.parse(json), circular, registry);
+    this._cleanMetadata(contents);
     this._linkCircularReference(contents, circular, registry);
-    JsonEx._saveCount = contents['@m'] || 0;
 
     return contents;
 };
@@ -78,6 +80,24 @@ JsonEx._linkCircularReference = function(contents, circulars, registry){
         value[key] = registry[id];
     });
 };
+
+JsonEx._cleanMetadata = function(object){
+    if(!object) return;
+
+    delete object['@'];
+    delete object['@c'];
+    delete object['@m'];
+
+    if(typeof object === 'object'){
+        Object.keys(object).forEach(function(key){
+            var value = object[key];
+            if(typeof value === 'object'){
+                JsonEx._cleanMetadata(value);
+            }
+        });
+    }
+};
+
 
 /**
  * Makes a deep copy of the specified object.
@@ -96,19 +116,18 @@ JsonEx.makeDeepCopy = function(object) {
  * @method _encode
  * @param {Object} value
  * @param {Array} circular
- * @param {Number} count
  * @param {Number} depth
  * @return {Object}
  * @private
  */
-JsonEx._encode = function(value, circular, count, depth) {
+JsonEx._encode = function(value, circular, depth) {
     depth = depth || 0;
     if (++depth >= this.maxDepth) {
         throw new Error('Object too deep');
     }
     var type = Object.prototype.toString.call(value);
     if (type === '[object Object]' || type === '[object Array]') {
-        value['@m'] = count;
+        value['@m'] = true;
         value['@c'] = JsonEx._generateId();
         var constructorName = this._getConstructorName(value);
         if (constructorName !== 'Object' && constructorName !== 'Array') {
@@ -117,14 +136,14 @@ JsonEx._encode = function(value, circular, count, depth) {
         for (var key in value) {
             if (value.hasOwnProperty(key)) {
                 if(value[key] && typeof value[key] === 'object'){
-                    if(value[key]['@m'] !== count){
-                        value[key] = this._encode(value[key], circular, count, depth + 1);
+                    if(!value[key]['@m']){
+                        value[key] = this._encode(value[key], circular, depth + 1);
                     }else{
                         circular.push([key, value, value[key]]);
                         value[key] = {'@r': value[key]['@c']};
                     }
                 }else{
-                    value[key] = this._encode(value[key], circular, count, depth + 1);
+                    value[key] = this._encode(value[key], circular, depth + 1);
                 }
             }
         }
