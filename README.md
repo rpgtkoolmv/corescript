@@ -1,3 +1,4 @@
+
 # RPG Maker MV CoreScript
 
 ## Introduction
@@ -23,8 +24,10 @@ There are three releases
 
 To build Corescripts, install Node.js, change working directory, and just type in console:
 
+```
 npm install
 npm run build
+```
 
 Then you can find Corescripts in folder “dist”
 
