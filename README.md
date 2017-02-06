@@ -44,11 +44,9 @@ To test, place MV’s project in game/ and type
 npm test
 ```
 
-- The workflow is Github Flow. When sending PR, prepare a new feature branch and send it to the master branch of this repository.
--- http://scottchacon.com/2011/08/31/github-flow.html
+- The workflow is Github Flow. When sending PR, prepare a new feature branch and send it to the master branch of this repository.http://scottchacon.com/2011/08/31/github-flow.html
 - This project is just started. The rules of development are decided through discussion.
-- Please apply for development slack from this form. It will usually be invited within 48 hours.
--- https://docs.google.com/forms/d/1T5wrKeOAfFBNytHrby4HMDzShtOMl2s7ayvjGwBrbNY/edit
+- Please apply for development slack from this form. It will usually be invited within 48 hours.https://docs.google.com/forms/d/1T5wrKeOAfFBNytHrby4HMDzShtOMl2s7ayvjGwBrbNY/edit
 
 ## Roadmap
 
