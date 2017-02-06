@@ -127,6 +127,7 @@ The core script is finally output to mainly 6 files.
     <dt>rpg_windows.js</dt>
     <dd>Classes named Window_Xxx handling window display and input.</dd>
 </dl>
+
 In addition, a plugin list is defined in *plugins.js*, and *main.js* launches the game.
 
 ## Inheritance style
@@ -156,17 +157,21 @@ When loading, since the prototype chain is reconnected simultaneously with deser
 The scene graph is a drawing tree like FLASH provided by Pixi.js.
 Children are influenced by parent's coordinates and visibility.
 Register a child in the form `(scene or sprite or window).addChild(child)`.
+
 ### Scene
 In RMMV the scene is the root element of the scene graph and has children with Sprite and Window.
 The life cycle is managed by `SceneManager`, and it operates up to one at the same time.
+
 Life cycle: `new Scene_Xxx() -> create() -> start() -> update()* -> stop() -> terminate()`
 
 ## Flow
+
 ### Initialization
 1. When the page is loaded, call `SceneManager.run()`. *(main.js)*
 1. Initialize classes such as `Graphics, WebAudio, Input, TouchInput`.
 1. Set `Scene_Boot` to `SceneManager`.
 1. Register `SceneManager.update` in `requestAnimationFrame`.
+
 `requestAnimationFrame` is called by the browser at regular time intervals (every time drawing is required).
 
 ### Update
