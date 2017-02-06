@@ -11,12 +11,15 @@
     "build:scenes": "node ./build.js rpg_scenes",
     "build:sprites": "node ./build.js rpg_sprites",
     "build:windows": "node ./build.js rpg_windows",
-    "build": "run-s build:*"
+    "build": "run-s build:*",
+    "copy": "cpx ./dist/*.js ./game/js/",
+    "buildcopy": "run-s build:* copy"
   },
   "author": "rpgtkoolmv team",
   "license": "MIT",
   "devDependencies": {
     "concat-with-sourcemaps": "^1.0.4",
+    "cpx": "^1.5.0",
     "npm-run-all": "^4.0.0"
   }
 }

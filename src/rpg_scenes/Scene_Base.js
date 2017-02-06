@@ -17,6 +17,7 @@ Scene_Base.prototype.initialize = function() {
     this._fadeSign = 0;
     this._fadeDuration = 0;
     this._fadeSprite = null;
+    this._imageReservationId = Utils.generateRuntimeId();
 };
 
 Scene_Base.prototype.create = function() {
@@ -32,6 +33,7 @@ Scene_Base.prototype.isReady = function() {
 
 Scene_Base.prototype.start = function() {
     this._active = true;
+    ImageManager.setDefaultReservationId(this._imageReservationId);
 };
 
 Scene_Base.prototype.update = function() {
@@ -49,6 +51,7 @@ Scene_Base.prototype.isBusy = function() {
 };
 
 Scene_Base.prototype.terminate = function() {
+    ImageManager.releaseReservation(this._imageReservationId);
 };
 
 Scene_Base.prototype.createWindowLayer = function() {

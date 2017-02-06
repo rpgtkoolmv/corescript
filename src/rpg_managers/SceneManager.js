@@ -139,6 +139,7 @@ SceneManager.update = function() {
         if (Utils.isMobileSafari()) {
             this.updateInputData();
         }
+        this.updateManagers();
         this.updateMain();
         this.tickEnd();
     } catch (e) {
@@ -223,8 +224,8 @@ SceneManager.updateMain = function() {
     this.requestUpdate();
 };
 
-SceneManager.updateManagers = function(ticks, delta) {
-    ImageManager.cache.update(ticks, delta);
+SceneManager.updateManagers = function() {
+    ImageManager.update();
 };
 
 SceneManager.changeScene = function() {

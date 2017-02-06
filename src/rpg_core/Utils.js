@@ -125,3 +125,8 @@ Utils.rgbToCssColor = function(r, g, b) {
     b = Math.round(b);
     return 'rgb(' + r + ',' + g + ',' + b + ')';
 };
+
+Utils._id = 1;
+Utils.generateRuntimeId = function(){
+    return Utils._id++;
+};
