@@ -51,7 +51,7 @@ npm test
 
 ## Roadmap
 
-Development will be done according to the roadmap. Currently I am developing ver 1.1.
+Development will be done according to the roadmap. Currently we are developing ver 1.1.
 
 ### ver 1.0
 
@@ -90,6 +90,7 @@ Goal: Confirm specification
 - Identification of edge case
 
 ### ver 1.5
+
 
 Goal: Assist in game development
 - Simple conflict check for plugins
@@ -135,8 +136,10 @@ In addition, a plugin list is defined in *plugins.js*, and *main.js* launches th
 function Derived() {
     this.initialize.apply(this, arguments); // Delegate to initialize()
 }
+
 Derived.prototype = Object.create(Base.prototype); // Derived inherits from Base
 Derived.prototype.constructor = Derived;
+
 Derived.prototype.initialize = function () {
     Base.prototype.initialize.call(this); // This makes super.initialize() sense
 };
@@ -174,7 +177,6 @@ Life cycle: `new Scene_Xxx() -> create() -> start() -> update()* -> stop() -> te
     1. Children recursively call their children `update()`.
 1. Render the scene (including its children) onto the screen.
 1. Register `SceneManager.update` in `requestAnimationFrame`.
- wrap
 
 
 ## License
