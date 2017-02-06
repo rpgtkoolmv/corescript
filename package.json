@@ -13,7 +13,7 @@
     "build:windows": "node ./build.js rpg_windows",
     "build": "run-s build:*",
     "copy": "cpx ./dist/*.js ./game/js/",
-    "test": "run-s build:* copy"
+    "buildcopy": "run-s build:* copy"
   },
   "author": "rpgtkoolmv team",
   "license": "MIT",
