@@ -41,6 +41,8 @@ DataManager._globalId       = 'RPGMV';
 DataManager._lastAccessedId = 1;
 DataManager._errorUrl       = null;
 
+DataManager.imageReservationId  = Utils.generateRuntimeId();
+
 DataManager._databaseFiles = [
     { name: '$dataActors',       src: 'Actors.json'       },
     { name: '$dataClasses',      src: 'Classes.json'      },
@@ -315,12 +317,12 @@ DataManager.loadAllSavefileImages = function() {
 DataManager.loadSavefileImages = function(info) {
     if (info.characters) {
         for (var i = 0; i < info.characters.length; i++) {
-            ImageManager.loadCharacter(info.characters[i][0]);
+            ImageManager.reserveCharacter(info.characters[i][0], 0, this.imageReservationId);
         }
     }
     if (info.faces) {
         for (var j = 0; j < info.faces.length; j++) {
-            ImageManager.loadFace(info.faces[j][0]);
+            ImageManager.reserveFace(info.faces[j][0], 0, this.imageReservationId);
         }
     }
 };

@@ -15,6 +15,10 @@ function Graphics() {
     throw new Error('This is a static class');
 }
 
+Graphics._cssFontLoading =  document.fonts && document.fonts.ready;
+Graphics._fontLoaded = null;
+
+
 /**
  * Initializes the graphics system.
  *
@@ -61,6 +65,22 @@ Graphics.initialize = function(width, height, type) {
     this._disableTextSelection();
     this._disableContextMenu();
     this._setupEventHandlers();
+    this._setupCssFontLoading();
+};
+
+
+Graphics._setupCssFontLoading = function(){
+    if(Graphics._cssFontLoading){
+        document.fonts.ready.then(function(fonts){
+            Graphics._fontLoaded = fonts;
+        }).catch(function(error){
+            SceneManager.onError(error);
+        });
+    }
+};
+
+Graphics.canUseCssFontLoading = function(){
+    return !!this._cssFontLoading;
 };
 
 /**
@@ -322,17 +342,25 @@ Graphics.loadFont = function(name, url) {
  * @return {Boolean} True if the font file is loaded
  */
 Graphics.isFontLoaded = function(name) {
-    if (!this._hiddenCanvas) {
-        this._hiddenCanvas = document.createElement('canvas');
+    if (Graphics._cssFontLoading) {
+        if(Graphics._fontLoaded){
+            return Graphics._fontLoaded.check('10px "'+name+'"');
+        }
+
+        return false;
+    } else {
+        if (!this._hiddenCanvas) {
+            this._hiddenCanvas = document.createElement('canvas');
+        }
+        var context = this._hiddenCanvas.getContext('2d');
+        var text = 'abcdefghijklmnopqrstuvwxyz';
+        var width1, width2;
+        context.font = '40px ' + name + ', sans-serif';
+        width1 = context.measureText(text).width;
+        context.font = '40px sans-serif';
+        width2 = context.measureText(text).width;
+        return width1 !== width2;
     }
-    var context = this._hiddenCanvas.getContext('2d');
-    var text = 'abcdefghijklmnopqrstuvwxyz';
-    var width1, width2;
-    context.font = '40px ' + name + ', sans-serif';
-    width1 = context.measureText(text).width;
-    context.font = '40px sans-serif';
-    width2 = context.measureText(text).width;
-    return width1 !== width2;
 };
 
 /**
@@ -800,6 +828,9 @@ Graphics._createRenderer = function() {
     } catch (e) {
         this._renderer = null;
     }
+
+    if(this._renderer && this._renderer.textureGC)
+        this._renderer.textureGC.maxIdle = 1;
 };
 
 /**

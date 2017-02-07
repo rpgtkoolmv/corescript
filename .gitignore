@@ -51,3 +51,5 @@ jspm_packages
 .idea
 dist
 *.iml
+game/
+todo.md

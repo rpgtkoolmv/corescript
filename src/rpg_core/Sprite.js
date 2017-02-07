@@ -57,13 +57,18 @@ Object.defineProperty(Sprite.prototype, 'bitmap', {
     },
     set: function(value) {
         if (this._bitmap !== value) {
-            this._bitmap = value;
-            if (this._bitmap) {
-                this.setFrame(0, 0, 0, 0);
-                this._bitmap.addLoadListener(this._onBitmapLoad.bind(this));
-            } else {
+            if(!this._bitmap){
+                this._refreshFrame = true;
+            }else if(this._bitmap && value){
+                this._refreshFrame = false;
+            }else if(!value){
+                this._refreshFrame = false;
                 this.texture.frame = Rectangle.emptyRectangle;
             }
+
+            this._requestBitmap = value;
+            this._bitmap = value;
+            if(value)value.addLoadListener(this._onBitmapLoad.bind(this));
         }
     },
     configurable: true
@@ -222,10 +227,16 @@ Sprite.prototype.setColorTone = function(tone) {
  * @private
  */
 Sprite.prototype._onBitmapLoad = function() {
-    if (this._frame.width === 0 && this._frame.height === 0) {
-        this._frame.width = this._bitmap.width;
-        this._frame.height = this._bitmap.height;
+    if(this._requestBitmap === this._bitmap){
+        this._requestBitmap = null;
+
+        if (this._refreshFrame && this._bitmap) {
+            this._refreshFrame = false;
+            this._frame.width = this._bitmap.width;
+            this._frame.height = this._bitmap.height;
+        }
     }
+
     this._refresh();
 };
 
