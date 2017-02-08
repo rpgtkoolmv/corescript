@@ -735,7 +735,10 @@ Tilemap.prototype._isOverpassPosition = function(mx, my) {
  * @private
  */
 Tilemap.prototype._sortChildren = function() {
-    this.children.sort(this._compareChildOrder.bind(this));
+    if ($gameTemp.tileMapSortRequested()) {
+        this.children.sort(this._compareChildOrder.bind(this));
+        $gameTemp.clearTileMapSortRequest();
+    }
 };
 
 /**
