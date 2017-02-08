@@ -203,7 +203,13 @@ Sprite_Character.prototype.createHalfBodySprites = function() {
 Sprite_Character.prototype.updatePosition = function() {
     this.x = this._character.screenX();
     this.y = this._character.screenY();
-    this.z = this._character.screenZ();
+
+    var newZ = this._character.screenZ();
+    if (newZ !== this.z) {
+        $gameTemp.requestTileMapSort();
+    }
+
+    this.z = newZ;
 };
 
 Sprite_Character.prototype.updateAnimation = function() {

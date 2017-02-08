@@ -12,6 +12,7 @@ Game_Temp.prototype.initialize = function() {
     this._commonEventId = 0;
     this._destinationX = null;
     this._destinationY = null;
+    this._tilemapSortRequested = true;
 };
 
 Game_Temp.prototype.isPlaytest = function() {
@@ -55,3 +56,16 @@ Game_Temp.prototype.destinationX = function() {
 Game_Temp.prototype.destinationY = function() {
     return this._destinationY;
 };
+
+Game_Temp.prototype.tileMapSortRequested = function() {
+  return this._tilemapSortRequested === true;
+};
+
+Game_Temp.prototype.requestTileMapSort = function() {
+  this._tilemapSortRequested = true;
+};
+
+Game_Temp.prototype.clearTileMapSortRequest = function() {
+  this._tilemapSortRequested = false;
+};
+

@@ -321,7 +321,10 @@ Game_CharacterBase.prototype.updateMove = function() {
     if (this._y > this._realY) {
         this._realY = Math.min(this._realY + this.distancePerFrame(), this._y);
     }
-    if (!this.isMoving()) {
+
+    if (this.isMoving()) {
+        $gameTemp.requestTileMapSort();
+    } else {
         this.refreshBushDepth();
     }
 };
