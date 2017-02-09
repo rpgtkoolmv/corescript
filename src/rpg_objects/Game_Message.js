@@ -184,7 +184,5 @@ Game_Message.prototype.newPage = function() {
 };
 
 Game_Message.prototype.allText = function() {
-    return this._texts.reduce(function(previousValue, currentValue) {
-        return previousValue + '\n' + currentValue;
-    });
+    return this._texts.join('\n');
 };
