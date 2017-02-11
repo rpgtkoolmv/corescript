@@ -268,7 +268,7 @@ DataManager.isThisGameFile = function(savefileId) {
         } else {
             var savefile = globalInfo[savefileId];
             return (savefile.globalId === this._globalId &&
-            savefile.title === $dataSystem.gameTitle);
+                    savefile.title === $dataSystem.gameTitle);
         }
     } else {
         return false;
