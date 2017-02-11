@@ -5,21 +5,28 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "build:core": "node ./build.js rpg_core",
-    "build:managers": "node ./build.js rpg_managers",
-    "build:objects": "node ./build.js rpg_objects",
-    "build:scenes": "node ./build.js rpg_scenes",
-    "build:sprites": "node ./build.js rpg_sprites",
-    "build:windows": "node ./build.js rpg_windows",
-    "build": "run-s build:*",
-    "copy": "cpx ./dist/*.js ./game/js/",
-    "test": "run-s build:* copy"
+    "build:core": "node ./concat.js rpg_core",
+    "build:managers": "node ./concat.js rpg_managers",
+    "build:objects": "node ./concat.js rpg_objects",
+    "build:scenes": "node ./concat.js rpg_scenes",
+    "build:sprites": "node ./concat.js rpg_sprites",
+    "build:windows": "node ./concat.js rpg_windows",
+    "watch": "node ./watch.js",
+    "build": "run-p build:*",
+    "copy:corescripts": "cpx ./dist/*.js ./game/js/",
+    "copy:libs": "cpx ./js/libs/*.js ./game/js/libs/",
+    "copy:main": "cpx ./js/main.js ./game/js/",
+    "copy": "run-p copy:*",
+    "test": "run-s build copy",
+    "start": "http-server ./game/"
   },
   "author": "rpgtkoolmv team",
   "license": "MIT",
   "devDependencies": {
     "concat-with-sourcemaps": "^1.0.4",
     "cpx": "^1.5.0",
+    "http-server": "^0.9.0",
+    "node-watch": "^0.4.1",
     "npm-run-all": "^4.0.0"
   }
 }

@@ -49,7 +49,7 @@ jspm_packages
 
 
 .idea
-dist
+dist/
 *.iml
 game/
 todo.md
