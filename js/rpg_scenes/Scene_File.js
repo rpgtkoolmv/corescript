@@ -69,3 +69,7 @@ Scene_File.prototype.firstSavefileIndex = function() {
 
 Scene_File.prototype.onSavefileOk = function() {
 };
+
+Scene_File.prototype.terminate = function(){
+    ImageManager.releaseReservation(DataManager.imageReservationId);
+};
