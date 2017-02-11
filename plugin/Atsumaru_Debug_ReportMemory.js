@@ -10,12 +10,13 @@
         var content = 'size: ' + Math.floor(ImageManager._imageCache.getSize()/1000)/1000 + 'MPix<br>';
         content += 'totalCount: ' + ImageManager._imageCache.countBitmap() + '<br>';
         content += 'requestCount: ' + ImageManager._imageCache.countRequest() + '<br>';
+        content += 'reservedCount: ' + ImageManager._imageCache.countReserved() + '<br>';
 
         div.innerHTML = content;
         div.style.zIndex = 11;
     }
 
-    const ImageManager_update = ImageManager.update;
+    var ImageManager_update = ImageManager.update;
     ImageManager.update = function(){
         ImageManager_update.call(this);
         updateInfo();

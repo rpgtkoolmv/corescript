@@ -4,6 +4,8 @@
   "js/rpg_core/Utils.js",
   "js/rpg_core/CacheEntry.js",
   "js/rpg_core/CacheMap.js",
+  "js/rpg_core/ImageCache.js",
+  "js/rpg_core/RequestQueue.js",
   "js/rpg_core/Point.js",
   "js/rpg_core/Rectangle.js",
   "js/rpg_core/Bitmap.js",
