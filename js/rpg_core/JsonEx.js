@@ -18,6 +18,11 @@ function JsonEx() {
  */
 JsonEx.maxDepth = 100;
 
+JsonEx._id = 1;
+JsonEx._generateId = function(){
+    return JsonEx._id++;
+};
+
 /**
  * Converts an object to a JSON string with object information.
  *
@@ -27,7 +32,23 @@ JsonEx.maxDepth = 100;
  * @return {String} The JSON string
  */
 JsonEx.stringify = function(object) {
-    return JSON.stringify(this._encode(object));
+    var circular = [];
+    JsonEx._id = 1;
+    var json = JSON.stringify(this._encode(object, circular, 0));
+    this._cleanMetadata(object);
+    this._restoreCircularReference(circular);
+
+    return json;
+};
+
+JsonEx._restoreCircularReference = function(circulars){
+    circulars.forEach(function(circular){
+        var key = circular[0];
+        var value = circular[1];
+        var content = circular[2];
+
+        value[key] = content;
+    });
 };
 
 /**
@@ -39,8 +60,42 @@ JsonEx.stringify = function(object) {
  * @return {Object} The reconstructed object
  */
 JsonEx.parse = function(json) {
-    return this._decode(JSON.parse(json));
+    var circular = [];
+    var registry = {};
+    var contents = this._decode(JSON.parse(json), circular, registry);
+    this._cleanMetadata(contents);
+    this._linkCircularReference(contents, circular, registry);
+
+    return contents;
 };
+
+JsonEx._linkCircularReference = function(contents, circulars, registry){
+    circulars.forEach(function(circular){
+        var key = circular[0];
+        var value = circular[1];
+        var id = circular[2];
+
+        value[key] = registry[id];
+    });
+};
+
+JsonEx._cleanMetadata = function(object){
+    if(!object) return;
+
+    delete object['@'];
+    delete object['@c'];
+    delete object['@m'];
+
+    if(typeof object === 'object'){
+        Object.keys(object).forEach(function(key){
+            var value = object[key];
+            if(typeof value === 'object'){
+                JsonEx._cleanMetadata(value);
+            }
+        });
+    }
+};
+
 
 /**
  * Makes a deep copy of the specified object.
@@ -58,24 +113,36 @@ JsonEx.makeDeepCopy = function(object) {
  * @static
  * @method _encode
  * @param {Object} value
+ * @param {Array} circular
  * @param {Number} depth
  * @return {Object}
  * @private
  */
-JsonEx._encode = function(value, depth) {
+JsonEx._encode = function(value, circular, depth) {
     depth = depth || 0;
     if (++depth >= this.maxDepth) {
         throw new Error('Object too deep');
     }
     var type = Object.prototype.toString.call(value);
     if (type === '[object Object]' || type === '[object Array]') {
+        value['@m'] = true;
+        value['@c'] = JsonEx._generateId();
         var constructorName = this._getConstructorName(value);
         if (constructorName !== 'Object' && constructorName !== 'Array') {
             value['@'] = constructorName;
         }
         for (var key in value) {
             if (value.hasOwnProperty(key)) {
-                value[key] = this._encode(value[key], depth + 1);
+                if(value[key] && typeof value[key] === 'object'){
+                    if(!value[key]['@m']){
+                        value[key] = this._encode(value[key], circular, depth + 1);
+                    }else{
+                        circular.push([key, value, value[key]]);
+                        value[key] = {'@r': value[key]['@c']};
+                    }
+                }else{
+                    value[key] = this._encode(value[key], circular, depth + 1);
+                }
             }
         }
     }
@@ -87,12 +154,16 @@ JsonEx._encode = function(value, depth) {
  * @static
  * @method _decode
  * @param {Object} value
+ * @param {Object} circular
+ * @param {Object} registry
  * @return {Object}
  * @private
  */
-JsonEx._decode = function(value) {
+JsonEx._decode = function(value, circular, registry) {
     var type = Object.prototype.toString.call(value);
     if (type === '[object Object]' || type === '[object Array]') {
+        registry[value['@c']] = value;
+
         if (value['@']) {
             var constructor = window[value['@']];
             if (constructor) {
@@ -101,7 +172,10 @@ JsonEx._decode = function(value) {
         }
         for (var key in value) {
             if (value.hasOwnProperty(key)) {
-                value[key] = this._decode(value[key]);
+                if(value[key] && value[key]['@r']){
+                    circular.push([key, value, value[key]['@r']])
+                }
+                value[key] = this._decode(value[key], circular, registry);
             }
         }
     }
