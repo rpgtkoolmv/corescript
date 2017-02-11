@@ -57,13 +57,18 @@ Object.defineProperty(Sprite.prototype, 'bitmap', {
     },
     set: function(value) {
         if (this._bitmap !== value) {
-            this._bitmap = value;
-            if (this._bitmap) {
-                this.setFrame(0, 0, 0, 0);
-                this._bitmap.addLoadListener(this._onBitmapLoad.bind(this));
-            } else {
+            if(!this._bitmap){
+                this._refreshFrame = true;
+            }else if(this._bitmap && value){
+                this._refreshFrame = false;
+            }else if(!value){
+                this._refreshFrame = false;
                 this.texture.frame = Rectangle.emptyRectangle;
             }
+
+            this._requestBitmap = value;
+            this._bitmap = value;
+            if(value)value.addLoadListener(this._onBitmapLoad.bind(this));
         }
     },
     configurable: true
@@ -156,7 +161,7 @@ Sprite.prototype.move = function(x, y) {
 Sprite.prototype.setFrame = function(x, y, width, height) {
     var frame = this._frame;
     if (x !== frame.x || y !== frame.y ||
-            width !== frame.width || height !== frame.height) {
+        width !== frame.width || height !== frame.height) {
         frame.x = x;
         frame.y = y;
         frame.width = width;
@@ -222,10 +227,16 @@ Sprite.prototype.setColorTone = function(tone) {
  * @private
  */
 Sprite.prototype._onBitmapLoad = function() {
-    if (this._frame.width === 0 && this._frame.height === 0) {
-        this._frame.width = this._bitmap.width;
-        this._frame.height = this._bitmap.height;
+    if(this._requestBitmap === this._bitmap){
+        this._requestBitmap = null;
+
+        if (this._refreshFrame && this._bitmap) {
+            this._refreshFrame = false;
+            this._frame.width = this._bitmap.width;
+            this._frame.height = this._bitmap.height;
+        }
     }
+
     this._refresh();
 };
 
@@ -287,7 +298,7 @@ Sprite.prototype._refresh = function() {
  */
 Sprite.prototype._isInBitmapRect = function(x, y, w, h) {
     return (this._bitmap && x + w > 0 && y + h > 0 &&
-            x < this._bitmap.width && y < this._bitmap.height);
+    x < this._bitmap.width && y < this._bitmap.height);
 };
 
 /**
