@@ -1,3 +1,4 @@
+
 # RPG Maker MV CoreScript
 
 ## Introduction
@@ -23,8 +24,10 @@ There are three releases
 
 To build Corescripts, install Node.js, change working directory, and just type in console:
 
+```
 npm install
 npm run build
+```
 
 Then you can find Corescripts in folder “dist”
 
@@ -44,10 +47,13 @@ To test, place MV’s project in game/ and type
 npm test
 ```
 
-- The workflow is Github Flow. When sending PR, prepare a new feature branch and send it to the master branch of this repository.
+## How to join
+
+- This project uses English as the main language.
+- The workflow is Github Flow. When sending PR, prepare a new feature branch and send it to the master branch of this repository.http://scottchacon.com/2011/08/31/github-flow.html
+- This project uses ES5. It is for compatibility with plugins.
+- Please apply for development slack from this form. It will usually be invited within 48 hours.https://docs.google.com/forms/d/1T5wrKeOAfFBNytHrby4HMDzShtOMl2s7ayvjGwBrbNY/edit
 - This project is just started. The rules of development are decided through discussion.
-- Please apply for development slack from this form. It will usually be invited within 48 hours.
-- https://docs.google.com/forms/d/1T5wrKeOAfFBNytHrby4HMDzShtOMl2s7ayvjGwBrbNY/edit
 
 ## Roadmap
 
