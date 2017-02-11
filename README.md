@@ -47,6 +47,23 @@ To test, place MV’s project in game/ and type
 npm test
 ```
 
+There are helpful tasks, watch and start.
+
+Watch task is watching js/rpg_*** changes, concat them, and copy that to ./game/js/ .
+
+```
+npm run watch
+```
+
+Start task starts local server. You can test Corescripts in your browser.
+
+http://localhost:8080/
+
+```
+npm start
+```
+
+
 ## How to join
 
 - This project uses English as the main language.
