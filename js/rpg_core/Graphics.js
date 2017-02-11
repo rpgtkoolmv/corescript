@@ -1,10 +1,9 @@
 //-----------------------------------------------------------------------------
-
 var waitForLoading = false;
 var register = false;
 
 function handleiOSTouch(ev) {
-        if (Graphics._video.paused && Graphics.isVideoPlaying())Graphics._video.play();
+    if (Graphics._video.paused && Graphics.isVideoPlaying())Graphics._video.play();
 }
 
 /**
@@ -15,6 +14,10 @@ function handleiOSTouch(ev) {
 function Graphics() {
     throw new Error('This is a static class');
 }
+
+Graphics._cssFontLoading =  document.fonts && document.fonts.ready;
+Graphics._fontLoaded = null;
+
 
 /**
  * Initializes the graphics system.
@@ -62,6 +65,22 @@ Graphics.initialize = function(width, height, type) {
     this._disableTextSelection();
     this._disableContextMenu();
     this._setupEventHandlers();
+    this._setupCssFontLoading();
+};
+
+
+Graphics._setupCssFontLoading = function(){
+    if(Graphics._cssFontLoading){
+        document.fonts.ready.then(function(fonts){
+            Graphics._fontLoaded = fonts;
+        }).catch(function(error){
+            SceneManager.onError(error);
+        });
+    }
+};
+
+Graphics.canUseCssFontLoading = function(){
+    return !!this._cssFontLoading;
 };
 
 /**
@@ -323,17 +342,25 @@ Graphics.loadFont = function(name, url) {
  * @return {Boolean} True if the font file is loaded
  */
 Graphics.isFontLoaded = function(name) {
-    if (!this._hiddenCanvas) {
-        this._hiddenCanvas = document.createElement('canvas');
+    if (Graphics._cssFontLoading) {
+        if(Graphics._fontLoaded){
+            return Graphics._fontLoaded.check('10px "'+name+'"');
+        }
+
+        return false;
+    } else {
+        if (!this._hiddenCanvas) {
+            this._hiddenCanvas = document.createElement('canvas');
+        }
+        var context = this._hiddenCanvas.getContext('2d');
+        var text = 'abcdefghijklmnopqrstuvwxyz';
+        var width1, width2;
+        context.font = '40px ' + name + ', sans-serif';
+        width1 = context.measureText(text).width;
+        context.font = '40px sans-serif';
+        width2 = context.measureText(text).width;
+        return width1 !== width2;
     }
-    var context = this._hiddenCanvas.getContext('2d');
-    var text = 'abcdefghijklmnopqrstuvwxyz';
-    var width1, width2;
-    context.font = '40px ' + name + ', sans-serif';
-    width1 = context.measureText(text).width;
-    context.font = '40px sans-serif';
-    width2 = context.measureText(text).width;
-    return width1 !== width2;
 };
 
 /**
@@ -592,7 +619,7 @@ Graphics._updateRealScale = function() {
  */
 Graphics._makeErrorHtml = function(name, message) {
     return ('<font color="yellow"><b>' + name + '</b></font><br>' +
-            '<font color="white">' + message + '</font><br>');
+    '<font color="white">' + message + '</font><br>');
 };
 
 /**
@@ -788,19 +815,22 @@ Graphics._createRenderer = function() {
     var options = { view: this._canvas };
     try {
         switch (this._rendererType) {
-        case 'canvas':
-            this._renderer = new PIXI.CanvasRenderer(width, height, options);
-            break;
-        case 'webgl':
-            this._renderer = new PIXI.WebGLRenderer(width, height, options);
-            break;
-        default:
-            this._renderer = PIXI.autoDetectRenderer(width, height, options);
-            break;
+            case 'canvas':
+                this._renderer = new PIXI.CanvasRenderer(width, height, options);
+                break;
+            case 'webgl':
+                this._renderer = new PIXI.WebGLRenderer(width, height, options);
+                break;
+            default:
+                this._renderer = PIXI.autoDetectRenderer(width, height, options);
+                break;
         }
     } catch (e) {
         this._renderer = null;
     }
+
+    if(this._renderer && this._renderer.textureGC)
+        this._renderer.textureGC.maxIdle = 1;
 };
 
 /**
@@ -1037,18 +1067,18 @@ Graphics._onWindowResize = function() {
 Graphics._onKeyDown = function(event) {
     if (!event.ctrlKey && !event.altKey) {
         switch (event.keyCode) {
-        case 113:   // F2
-            event.preventDefault();
-            this._switchFPSMeter();
-            break;
-        case 114:   // F3
-            event.preventDefault();
-            this._switchStretchMode();
-            break;
-        case 115:   // F4
-            event.preventDefault();
-            this._switchFullScreen();
-            break;
+            case 113:   // F2
+                event.preventDefault();
+                this._switchFPSMeter();
+                break;
+            case 114:   // F3
+                event.preventDefault();
+                this._switchStretchMode();
+                break;
+            case 115:   // F4
+                event.preventDefault();
+                this._switchFullScreen();
+                break;
         }
     }
 };
@@ -1103,8 +1133,8 @@ Graphics._switchFullScreen = function() {
  */
 Graphics._isFullScreen = function() {
     return ((document.fullScreenElement && document.fullScreenElement !== null) ||
-            (!document.mozFullScreen && !document.webkitFullscreenElement &&
-             !document.msFullscreenElement));
+    (!document.mozFullScreen && !document.webkitFullscreenElement &&
+    !document.msFullscreenElement));
 };
 
 /**
