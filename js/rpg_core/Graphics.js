@@ -1,9 +1,10 @@
 //-----------------------------------------------------------------------------
+
 var waitForLoading = false;
 var register = false;
 
 function handleiOSTouch(ev) {
-    if (Graphics._video.paused && Graphics.isVideoPlaying())Graphics._video.play();
+        if (Graphics._video.paused && Graphics.isVideoPlaying())Graphics._video.play();
 }
 
 /**
@@ -619,7 +620,7 @@ Graphics._updateRealScale = function() {
  */
 Graphics._makeErrorHtml = function(name, message) {
     return ('<font color="yellow"><b>' + name + '</b></font><br>' +
-    '<font color="white">' + message + '</font><br>');
+            '<font color="white">' + message + '</font><br>');
 };
 
 /**
@@ -815,15 +816,15 @@ Graphics._createRenderer = function() {
     var options = { view: this._canvas };
     try {
         switch (this._rendererType) {
-            case 'canvas':
-                this._renderer = new PIXI.CanvasRenderer(width, height, options);
-                break;
-            case 'webgl':
-                this._renderer = new PIXI.WebGLRenderer(width, height, options);
-                break;
-            default:
-                this._renderer = PIXI.autoDetectRenderer(width, height, options);
-                break;
+        case 'canvas':
+            this._renderer = new PIXI.CanvasRenderer(width, height, options);
+            break;
+        case 'webgl':
+            this._renderer = new PIXI.WebGLRenderer(width, height, options);
+            break;
+        default:
+            this._renderer = PIXI.autoDetectRenderer(width, height, options);
+            break;
         }
     } catch (e) {
         this._renderer = null;
@@ -1067,18 +1068,18 @@ Graphics._onWindowResize = function() {
 Graphics._onKeyDown = function(event) {
     if (!event.ctrlKey && !event.altKey) {
         switch (event.keyCode) {
-            case 113:   // F2
-                event.preventDefault();
-                this._switchFPSMeter();
-                break;
-            case 114:   // F3
-                event.preventDefault();
-                this._switchStretchMode();
-                break;
-            case 115:   // F4
-                event.preventDefault();
-                this._switchFullScreen();
-                break;
+        case 113:   // F2
+            event.preventDefault();
+            this._switchFPSMeter();
+            break;
+        case 114:   // F3
+            event.preventDefault();
+            this._switchStretchMode();
+            break;
+        case 115:   // F4
+            event.preventDefault();
+            this._switchFullScreen();
+            break;
         }
     }
 };
@@ -1133,8 +1134,8 @@ Graphics._switchFullScreen = function() {
  */
 Graphics._isFullScreen = function() {
     return ((document.fullScreenElement && document.fullScreenElement !== null) ||
-    (!document.mozFullScreen && !document.webkitFullscreenElement &&
-    !document.msFullscreenElement));
+            (!document.mozFullScreen && !document.webkitFullscreenElement &&
+             !document.msFullscreenElement));
 };
 
 /**
