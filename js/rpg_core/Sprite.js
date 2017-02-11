@@ -161,7 +161,7 @@ Sprite.prototype.move = function(x, y) {
 Sprite.prototype.setFrame = function(x, y, width, height) {
     var frame = this._frame;
     if (x !== frame.x || y !== frame.y ||
-        width !== frame.width || height !== frame.height) {
+            width !== frame.width || height !== frame.height) {
         frame.x = x;
         frame.y = y;
         frame.width = width;
@@ -298,7 +298,7 @@ Sprite.prototype._refresh = function() {
  */
 Sprite.prototype._isInBitmapRect = function(x, y, w, h) {
     return (this._bitmap && x + w > 0 && y + h > 0 &&
-    x < this._bitmap.width && y < this._bitmap.height);
+        x < this._bitmap.width && y < this._bitmap.height);
 };
 
 /**
