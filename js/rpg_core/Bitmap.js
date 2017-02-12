@@ -314,10 +314,10 @@ Object.defineProperty(Bitmap.prototype, 'paintOpacity', {
         return this._paintOpacity;
     },
     set: function(value) {
-        if (this._paintOpacity !== value) {
-            this._paintOpacity = value;
-            this._context.globalAlpha = this._paintOpacity / 255;
-        }
+      if (this._paintOpacity !== value) {
+          this._paintOpacity = value;
+          this._context.globalAlpha = this._paintOpacity / 255;
+      }
     },
     configurable: true
 });
@@ -356,7 +356,7 @@ Bitmap.prototype.blt = function(source, sx, sy, sw, sh, dx, dy, dw, dh) {
     dw = dw || sw;
     dh = dh || sh;
     if (sx >= 0 && sy >= 0 && sw > 0 && sh > 0 && dw > 0 && dh > 0 &&
-        sx + sw <= source.width && sy + sh <= source.height) {
+            sx + sw <= source.width && sy + sh <= source.height) {
         this._context.globalCompositeOperation = 'source-over';
         this._context.drawImage(source._canvas, sx, sy, sw, sh, dx, dy, dw, dh);
         this._setDirty();
@@ -723,7 +723,7 @@ Bitmap.prototype.addLoadListener = function(listner) {
  */
 Bitmap.prototype._makeFontNameText = function() {
     return (this.fontItalic ? 'Italic ' : '') +
-        this.fontSize + 'px ' + this.fontFace;
+            this.fontSize + 'px ' + this.fontFace;
 };
 
 /**
@@ -782,17 +782,17 @@ Bitmap.prototype._onLoad = function() {
 Bitmap.prototype.decode = function(){
     switch(this._loadingState){
         case 'requestCompleted': case 'decryptCompleted':
-        this.resize(this._image.width, this._image.height);
-        this._context.drawImage(this._image, 0, 0);
-        this._loadingState = 'loaded';
+            this.resize(this._image.width, this._image.height);
+            this._context.drawImage(this._image, 0, 0);
+            this._loadingState = 'loaded';
 
-        this._setDirty();
-        this._callLoadListeners();
-        break;
+            this._setDirty();
+            this._callLoadListeners();
+            break;
 
-        case 'requesting': case 'decrypting':
-        this._decodeAfterRequest = true;
-        break;
+            case 'requesting': case 'decrypting':
+            this._decodeAfterRequest = true;
+            break;
 
         case 'pending':
             this._requestImage(this._url, true);

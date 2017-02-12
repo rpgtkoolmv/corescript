@@ -98,9 +98,9 @@ ImageManager.loadEmptyBitmap = function() {
 ImageManager.loadNormalBitmap = function(path, hue) {
     var key = this._generateCacheKey(path, hue);
     var bitmap = this._imageCache.get(key);
-    if(!bitmap){
+    if (!bitmap) {
         bitmap = Bitmap.load(path);
-        bitmap.addLoadListener(function(){
+        bitmap.addLoadListener(function() {
             bitmap.rotateHue(hue);
         });
         this._imageCache.add(key, bitmap);
