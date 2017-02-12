@@ -49,6 +49,11 @@ Sprite_Animation.prototype.setup = function(target, animation, mirror, delay) {
         this.setupDuration();
         this.loadBitmaps();
         this.createSprites();
+        if (this._mirror) {
+            this.scale.x = -1;
+        } else {
+            this.scale.x = 1;
+        }
     }
 };
 
@@ -255,7 +260,7 @@ Sprite_Animation.prototype.updateCellSprite = function(sprite, cell) {
         }
         sprite.rotation = cell[4] * Math.PI / 180;
         sprite.scale.x = cell[3] / 100;
-        if ((cell[5] && !mirror) || (!cell[5] && mirror)) {
+        if (cell[5]) {
             sprite.scale.x *= -1;
         }
         sprite.scale.y = cell[3] / 100;
