@@ -298,7 +298,7 @@ Sprite.prototype._refresh = function() {
  */
 Sprite.prototype._isInBitmapRect = function(x, y, w, h) {
     return (this._bitmap && x + w > 0 && y + h > 0 &&
-        x < this._bitmap.width && y < this._bitmap.height);
+            x < this._bitmap.width && y < this._bitmap.height);
 };
 
 /**
