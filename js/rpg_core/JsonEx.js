@@ -154,7 +154,7 @@ JsonEx._encode = function(value, circular, depth) {
  * @static
  * @method _decode
  * @param {Object} value
- * @param {Object} circular
+ * @param {Array} circular
  * @param {Object} registry
  * @return {Object}
  * @private
