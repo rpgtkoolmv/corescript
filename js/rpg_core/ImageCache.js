@@ -1,5 +1,5 @@
 function ImageCache(){
-    ImageCache.prototype.initialize.call(this);
+    this.initialize.apply(this, arguments);
 }
 
 ImageCache.limit = 20 * 1000 * 1000;

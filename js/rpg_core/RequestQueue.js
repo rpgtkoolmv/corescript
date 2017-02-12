@@ -1,5 +1,5 @@
 function RequestQueue(){
-    RequestQueue.prototype.initialize.call(this);
+    this.initialize.apply(this, arguments);
 }
 
 RequestQueue.prototype.initialize = function(){
