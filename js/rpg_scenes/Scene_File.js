@@ -71,5 +71,6 @@ Scene_File.prototype.onSavefileOk = function() {
 };
 
 Scene_File.prototype.terminate = function(){
+    Scene_Base.prototype.terminate.call(this);
     ImageManager.releaseReservation(DataManager.imageReservationId);
 };

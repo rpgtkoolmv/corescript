@@ -62,44 +62,6 @@ ImageCache.prototype._truncateCache = function(){
     });
 };
 
-ImageCache.prototype.getSize = function(){
-    var totalSize = 0;
-    var items = this._items;
-
-    Object.keys(items).forEach(function(key){
-        var bitmap = items[key].bitmap;
-        totalSize += bitmap.width * bitmap.height;
-    });
-
-    return totalSize;
-};
-
-ImageCache.prototype.countBitmap = function(){
-    return Object.keys(this._items).length;
-};
-
-ImageCache.prototype.countRequest = function(){
-    var items = this._items;
-
-    return Object.keys(this._items)
-        .map(function(key){
-            return items[key].bitmap;
-        }).filter(function(bitmap){
-            return bitmap.isRequestOnly();
-        }).length;
-};
-
-ImageCache.prototype.countReserved = function(){
-    var items = this._items;
-
-    return Object.keys(this._items)
-        .map(function(key){
-            return items[key].reservationId;
-        }).filter(function(id){
-            return id;
-        }).length;
-};
-
 ImageCache.prototype.isReady = function(){
     var items = this._items;
     return !Object.keys(items).some(function(key){

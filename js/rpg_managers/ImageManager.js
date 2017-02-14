@@ -138,12 +138,12 @@ ImageManager.isZeroParallax = function(filename) {
 };
 
 
-ImageManager.reserveAnimation = function(filename, hue, reserveId) {
-    return this.reserveBitmap('img/animations/', filename, hue, true, reserveId);
+ImageManager.reserveAnimation = function(filename, hue, reservationId) {
+    return this.reserveBitmap('img/animations/', filename, hue, true, reservationId);
 };
 
-ImageManager.reserveBattleback1 = function(filename, hue, reserveId) {
-    return this.reserveBitmap('img/battlebacks1/', filename, hue, true, reserveId);
+ImageManager.reserveBattleback1 = function(filename, hue, reservationId) {
+    return this.reserveBitmap('img/battlebacks1/', filename, hue, true, reservationId);
 };
 
 ImageManager.reserveBattleback2 = function(filename, hue, reservationId) {

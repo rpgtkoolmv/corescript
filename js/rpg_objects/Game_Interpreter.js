@@ -1744,10 +1744,12 @@ Game_Interpreter.requestImages = function(list){
     list.forEach(function(command){
         var params = command.parameters;
         switch(command.code){
+            // Show Text
             case 101:
                 if(params[0]) ImageManager.requestFace(params[0]);
                 break;
 
+            // Set Movement Route
             case 205:
                 if(params[1]){
                     params[1].list.forEach(function(command){
@@ -1759,10 +1761,12 @@ Game_Interpreter.requestImages = function(list){
                 }
                 break;
 
+            // Show Picture
             case 231:
                 if(params[1]) ImageManager.requestPicture(params[1]);
                 break;
 
+            // Change Tileset
             case 282:
                 var tileset = $dataTilesets[params[0]];
                 tileset.tilesetNames.forEach(function(tilesetName){
@@ -1770,12 +1774,14 @@ Game_Interpreter.requestImages = function(list){
                 });
                 break;
 
+            // Change Actor Images
             case 322:
                 if(params[1]) ImageManager.requestCharacter(params[1]);
                 if(params[3]) ImageManager.requestFace(params[3]);
                 if(params[5]) ImageManager.requestEnemy(params[5]);
                 break;
 
+            // Change Vehicle Image
             case 323:
                 var vehicle = $gameMap.vehicle(params[0]);
                 if(vehicle && params[1]){
@@ -1783,6 +1789,7 @@ Game_Interpreter.requestImages = function(list){
                 }
                 break;
 
+            // Show Battle Animation
             case 337:
                 if(params[1]) ImageManager.requestAnimation(params[1]);
                 break;
