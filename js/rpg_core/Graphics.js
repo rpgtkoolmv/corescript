@@ -1,12 +1,4 @@
 //-----------------------------------------------------------------------------
-
-var waitForLoading = false;
-var register = false;
-
-function handleiOSTouch(ev) {
-        if (Graphics._video.paused && Graphics.isVideoPlaying())Graphics._video.play();
-}
-
 /**
  * The static class that carries out graphics processing.
  *
@@ -43,6 +35,8 @@ Graphics.initialize = function(width, height, type) {
     this._errorPrinter = null;
     this._canvas = null;
     this._video = null;
+    this._videoUnlocked = !Utils.isMobileDevice();
+    this._videoLoading = false;
     this._upperCanvas = null;
     this._renderer = null;
     this._fpsMeter = null;
@@ -377,14 +371,7 @@ Graphics.playVideo = function(src) {
     this._video.onerror = this._onVideoError.bind(this);
     this._video.onended = this._onVideoEnd.bind(this);
     this._video.load();
-
-    if (Utils.isMobileSafari()) {
-        waitForLoading = true;
-        if (!register) {
-            register = true;
-            document.addEventListener('touchstart', handleiOSTouch);
-        }
-    }
+    this._videoLoading = true;
 };
 
 /**
@@ -395,8 +382,7 @@ Graphics.playVideo = function(src) {
  * @return {Boolean} True if the video is playing
  */
 Graphics.isVideoPlaying = function() {
-    if (Utils.isMobileSafari()) return waitForLoading || (this._video && this._isVideoVisible());
-    return this._video && this._isVideoVisible();
+    return this._videoLoading || this._isVideoVisible();
 };
 
 /**
@@ -735,7 +721,9 @@ Graphics._createVideo = function() {
     this._video = document.createElement('video');
     this._video.id = 'GameVideo';
     this._video.style.opacity = 0;
+    this._video.setAttribute('playsinline', '');
     this._updateVideo();
+    makeVideoPlayableInline(this._video);
     document.body.appendChild(this._video);
 };
 
@@ -986,9 +974,7 @@ Graphics._applyCanvasFilter = function() {
 Graphics._onVideoLoad = function() {
     this._video.play();
     this._updateVisibility(true);
-    if (Utils.isMobileSafari()) {
-        waitForLoading = false;
-    }
+    this._videoLoading = false;
 };
 
 /**
@@ -998,6 +984,7 @@ Graphics._onVideoLoad = function() {
  */
 Graphics._onVideoError = function() {
     this._updateVisibility(false);
+    this._videoLoading = false;
 };
 
 /**
@@ -1007,13 +994,6 @@ Graphics._onVideoError = function() {
  */
 Graphics._onVideoEnd = function() {
     this._updateVisibility(false);
-
-    if (Utils.isMobileSafari()) {
-        if (register) {
-            document.removeEventListener('touchstart', handleiOSTouch);
-            register = false;
-        }
-    }
 };
 
 /**
@@ -1045,6 +1025,7 @@ Graphics._isVideoVisible = function() {
 Graphics._setupEventHandlers = function() {
     window.addEventListener('resize', this._onWindowResize.bind(this));
     document.addEventListener('keydown', this._onKeyDown.bind(this));
+    document.addEventListener('touchend', this._onTouchEnd.bind(this));
 };
 
 /**
@@ -1078,6 +1059,22 @@ Graphics._onKeyDown = function(event) {
             this._switchFullScreen();
             break;
         }
+    }
+};
+
+/**
+ * @static
+ * @method _onTouchEnd
+ * @param {TouchEvent} event
+ * @private
+ */
+Graphics._onTouchEnd = function(event) {
+    if (!this._videoUnlocked) {
+        this._video.play();
+        this._videoUnlocked = true;
+    }
+    if (this._isVideoVisible() && this._video.paused) {
+        this._video.play();
     }
 };
 
