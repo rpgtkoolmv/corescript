@@ -12,7 +12,7 @@ function SceneManager() {
  * @private
  */
 SceneManager._getTimeInMs = function() {
-    return performance.now();
+    if (!Utils.isMobileSafari()) return performance.now();
 };
 
 SceneManager._scene             = null;
