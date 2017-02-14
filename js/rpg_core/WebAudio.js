@@ -268,6 +268,7 @@ Object.defineProperty(WebAudio.prototype, 'volume', {
     set: function(value) {
         this._volume = value;
         if (this._gainNode) {
+            this._gainNode.gain.cancelScheduledValues(0);
             this._gainNode.gain.value = this._volume;
         }
     },
