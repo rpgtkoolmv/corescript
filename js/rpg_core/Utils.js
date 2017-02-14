@@ -26,7 +26,7 @@ Utils.RPGMAKER_NAME = 'MV';
  * @type String
  * @final
  */
-Utils.RPGMAKER_VERSION = "1.3.4";
+Utils.RPGMAKER_VERSION = "1.3.5";
 
 /**
  * Checks whether the option is in the query string.

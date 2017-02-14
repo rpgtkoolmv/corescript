@@ -268,7 +268,6 @@ Sprite.prototype._refresh = function() {
     } else if (this._bitmap) {
         this.texture.frame = Rectangle.emptyRectangle;
     } else {
-        //TODO: remove this
         this.texture.baseTexture.width = Math.max(this.texture.baseTexture.width, this._frame.x + this._frame.width);
         this.texture.baseTexture.height = Math.max(this.texture.baseTexture.height, this._frame.y + this._frame.height);
         this.texture.frame = this._frame;

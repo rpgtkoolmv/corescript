@@ -73,7 +73,6 @@ CacheEntry.prototype.touch = function () {
         this.touchSeconds = cache.updateSeconds;
     } else if (this.freedByTTL) {
         this.freedByTTL = false;
-        //TODO: shall we log this event? its not normal
         if (!cache._inner[this.key]) {
             cache._inner[this.key] = this;
         }

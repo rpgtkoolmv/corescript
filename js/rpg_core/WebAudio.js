@@ -123,6 +123,16 @@ WebAudio._createMasterGainNode = function() {
  * @private
  */
 WebAudio._setupEventHandlers = function() {
+    document.addEventListener("touchend", function() {
+            var context = WebAudio._context;
+            if (context && context.state === "suspended" && typeof context.resume === "function") {
+                context.resume().then(function() {
+                    WebAudio._onTouchStart();
+                })
+            } else {
+                WebAudio._onTouchStart();
+            }
+    });
     document.addEventListener('touchstart', this._onTouchStart.bind(this));
     document.addEventListener('visibilitychange', this._onVisibilityChange.bind(this));
 };

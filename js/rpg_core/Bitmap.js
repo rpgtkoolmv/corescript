@@ -132,7 +132,7 @@ Bitmap.snap = function(stage) {
         }
         context.drawImage(canvas, 0, 0);
     } else {
-        //TODO: Ivan: what if stage is not present?
+
     }
     renderTexture.destroy({ destroyBase: true });
     bitmap._setDirty();
