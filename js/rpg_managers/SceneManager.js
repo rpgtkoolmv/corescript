@@ -8,11 +8,11 @@ function SceneManager() {
 }
 
 /*
- * Gets the current time in ms.
+ * Gets the current time in ms without on iOS Safari.
  * @private
  */
-SceneManager._getTimeInMs = function() {
-    if (!Utils.isMobileSafari()) return performance.now();
+SceneManager._getTimeInMsWithoutMobileSafari = function() {
+    return performance.now();
 };
 
 SceneManager._scene             = null;
@@ -28,7 +28,7 @@ SceneManager._screenHeight      = 624;
 SceneManager._boxWidth          = 816;
 SceneManager._boxHeight         = 624;
 SceneManager._deltaTime = 1.0 / 60.0;
-SceneManager._currentTime = SceneManager._getTimeInMs();
+if (!Utils.isMobileSafari()) SceneManager._currentTime = SceneManager._getTimeInMsWithoutMobileSafari();
 SceneManager._accumulator = 0.0;
 
 SceneManager.run = function(sceneClass) {
@@ -207,7 +207,7 @@ SceneManager.updateMain = function() {
         this.changeScene();
         this.updateScene();
     } else {
-        var newTime = this._getTimeInMs();
+        var newTime = this._getTimeInMsWithoutMobileSafari();
         var fTime = (newTime - this._currentTime) / 1000;
         if (fTime > 0.25) fTime = 0.25;
         this._currentTime = newTime;
