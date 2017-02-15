@@ -301,6 +301,10 @@ SceneManager.isPreviousScene = function(sceneClass) {
 };
 
 SceneManager.goto = function(sceneClass) {
+    if(this._doesNeedClearingRequest(sceneClass)){
+        ImageManager.clearRequest();
+    }
+
     if (sceneClass) {
         this._nextScene = new sceneClass();
     }
@@ -350,4 +354,16 @@ SceneManager.snapForBackground = function() {
 
 SceneManager.backgroundBitmap = function() {
     return this._backgroundBitmap;
+};
+
+SceneManager._doesNeedClearingRequest = function(nextScene){
+    var mapInStack = this._stack.some(function(scene){
+        return scene === Scene_Map;
+    });
+    var nextSceneIsMap = nextScene === Scene_Map;
+    var currentSceneIsMap = this._scene && this._scene.constructor === Scene_Map;
+
+    if(mapInStack) return false;
+    if(nextSceneIsMap && currentSceneIsMap) return true;
+    return false;
 };
