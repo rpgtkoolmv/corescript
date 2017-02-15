@@ -758,7 +758,7 @@ Bitmap.prototype._onLoad = function() {
 Bitmap.prototype._callLoadListeners = function() {
     while (this._loadListeners.length > 0) {
         var listener = this._loadListeners.shift();
-        listener();
+        listener(this);
     }
 };
 

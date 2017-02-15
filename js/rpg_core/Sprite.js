@@ -66,7 +66,6 @@ Object.defineProperty(Sprite.prototype, 'bitmap', {
                 this.texture.frame = Rectangle.emptyRectangle;
             }
 
-            this._requestBitmap = value;
             this._bitmap = value;
             if(value)value.addLoadListener(this._onBitmapLoad.bind(this));
         }
@@ -226,10 +225,8 @@ Sprite.prototype.setColorTone = function(tone) {
  * @method _onBitmapLoad
  * @private
  */
-Sprite.prototype._onBitmapLoad = function() {
-    if(this._requestBitmap === this._bitmap){
-        this._requestBitmap = null;
-
+Sprite.prototype._onBitmapLoad = function(bitmapLoaded) {
+    if(bitmapLoaded === this._bitmap){
         if (this._refreshFrame && this._bitmap) {
             this._refreshFrame = false;
             this._frame.width = this._bitmap.width;
