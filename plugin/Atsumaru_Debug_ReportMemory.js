@@ -11,6 +11,7 @@
         content += 'totalCount: ' + ImageManager._imageCache._countBitmap() + '<br>';
         content += 'requestCount: ' + ImageManager._imageCache._countRequest() + '<br>';
         content += 'reservedCount: ' + ImageManager._imageCache._countReserved() + '<br>';
+        content += 'purgedCount: ' + ImageManager._imageCache._countPurged() + '<br>';
 
         div.innerHTML = content;
         div.style.zIndex = 11;
@@ -20,7 +21,7 @@
     ImageManager.update = function(){
         ImageManager_update.call(this);
         updateInfo();
-    }
+    };
 
     ImageCache.prototype._getSize = function(){
         var totalSize = 0;
@@ -59,4 +60,8 @@
                 return id;
             }).length;
     };
+
+    ImageCache.prototype._countPurged = function(){
+        return this._purged.length;
+    }
 })();
