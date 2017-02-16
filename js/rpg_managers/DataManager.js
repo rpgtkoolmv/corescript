@@ -315,12 +315,12 @@ DataManager.loadAllSavefileImages = function() {
 DataManager.loadSavefileImages = function(info) {
     if (info.characters) {
         for (var i = 0; i < info.characters.length; i++) {
-            ImageManager.reserveCharacter(info.characters[i][0], 0);
+            ImageManager.reserveCharacter(info.characters[i][0]);
         }
     }
     if (info.faces) {
         for (var j = 0; j < info.faces.length; j++) {
-            ImageManager.reserveFace(info.faces[j][0], 0);
+            ImageManager.reserveFace(info.faces[j][0]);
         }
     }
 };
