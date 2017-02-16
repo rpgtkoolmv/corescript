@@ -111,6 +111,11 @@ Scene_Map.prototype.terminate = function() {
         this._mapNameWindow.hide();
         SceneManager.snapForBackground();
     }
+
+    if (SceneManager.isNextScene(Scene_Map)) {
+        ImageManager.clearRequest();
+    }
+
     $gameScreen.clearZoom();
 
     //TODO: Ivan: investigate why is it working, what keeps Scene_Map from freeing stuff
