@@ -303,7 +303,6 @@ ImageManager.requestNormalBitmap = function(path, hue){
 
 ImageManager.update = function(){
     this._requestQueue.update();
-    this._imageCache.gc();
 };
 
 ImageManager.clearRequest = function(){

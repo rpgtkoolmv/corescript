@@ -6,9 +6,6 @@ ImageCache.limit = 20 * 1000 * 1000;
 
 ImageCache.prototype.initialize = function(){
     this._items = {};
-
-    //it holds purged bitmap which is not in ready.
-    this._purged = [];
 };
 
 ImageCache.prototype.add = function(key, value){
@@ -50,18 +47,16 @@ ImageCache.prototype.releaseReservation = function(reservationId){
 ImageCache.prototype._truncateCache = function(){
     var items = this._items;
     var sizeLeft = ImageCache.limit;
-    var purged = this._purged;
 
     Object.keys(items).map(function(key){
         return items[key];
     }).sort(function(a, b){
         return b.touch - a.touch;
     }).forEach(function(item){
-        if(sizeLeft > 0 || item.reservationId){
+        if(!item.bitmap.isRequestOnly() && (sizeLeft > 0 || item.reservationId || !item.bitmap.isReady())){
             var bitmap = item.bitmap;
             sizeLeft -= bitmap.width * bitmap.height;
         }else{
-            purged.push(items[item.key]);
             delete items[item.key];
         }
     });
@@ -71,12 +66,6 @@ ImageCache.prototype.isReady = function(){
     var items = this._items;
     return !Object.keys(items).some(function(key){
         return !items[key].bitmap.isRequestOnly() && !items[key].bitmap.isReady();
-    }) || this._purged.length !== 0;
-};
-
-ImageCache.prototype.gc = function(){
-    this._purged = this._purged.filter(function(bitmap){
-        return !bitmap.isReady();
     });
 };
 
@@ -93,9 +82,5 @@ ImageCache.prototype.getErrorBitmap = function(){
         return bitmap;
     }
 
-    this._purged.forEach(function(item){
-        if(item.isError()) bitmap = item;
-    });
-
-    return bitmap;
+    return null;
 };
