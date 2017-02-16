@@ -1749,6 +1749,10 @@ Game_Interpreter.requestImages = function(list){
                 if(params[0]) ImageManager.requestFace(params[0]);
                 break;
 
+            //Change Party Member
+            case 129:
+                break;
+
             // Set Movement Route
             case 205:
                 if(params[1]){
@@ -1759,6 +1763,10 @@ Game_Interpreter.requestImages = function(list){
                         }
                     });
                 }
+                break;
+
+            //Show Animation
+            case 212:
                 break;
 
             // Show Picture
@@ -1773,6 +1781,15 @@ Game_Interpreter.requestImages = function(list){
                     if(tilesetName) ImageManager.requestTileset(tilesetName);
                 });
                 break;
+
+            // Chage Battle Back
+            case 283:
+                break;
+
+            // Change Parallax
+            case 284:
+                break;
+
 
             // Change Actor Images
             case 322:
