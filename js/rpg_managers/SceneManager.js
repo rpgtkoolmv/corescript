@@ -30,8 +30,6 @@ SceneManager._boxHeight         = 624;
 SceneManager._deltaTime = 1.0 / 60.0;
 SceneManager._currentTime = SceneManager._getTimeInMs();
 SceneManager._accumulator = 0.0;
-SceneManager._reservationStack = [];
-SceneManager._currentReservationId = 0;
 
 SceneManager.run = function(sceneClass) {
     try {
@@ -234,12 +232,12 @@ SceneManager.changeScene = function() {
     if (this.isSceneChanging() && !this.isCurrentSceneBusy()) {
         if (this._scene) {
             this._scene.terminate();
-            ImageManager.releaseReservation(this._currentReservationId);
+            this._scene.detachReservation();
             this._previousClass = this._scene.constructor;
         }
         this._scene = this._nextScene;
         if (this._scene) {
-            this._currentReservationId = Utils.generateRuntimeId();
+            this._scene.attachReservation();
             this._scene.create();
             this._nextScene = null;
             this._sceneStarted = false;
@@ -315,15 +313,11 @@ SceneManager.goto = function(sceneClass) {
 
 SceneManager.push = function(sceneClass) {
     this._stack.push(this._scene.constructor);
-    this._reservationStack.push(this._currentReservationId);
-    this._currentReservationId = Utils.generateRuntimeId();
     this.goto(sceneClass);
 };
 
 SceneManager.pop = function() {
     if (this._stack.length > 0) {
-        this.releaseReservation(this._currentReservationId);
-        this._currentReservationId = this._reservationStack.pop();
         this.goto(this._stack.pop());
     } else {
         this.exit();

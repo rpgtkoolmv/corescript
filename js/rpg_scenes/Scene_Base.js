@@ -19,6 +19,14 @@ Scene_Base.prototype.initialize = function() {
     this._imageReservationId = Utils.generateRuntimeId();
 };
 
+Scene_Base.prototype.attachReservation = function() {
+    ImageManager.setDefaultReservationId(this._imageReservationId);
+};
+
+Scene_Base.prototype.detachReservation = function() {
+    ImageManager.releaseReservation(this._imageReservationId);
+};
+
 Scene_Base.prototype.create = function() {
 };
 
