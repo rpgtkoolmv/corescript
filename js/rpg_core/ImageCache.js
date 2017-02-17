@@ -53,13 +53,24 @@ ImageCache.prototype._truncateCache = function(){
     }).sort(function(a, b){
         return b.touch - a.touch;
     }).forEach(function(item){
-        if(!item.bitmap.isRequestOnly() && (sizeLeft > 0 || item.reservationId || !item.bitmap.isReady())){
+        if(sizeLeft > 0 || this._mustBeHeld(item)){
             var bitmap = item.bitmap;
             sizeLeft -= bitmap.width * bitmap.height;
         }else{
             delete items[item.key];
         }
     });
+};
+
+ImageCache.prototype._mustBeHeld = function(item){
+    // request only is weak so It's purgeable
+    if(item.bitmap.isRequestOnly()) return false;
+    // reserved item must be held
+    if(item.reservationId) return true;
+    // not ready bitmap must be held (because of checking isReady())
+    if(!item.bitmap.isReady()) return true;
+    // then the item may purgeable
+    return false;
 };
 
 ImageCache.prototype.isReady = function(){
