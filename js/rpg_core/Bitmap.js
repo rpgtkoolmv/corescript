@@ -122,7 +122,8 @@ Bitmap.prototype.initialize = function(width, height) {
  */
 Bitmap.load = function(url) {
     var bitmap = new Bitmap();
-    bitmap._loadImage(url, false);
+    bitmap._decodeAfterRequest = true;
+    bitmap._requestImage(url);
 
     return bitmap;
 };
@@ -795,7 +796,8 @@ Bitmap.prototype.decode = function(){
             break;
 
         case 'pending':
-            this._requestImage(this._url, true);
+            this._decodeAfterRequest = true;
+            this._requestImage(this._url);
             break;
     }
 };
@@ -840,40 +842,16 @@ Bitmap.prototype.checkDirty = function() {
 
 Bitmap.request = function(url){
     var bitmap = new Bitmap();
-    bitmap._loadImage(url, true);
+    bitmap._url = url;
+    bitmap._loadingState = 'pending';
 
     return bitmap;
 };
 
-Bitmap.prototype._loadImage = function(url, pending){
-    switch(this._loadingState){
-        case 'none':
-            if(pending){
-                this._url = url;
-                this._loadingState = 'pending';
-            }else{
-                this._requestImage(url, true);
-            }
-            break;
-
-        default:
-            if(!pending){
-                this._requestImage(url, true);
-            }
-            break;
-    }
-};
-
-Bitmap.prototype._requestImage = function(url, autoDecode){
-    if(this._image){
-        this._decodeAfterRequest = autoDecode;
-        return;
-    }
-
+Bitmap.prototype._requestImage = function(url){
     this._image = new Image();
     this._url = url;
     this._loadingState = 'requesting';
-    this._decodeAfterRequest = autoDecode;
 
     if(!Decrypter.checkImgIgnore(url) && Decrypter.hasEncryptedImages) {
         this._loadingState = 'decrypting';
@@ -897,6 +875,7 @@ Bitmap.prototype.isRequestReady = function(){
 
 Bitmap.prototype.startRequest = function(){
     if(this._loadingState === 'pending'){
-        this._requestImage(this._url, false);
+        this._decodeAfterRequest = false;
+        this._requestImage(this._url);
     }
 };
