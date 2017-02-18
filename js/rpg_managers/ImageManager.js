@@ -102,7 +102,7 @@ ImageManager.loadNormalBitmap = function(path, hue) {
     if (!bitmap) {
         bitmap = Bitmap.load(path);
         bitmap.addLoadListener(function() {
-            bitmap.rotateHue(hue || 0);
+            bitmap.rotateHue(hue);
         });
         this._imageCache.add(key, bitmap);
     }else if(!bitmap.isReady()){
