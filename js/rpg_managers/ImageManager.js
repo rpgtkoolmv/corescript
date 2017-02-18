@@ -96,12 +96,13 @@ ImageManager.loadEmptyBitmap = function() {
 };
 
 ImageManager.loadNormalBitmap = function(path, hue) {
+    hue = hue || 0;
     var key = this._generateCacheKey(path, hue);
     var bitmap = this._imageCache.get(key);
     if (!bitmap) {
         bitmap = Bitmap.load(path);
         bitmap.addLoadListener(function() {
-            bitmap.rotateHue(hue);
+            bitmap.rotateHue(hue || 0);
         });
         this._imageCache.add(key, bitmap);
     }else if(!bitmap.isReady()){
@@ -285,7 +286,8 @@ ImageManager.requestBitmap = function(folder, filename, hue, smooth) {
 };
 
 ImageManager.requestNormalBitmap = function(path, hue){
-    var key = this._generateCacheKey(path, hue || 0);
+    hue = hue || 0;
+    var key = this._generateCacheKey(path, hue);
     var bitmap = this._imageCache.get(key);
     if(!bitmap){
         bitmap = Bitmap.request(path);
