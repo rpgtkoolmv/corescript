@@ -89,7 +89,7 @@ ImageManager.loadEmptyBitmap = function() {
     if(!empty){
         empty = new Bitmap();
         this._imageCache.add('empty', empty);
-        this._imageCache.reserve('empty', this._systemReservationId);
+        this._imageCache.reserve('empty', empty, this._systemReservationId);
     }
 
     return empty;
@@ -207,7 +207,7 @@ ImageManager.reserveBitmap = function(folder, filename, hue, smooth, reservation
 
 ImageManager.reserveNormalBitmap = function(path, hue, reservationId){
     var bitmap = this.loadNormalBitmap(path, hue);
-    this._imageCache.reserve(this._generateCacheKey(path, hue), reservationId);
+    this._imageCache.reserve(this._generateCacheKey(path, hue), bitmap, reservationId);
 
     return bitmap;
 };

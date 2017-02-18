@@ -28,7 +28,15 @@ ImageCache.prototype.get = function(key){
     return null;
 };
 
-ImageCache.prototype.reserve = function(key, reservationId){
+ImageCache.prototype.reserve = function(key, value, reservationId){
+    if(!items[key]){
+        this._items[key] = {
+            bitmap: value,
+            touch: Date.now(),
+            key: key
+        };
+    }
+
     this._items[key].reservationId = reservationId;
 };
 
