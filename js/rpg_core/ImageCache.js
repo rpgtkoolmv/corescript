@@ -67,7 +67,7 @@ ImageCache.prototype._truncateCache = function(){
         }else{
             delete items[item.key];
         }
-    });
+    }.bind(this));
 };
 
 ImageCache.prototype._mustBeHeld = function(item){
