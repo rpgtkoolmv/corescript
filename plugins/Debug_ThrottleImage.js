@@ -11,7 +11,7 @@
  */
 
 (function(){
-    var parameters = PluginManager.parameters('Atsumaru_Debug_ThrottleImage');
+    var parameters = PluginManager.parameters('Debug_ThrottleImage');
     var delay = +parameters['Delay'] || 2000;
 
     var Bitmap_prototype_onLoad = Bitmap.prototype._onLoad;
