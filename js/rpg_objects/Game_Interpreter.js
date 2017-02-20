@@ -1749,8 +1749,19 @@ Game_Interpreter.requestImages = function(list){
                 if(params[0]) ImageManager.requestFace(params[0]);
                 break;
 
-            //Change Party Member
+            // Common Event
+            case 117:
+                var commonEvent = $dataCommonEvents[params[0]];
+                if (commonEvent) this.requestImages(commonEvent.list);
+                break;
+
+            // Change Party Member
             case 129:
+                var actor = $gameActors.actor(params[0]);
+                if (actor && params[1] === 0) {
+                    var chara = actor.characterName();
+                    if (chara) ImageManager.requestCharacter(chara);
+                }
                 break;
 
             // Set Movement Route
@@ -1759,14 +1770,33 @@ Game_Interpreter.requestImages = function(list){
                     params[1].list.forEach(function(command){
                         var params = command.parameters;
                         if(command.code === Game_Character.ROUTE_CHANGE_IMAGE){
-                            ImageManager.requestCharacter(params[0]);
+                            if(params[0]) ImageManager.requestCharacter(params[0]);
                         }
                     });
                 }
                 break;
 
-            //Show Animation
-            case 212:
+            // Show Animation, Show Battle Animation
+            case 212: case 337:
+                if(params[1]) {
+                    var animation = $dataAnimations[params[1]];
+                    var name1 = animation.animation1Name;
+                    var name2 = animation.animation2Name;
+                    var hue1 = animation.animation1Hue;
+                    var hue2 = animation.animation2Hue;
+                    if (name1) ImageManager.requestAnimation(name1, hue1);
+                    if (name2) ImageManager.requestAnimation(name2, hue2);
+                }
+                break;
+
+            // Change Player Followers
+            case 216:
+                if (params[0] === 0) {
+                    $gamePlayer.followers().forEach(function(follower) {
+                        var name = follower.characterName();
+                        if (name) ImageManager.requestCharacter(name);
+                    });
+                }
                 break;
 
             // Show Picture
@@ -1782,20 +1812,24 @@ Game_Interpreter.requestImages = function(list){
                 });
                 break;
 
-            // Chage Battle Back
+            // Change Battle Back
             case 283:
+                if ($gameParty.inBattle()) {
+                    if (params[0]) ImageManager.requestBattleback1(params[0]);
+                    if (params[1]) ImageManager.requestBattleback2(params[1]);
+                }
                 break;
 
             // Change Parallax
             case 284:
+                if (!$gameParty.inBattle() && params[0]) ImageManager.requestParallax(params[0]);
                 break;
-
 
             // Change Actor Images
             case 322:
                 if(params[1]) ImageManager.requestCharacter(params[1]);
                 if(params[3]) ImageManager.requestFace(params[3]);
-                if(params[5]) ImageManager.requestEnemy(params[5]);
+                if(params[5]) ImageManager.requestSvActor(params[5]);
                 break;
 
             // Change Vehicle Image
@@ -1806,10 +1840,12 @@ Game_Interpreter.requestImages = function(list){
                 }
                 break;
 
-            // Show Battle Animation
-            case 337:
-                if(params[1]) ImageManager.requestAnimation(params[1]);
-                break;
+            // Enemy Transform
+            case 336:
+                var enemy = $dataEnemies[params[1]];
+                var name = enemy.battlerName;
+                var hue = enemy.battlerHue;
+                if (name) ImageManager.requestEnemy(name, hue);
         }
     });
 };
