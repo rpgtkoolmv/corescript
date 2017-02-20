@@ -10,11 +10,19 @@
  * reservedCount: count of reserved Bitmaps
  *
  * All number should be stable.
- * If you find that It increases gradually, Please report to team!!
+ * If you find that It increases gradually after reaching limit, Please report to team!!
+ *
+ * @param Max Pixels In MPix
+ * @default 20
  *
  */
 
 (function(){
+    var parameters = PluginManager.parameters('Debug_ReportMemory');
+    var pixels = +parameters['Max Pixels In MPix'] || 20;
+
+    ImageCache.limit = pixels * 1024 * 1024;
+
     var div = document.createElement('div');
     div.style.backgroundColor = 'AliceBlue';
     div.style.position = 'fixed';
