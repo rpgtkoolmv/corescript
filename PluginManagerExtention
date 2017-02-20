@@ -1,0 +1,96 @@
+//-----------------------------------------------------------------------------
+// PluginManager
+//
+// The static class that manages the plugins.
+
+function PluginManager() {
+    throw new Error('This is a static class');
+}
+
+PluginManager._path         = 'js/plugins/';
+PluginManager._scripts      = [];
+PluginManager._errorUrls    = [];
+PluginManager._parameters   = {};
+
+PluginManager.setup = function(plugins) {
+    plugins.forEach(function(plugin) {
+        if (plugin.status && !this._scripts.contains(plugin.name)) {
+            this.setParameters(plugin.name, plugin.parameters);
+            this.loadScript(plugin.name + '.js');
+            this._scripts.push(plugin.name);
+        }
+    }, this);
+};
+
+PluginManager.checkErrors = function() {
+    var url = this._errorUrls.shift();
+    if (url) {
+        throw new Error('Failed to load: ' + url);
+    }
+};
+
+PluginManager.parameters = function(name) {
+    return this._parameters[name.toLowerCase()] || {};
+};
+
+PluginManager.setParameters = function(name, parameters) {
+    this._parameters[name.toLowerCase()] = parameters;
+};
+
+/**
+ * Will convert the parameters string into a boolean or make sure it's a boolean.
+ * @param {Plugin} plugin The plugin variable.
+ * @param {String} parameters The parameters name in string.
+ * @returns {Boolean}
+ */
+PluginManager.toBoolean = function (plugin, parameters) {
+    var n = plugin[parameters];
+    if (n === 'true' || n === '1') {
+        return true;
+    } else if (n === 'false' || n === '0') {
+        return false;
+    } else {
+        throw new Error(parameters + ' is a boolean. Please set it to true(1) or false(0) only.');
+    }
+};
+
+/**
+ * Will convert the parameters into ANY JS legal Array.
+ * The syntax is [someNumber,String,[String,Boolean],andAgainSomeValidArrayOperator]
+ * or 1,2,3,4 etc
+ * @static 
+ * @param {PluginManager} plugin 
+ * @param {string} parameters 
+ * @returns {Array<any>} 
+ */
+Pluginmanager.toArray = function (plugin, parameters) {
+    var array;
+    try {
+        array = JSON.parse(plugin[parameters]);
+    } catch (e) {
+        try {
+            array = JSON.parse('[' + plugin[parameters] + ']');
+        } catch (e) {
+            throw "Parameter " + parameters + " is not a valid array";
+        }
+    }
+    if (!array instanceof Array) {
+        throw "Parameter " + parameters + " is not a valid array";
+    }
+    return array;
+};
+
+PluginManager.loadScript = function(name) {
+    var url = this._path + name;
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = url;
+    script.async = false;
+    script.onerror = this.onError.bind(this);
+    script._url = url;
+    document.body.appendChild(script);
+};
+
+PluginManager.onError = function(e) {
+    this._errorUrls.push(e.target._url);
+};
