@@ -96,7 +96,6 @@ ImageManager.loadEmptyBitmap = function() {
 };
 
 ImageManager.loadNormalBitmap = function(path, hue) {
-    hue = hue || 0;
     var key = this._generateCacheKey(path, hue);
     var bitmap = this._imageCache.get(key);
     if (!bitmap) {
@@ -280,13 +279,12 @@ ImageManager.requestTitle2 = function(filename, hue) {
 
 ImageManager.requestBitmap = function(folder, filename, hue, smooth) {
     var path = folder + encodeURIComponent(filename) + '.png';
-    var bitmap = ImageManager.requestNormalBitmap(path, hue);
+    var bitmap = ImageManager.requestNormalBitmap(path, hue || 0);
     bitmap.smooth = smooth;
     return bitmap;
 };
 
 ImageManager.requestNormalBitmap = function(path, hue){
-    hue = hue || 0;
     var key = this._generateCacheKey(path, hue);
     var bitmap = this._imageCache.get(key);
     if(!bitmap){
