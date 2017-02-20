@@ -21,7 +21,7 @@
     var parameters = PluginManager.parameters('Debug_ReportMemory');
     var pixels = +parameters['Max Pixels In MPix'] || 20;
 
-    ImageCache.limit = pixels * 1024 * 1024;
+    ImageCache.limit = pixels * 1000 * 1000;
 
     var div = document.createElement('div');
     div.style.backgroundColor = 'AliceBlue';
