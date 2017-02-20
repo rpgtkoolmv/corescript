@@ -1845,7 +1845,14 @@ Game_Interpreter.requestImages = function(list){
                 var enemy = $dataEnemies[params[1]];
                 var name = enemy.battlerName;
                 var hue = enemy.battlerHue;
-                if (name) ImageManager.requestEnemy(name, hue);
+                if (name) {
+                    if ($gameSystem.isSideView()) {
+                        ImageManager.requestSvEnemy(name, hue);
+                    } else {
+                        ImageManager.requestEnemy(name, hue);
+                    }
+                }
+                break;
         }
     });
 };
