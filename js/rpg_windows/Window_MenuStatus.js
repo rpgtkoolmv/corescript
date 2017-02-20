@@ -43,7 +43,7 @@ Window_MenuStatus.prototype.numVisibleRows = function() {
 
 Window_MenuStatus.prototype.loadImages = function() {
     $gameParty.members().forEach(function(actor) {
-        ImageManager.loadFace(actor.faceName());
+        ImageManager.reserveFace(actor.faceName());
     }, this);
 };
 

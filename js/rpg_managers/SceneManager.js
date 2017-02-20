@@ -139,6 +139,7 @@ SceneManager.update = function() {
         if (Utils.isMobileSafari()) {
             this.updateInputData();
         }
+        this.updateManagers();
         this.updateMain();
         this.tickEnd();
     } catch (e) {
@@ -223,18 +224,20 @@ SceneManager.updateMain = function() {
     this.requestUpdate();
 };
 
-SceneManager.updateManagers = function(ticks, delta) {
-    ImageManager.cache.update(ticks, delta);
+SceneManager.updateManagers = function() {
+    ImageManager.update();
 };
 
 SceneManager.changeScene = function() {
     if (this.isSceneChanging() && !this.isCurrentSceneBusy()) {
         if (this._scene) {
             this._scene.terminate();
+            this._scene.detachReservation();
             this._previousClass = this._scene.constructor;
         }
         this._scene = this._nextScene;
         if (this._scene) {
+            this._scene.attachReservation();
             this._scene.create();
             this._nextScene = null;
             this._sceneStarted = false;

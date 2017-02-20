@@ -41,6 +41,7 @@ Game_Interpreter.prototype.setup = function(list, eventId) {
     this._mapId = $gameMap.mapId();
     this._eventId = eventId || 0;
     this._list = list;
+    Game_Interpreter.requestImages(list);
 };
 
 Game_Interpreter.prototype.eventId = function() {
@@ -1289,11 +1290,19 @@ Game_Interpreter.prototype.command281 = function() {
 // Change Tileset
 Game_Interpreter.prototype.command282 = function() {
     var tileset = $dataTilesets[this._params[0]];
-    for (var i = 0; i < tileset.tilesetNames.length; i++) {
-        ImageManager.loadTileset(tileset.tilesetNames[i]);
+    if(!this._imageReservationId){
+        this._imageReservationId = Utils.generateRuntimeId();
+
+        for (var i = 0; i < tileset.tilesetNames.length; i++) {
+            ImageManager.reserveTileset(tileset.tilesetNames[i], 0, this._imageReservationId);
+        }
     }
+
     if (ImageManager.isReady()) {
         $gameMap.changeTileset(this._params[0]);
+        ImageManager.releaseReservation(this._imageReservationId);
+        this._imageReservationId = null;
+
         return true;
     } else {
         return false;
@@ -1729,4 +1738,78 @@ Game_Interpreter.prototype.command356 = function() {
 
 Game_Interpreter.prototype.pluginCommand = function(command, args) {
     // to be overridden by plugins
+};
+
+Game_Interpreter.requestImages = function(list){
+    list.forEach(function(command){
+        var params = command.parameters;
+        switch(command.code){
+            // Show Text
+            case 101:
+                if(params[0]) ImageManager.requestFace(params[0]);
+                break;
+
+            //Change Party Member
+            case 129:
+                break;
+
+            // Set Movement Route
+            case 205:
+                if(params[1]){
+                    params[1].list.forEach(function(command){
+                        var params = command.parameters;
+                        if(command.code === Game_Character.ROUTE_CHANGE_IMAGE){
+                            ImageManager.requestCharacter(params[0]);
+                        }
+                    });
+                }
+                break;
+
+            //Show Animation
+            case 212:
+                break;
+
+            // Show Picture
+            case 231:
+                if(params[1]) ImageManager.requestPicture(params[1]);
+                break;
+
+            // Change Tileset
+            case 282:
+                var tileset = $dataTilesets[params[0]];
+                tileset.tilesetNames.forEach(function(tilesetName){
+                    if(tilesetName) ImageManager.requestTileset(tilesetName);
+                });
+                break;
+
+            // Chage Battle Back
+            case 283:
+                break;
+
+            // Change Parallax
+            case 284:
+                break;
+
+
+            // Change Actor Images
+            case 322:
+                if(params[1]) ImageManager.requestCharacter(params[1]);
+                if(params[3]) ImageManager.requestFace(params[3]);
+                if(params[5]) ImageManager.requestEnemy(params[5]);
+                break;
+
+            // Change Vehicle Image
+            case 323:
+                var vehicle = $gameMap.vehicle(params[0]);
+                if(vehicle && params[1]){
+                    ImageManager.requestCharacter(params[1]);
+                }
+                break;
+
+            // Show Battle Animation
+            case 337:
+                if(params[1]) ImageManager.requestAnimation(params[1]);
+                break;
+        }
+    });
 };
