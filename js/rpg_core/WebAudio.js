@@ -112,7 +112,7 @@ WebAudio._createMasterGainNode = function() {
     var context = WebAudio._context;
     if (context) {
         this._masterGainNode = context.createGain();
-        this._masterGainNode.gain.value = 1;
+        this._masterGainNode.gain.setValueAtTime(1, context.currentTime);
         this._masterGainNode.connect(context.destination);
     }
 };
@@ -123,6 +123,16 @@ WebAudio._createMasterGainNode = function() {
  * @private
  */
 WebAudio._setupEventHandlers = function() {
+    document.addEventListener("touchend", function() {
+            var context = WebAudio._context;
+            if (context && context.state === "suspended" && typeof context.resume === "function") {
+                context.resume().then(function() {
+                    WebAudio._onTouchStart();
+                })
+            } else {
+                WebAudio._onTouchStart();
+            }
+    });
     document.addEventListener('touchstart', this._onTouchStart.bind(this));
     document.addEventListener('visibilitychange', this._onVisibilityChange.bind(this));
 };
@@ -268,7 +278,7 @@ Object.defineProperty(WebAudio.prototype, 'volume', {
     set: function(value) {
         this._volume = value;
         if (this._gainNode) {
-            this._gainNode.gain.value = this._volume;
+            this._gainNode.gain.setValueAtTime(this._volume, WebAudio._context.currentTime);
         }
     },
     configurable: true
@@ -529,9 +539,9 @@ WebAudio.prototype._createNodes = function() {
     this._sourceNode.buffer = this._buffer;
     this._sourceNode.loopStart = this._loopStart;
     this._sourceNode.loopEnd = this._loopStart + this._loopLength;
-    this._sourceNode.playbackRate.value = this._pitch;
+    this._sourceNode.playbackRate.setValueAtTime(this._pitch, context.currentTime);
     this._gainNode = context.createGain();
-    this._gainNode.gain.value = this._volume;
+    this._gainNode.gain.setValueAtTime(this._volume, context.currentTime);
     this._pannerNode = context.createPanner();
     this._pannerNode.panningModel = 'equalpower';
     this._updatePanner();

@@ -12,6 +12,7 @@ Game_Temp.prototype.initialize = function() {
     this._commonEventId = 0;
     this._destinationX = null;
     this._destinationY = null;
+    this._isMapTouch = false;
 };
 
 Game_Temp.prototype.isPlaytest = function() {
@@ -54,4 +55,13 @@ Game_Temp.prototype.destinationX = function() {
 
 Game_Temp.prototype.destinationY = function() {
     return this._destinationY;
+};
+
+//
+Game_Temp.prototype.isMapTouched = function() {
+  return this._isMapTouch;
+};
+
+Game_Temp.prototype.setIsMapTouched = function(val) {
+    this._isMapTouch = val;
 };

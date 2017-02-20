@@ -153,7 +153,7 @@ Bitmap.snap = function(stage) {
         }
         context.drawImage(canvas, 0, 0);
     } else {
-        //TODO: Ivan: what if stage is not present?
+
     }
     renderTexture.destroy({ destroyBase: true });
     bitmap._setDirty();
@@ -809,7 +809,7 @@ Bitmap.prototype.decode = function(){
 Bitmap.prototype._callLoadListeners = function() {
     while (this._loadListeners.length > 0) {
         var listener = this._loadListeners.shift();
-        listener();
+        listener(this);
     }
 };
 
