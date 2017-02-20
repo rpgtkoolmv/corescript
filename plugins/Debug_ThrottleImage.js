@@ -1,4 +1,11 @@
 /*:
+ * @plugindesc Throttle loading images.
+ * @author RM CoreScript team
+ *
+ * @help
+ * This plugin throttle loading.
+ * Loading image is delayed by Delay parameter(in ms)
+ *
  * @param Delay
  * @default 2000
  */

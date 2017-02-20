@@ -1,3 +1,19 @@
+/*:
+ * @plugindesc Show memory usage.
+ * @author RM CoreScript team
+ *
+ * @help
+ * This plugin shows memory related usages.
+ * size: size in MPixel
+ * totalCount: count of Bitmaps
+ * requestCount: count of requested Bitmaps
+ * reservedCount: count of reserved Bitmaps
+ *
+ * All number should be stable.
+ * If you find that It increases gradually, Please report to team!!
+ *
+ */
+
 (function(){
     var div = document.createElement('div');
     div.style.backgroundColor = 'AliceBlue';
