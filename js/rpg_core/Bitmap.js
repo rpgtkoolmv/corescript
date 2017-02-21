@@ -714,7 +714,7 @@ Bitmap.prototype.addLoadListener = function(listner) {
     if (!this.isReady()) {
         this._loadListeners.push(listner);
     } else {
-        listner();
+        listner(this);
     }
 };
 
