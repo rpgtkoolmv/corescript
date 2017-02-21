@@ -24,6 +24,11 @@ Scene_Skill.prototype.create = function() {
     this.refreshActor();
 };
 
+Scene_Skill.prototype.start = function() {
+    Scene_ItemBase.prototype.start.call(this);
+    this._statusWindow.refresh();
+};
+
 Scene_Skill.prototype.createSkillTypeWindow = function() {
     var wy = this._helpWindow.height;
     this._skillTypeWindow = new Window_SkillType(0, wy);

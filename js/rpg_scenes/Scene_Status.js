@@ -24,6 +24,11 @@ Scene_Status.prototype.create = function() {
     this.refreshActor();
 };
 
+Scene_Status.prototype.start = function() {
+    Scene_MenuBase.prototype.start.call(this);
+    this._statusWindow.refresh();
+};
+
 Scene_Status.prototype.refreshActor = function() {
     var actor = this.actor();
     this._statusWindow.setActor(actor);

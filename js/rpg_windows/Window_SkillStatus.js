@@ -18,6 +18,9 @@ Window_SkillStatus.prototype.initialize = function(x, y, width, height) {
 Window_SkillStatus.prototype.setActor = function(actor) {
     if (this._actor !== actor) {
         this._actor = actor;
+        if (actor) {
+            ImageManager.reserveFace(actor.faceName());
+        }
         this.refresh();
     }
 };

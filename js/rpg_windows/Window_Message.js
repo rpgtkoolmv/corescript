@@ -251,11 +251,13 @@ Window_Message.prototype.newPage = function(textState) {
 };
 
 Window_Message.prototype.loadMessageFace = function() {
-    this._faceBitmap = ImageManager.loadFace($gameMessage.faceName());
+    this._imageReservationId = this._imageReservationId || Utils.generateRuntimeId();
+    this._faceBitmap = ImageManager.reserveFace($gameMessage.faceName(), 0, this._imageReservationId);
 };
 
 Window_Message.prototype.drawMessageFace = function() {
     this.drawFace($gameMessage.faceName(), $gameMessage.faceIndex(), 0, 0);
+    ImageManager.releaseReservation(this._imageReservationId);
 };
 
 Window_Message.prototype.newLineX = function() {
