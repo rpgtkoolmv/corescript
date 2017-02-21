@@ -21,12 +21,11 @@ Scene_Skill.prototype.create = function() {
     this.createStatusWindow();
     this.createItemWindow();
     this.createActorWindow();
-    this.refreshActor();
 };
 
 Scene_Skill.prototype.start = function() {
     Scene_ItemBase.prototype.start.call(this);
-    this._statusWindow.refresh();
+    this.refreshActor();
 };
 
 Scene_Skill.prototype.createSkillTypeWindow = function() {

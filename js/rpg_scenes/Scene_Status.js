@@ -21,12 +21,11 @@ Scene_Status.prototype.create = function() {
     this._statusWindow.setHandler('pagedown', this.nextActor.bind(this));
     this._statusWindow.setHandler('pageup',   this.previousActor.bind(this));
     this.addWindow(this._statusWindow);
-    this.refreshActor();
 };
 
 Scene_Status.prototype.start = function() {
     Scene_MenuBase.prototype.start.call(this);
-    this._statusWindow.refresh();
+    this.refreshActor();
 };
 
 Scene_Status.prototype.refreshActor = function() {
