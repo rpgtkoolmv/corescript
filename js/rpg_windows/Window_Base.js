@@ -697,3 +697,9 @@ Window_Base.prototype.canvasToLocalY = function(y) {
     }
     return y;
 };
+
+Window_Base.prototype.reserveFaceImages = function() {
+    $gameParty.members().forEach(function(actor) {
+        ImageManager.reserveFace(actor.faceName());
+    }, this);
+};
