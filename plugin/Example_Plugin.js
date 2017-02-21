@@ -13,7 +13,7 @@ var program = PluginManager.createPluginProgram('Example');
  * output:
  *  Plugin: Exmaple, Params: {isRun :true}
  */
-program.command('', 'isRun:boolean', function(params) {
+program.command('isRun:boolean', function(params) {
   console.log('Plugin: Exmaple, Params: {isRun: ' + params.isRun + '}')
 })
 
