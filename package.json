@@ -16,6 +16,7 @@
     "copy:corescripts": "cpx ./dist/*.js ./game/js/",
     "copy:libs": "cpx ./js/libs/*.js ./game/js/libs/",
     "copy:main": "cpx ./js/main.js ./game/js/",
+    "copy:template": "cpx ./template/**/* ./game/",
     "copy": "run-p copy:*",
     "test": "run-s build copy",
     "start": "http-server ./game/"
