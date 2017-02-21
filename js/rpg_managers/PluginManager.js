@@ -54,7 +54,7 @@ PluginManager.onError = function(e) {
 };
 
 PluginManager.createPluginProgram = function(program) {
-    if(this._programCache[program] != void 0) throw new Error('Plugin command: ' + program); //TODO
+    if(this._programCache[program] != void 0) throw new Error('Already initialized pulgin program ' + program);
     this._programCache[program] = new PluginProgram(program);
     return this._programCache[program];
 };
@@ -63,7 +63,7 @@ PluginManager.runProgram = function(program, params) {
     if(this._programCache[program] != void 0)
         this._programCache[program].run(params);
     else {
-        throw new Error('Failed to find plugin command: ' + program);
+        throw new Error('Failed to find plugin command: ' + program + '.');
     }
 };
 
@@ -83,7 +83,7 @@ PluginProgram.prototype.initialize = function(name) {
 }
 
 PluginProgram.createParams = function(paramsStyle, args) {
-    if(paramsStyle.length != args.length) throw new Error('Wrong number of arguments (given ' + args.length + ', expected ' + paramsStyle.length + ')')
+    if(paramsStyle.length != args.length) throw new Error('Wrong number of arguments (given ' + args.length + ', expected ' + paramsStyle.length + ').')
     var params = {};
     args.forEach(function(arg, index) {
         var value;
@@ -107,9 +107,8 @@ PluginProgram.createParams = function(paramsStyle, args) {
 }
 
 PluginProgram.prototype.run = function(args) {
-    args = args.split(' ')
     if(this._commands[args[0]] == void 0) {
-        if(this._commands.__default == void 0) throw new Error('');
+        if(this._commands.__default == void 0) throw new Error('Failed to not find the default command.');
         var params = PluginProgram.createParams(this._commands.__default.params, args);
         this._commands.__default.callback(params);
     } else {
@@ -126,7 +125,7 @@ PluginProgram.prototype.command = function() {
         argStyle = arguments[1];
         callback = arguments[2];
     } else {
-        if(this._commands.__default != void 0) throw new Error('');
+        if(this._commands.__default != void 0) throw new Error('The default command already exists');
         commandName = '__default';
         argStyle = arguments[0];
         callback = arguments[1];

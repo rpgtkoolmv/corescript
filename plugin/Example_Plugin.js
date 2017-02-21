@@ -3,7 +3,7 @@
  * 
  */
 
-var program = PluginManager.createPluginProgram('Example');
+var program = PluginManager.createPluginProgram('example');
 
 /**
  * Plugin command: 
@@ -14,7 +14,7 @@ var program = PluginManager.createPluginProgram('Example');
  *  Plugin: Exmaple, Params: {isRun :true}
  */
 program.command('isRun:boolean', function(params) {
-  console.log('Plugin: Exmaple, Params: {isRun: ' + params.isRun + '}')
+  console.log('Plugin: exmaple, Params: {isRun: ' + params.isRun + '}')
 })
 
 /**
@@ -26,5 +26,5 @@ program.command('isRun:boolean', function(params) {
  *  Plugin: Exmaple, Command: init, Params: {title: helloworld, x: 12, y: 12, width: 640, height: 480}
  */
 program.command('init', 'title:string, x:number, y:number, width:number, height:number', function(params) {
-  console.log('Plugin: Exmaple, Command: init, Params: {title: ' + params.title + ',x: '+ params.x +', y: '+ params.y +', width: '+ params.width +', height: '+ params.height +'}')
+  console.log('Plugin: exmaple, Command: init, Params: {title: ' + params.title + ',x: '+ params.x +', y: '+ params.y +', width: '+ params.width +', height: '+ params.height +'}')
 })
