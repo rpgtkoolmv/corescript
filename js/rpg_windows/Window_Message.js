@@ -22,6 +22,7 @@ Window_Message.prototype.initialize = function() {
 };
 
 Window_Message.prototype.initMembers = function() {
+    this._imageReservationId = Utils.generateRuntimeId();
     this._background = 0;
     this._positionType = 2;
     this._waitCount = 0;
@@ -251,7 +252,6 @@ Window_Message.prototype.newPage = function(textState) {
 };
 
 Window_Message.prototype.loadMessageFace = function() {
-    this._imageReservationId = this._imageReservationId || Utils.generateRuntimeId();
     this._faceBitmap = ImageManager.reserveFace($gameMessage.faceName(), 0, this._imageReservationId);
 };
 
