@@ -63,7 +63,7 @@ PluginManager.toBoolean = function (plugin, parameters) {
  * @param {string} parameters 
  * @returns {Array<any>} 
  */
-Pluginmanager.toArray = function (plugin, parameters) {
+PluginManager.toArray = function (plugin, parameters) {
     var array;
     try {
         array = JSON.parse(plugin[parameters]);
