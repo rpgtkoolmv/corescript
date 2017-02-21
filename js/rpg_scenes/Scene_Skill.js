@@ -45,6 +45,7 @@ Scene_Skill.prototype.createStatusWindow = function() {
     var ww = Graphics.boxWidth - wx;
     var wh = this._skillTypeWindow.height;
     this._statusWindow = new Window_SkillStatus(wx, wy, ww, wh);
+    this._statusWindow.reserveFaceImages();
     this.addWindow(this._statusWindow);
 };
 

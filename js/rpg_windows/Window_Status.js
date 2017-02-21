@@ -15,7 +15,6 @@ Window_Status.prototype.initialize = function() {
     var height = Graphics.boxHeight;
     Window_Selectable.prototype.initialize.call(this, 0, 0, width, height);
     this._actor = null;
-    this.reserveFaceImages();
     this.refresh();
     this.activate();
 };

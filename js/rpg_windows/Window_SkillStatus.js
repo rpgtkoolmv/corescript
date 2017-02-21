@@ -13,7 +13,6 @@ Window_SkillStatus.prototype.constructor = Window_SkillStatus;
 Window_SkillStatus.prototype.initialize = function(x, y, width, height) {
     Window_Base.prototype.initialize.call(this, x, y, width, height);
     this._actor = null;
-    this.reserveFaceImages();
 };
 
 Window_SkillStatus.prototype.setActor = function(actor) {
