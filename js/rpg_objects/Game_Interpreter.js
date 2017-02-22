@@ -1746,7 +1746,7 @@ Game_Interpreter.requestImages = function(list){
         switch(command.code){
             // Show Text
             case 101:
-                if(params[0]) ImageManager.requestFace(params[0]);
+                ImageManager.requestFace(params[0]);
                 break;
 
             // Common Event
@@ -1759,8 +1759,8 @@ Game_Interpreter.requestImages = function(list){
             case 129:
                 var actor = $gameActors.actor(params[0]);
                 if (actor && params[1] === 0) {
-                    var chara = actor.characterName();
-                    if (chara) ImageManager.requestCharacter(chara);
+                    var name = actor.characterName();
+                    ImageManager.requestCharacter(name);
                 }
                 break;
 
@@ -1770,7 +1770,7 @@ Game_Interpreter.requestImages = function(list){
                     params[1].list.forEach(function(command){
                         var params = command.parameters;
                         if(command.code === Game_Character.ROUTE_CHANGE_IMAGE){
-                            if(params[0]) ImageManager.requestCharacter(params[0]);
+                            ImageManager.requestCharacter(params[0]);
                         }
                     });
                 }
@@ -1784,8 +1784,8 @@ Game_Interpreter.requestImages = function(list){
                     var name2 = animation.animation2Name;
                     var hue1 = animation.animation1Hue;
                     var hue2 = animation.animation2Hue;
-                    if (name1) ImageManager.requestAnimation(name1, hue1);
-                    if (name2) ImageManager.requestAnimation(name2, hue2);
+                    ImageManager.requestAnimation(name1, hue1);
+                    ImageManager.requestAnimation(name2, hue2);
                 }
                 break;
 
@@ -1794,48 +1794,50 @@ Game_Interpreter.requestImages = function(list){
                 if (params[0] === 0) {
                     $gamePlayer.followers().forEach(function(follower) {
                         var name = follower.characterName();
-                        if (name) ImageManager.requestCharacter(name);
+                        ImageManager.requestCharacter(name);
                     });
                 }
                 break;
 
             // Show Picture
             case 231:
-                if(params[1]) ImageManager.requestPicture(params[1]);
+                ImageManager.requestPicture(params[1]);
                 break;
 
             // Change Tileset
             case 282:
                 var tileset = $dataTilesets[params[0]];
                 tileset.tilesetNames.forEach(function(tilesetName){
-                    if(tilesetName) ImageManager.requestTileset(tilesetName);
+                    ImageManager.requestTileset(tilesetName);
                 });
                 break;
 
             // Change Battle Back
             case 283:
                 if ($gameParty.inBattle()) {
-                    if (params[0]) ImageManager.requestBattleback1(params[0]);
-                    if (params[1]) ImageManager.requestBattleback2(params[1]);
+                    ImageManager.requestBattleback1(params[0]);
+                    ImageManager.requestBattleback2(params[1]);
                 }
                 break;
 
             // Change Parallax
             case 284:
-                if (!$gameParty.inBattle() && params[0]) ImageManager.requestParallax(params[0]);
+                if (!$gameParty.inBattle()) {
+                    ImageManager.requestParallax(params[0]);
+                }
                 break;
 
             // Change Actor Images
             case 322:
-                if(params[1]) ImageManager.requestCharacter(params[1]);
-                if(params[3]) ImageManager.requestFace(params[3]);
-                if(params[5]) ImageManager.requestSvActor(params[5]);
+                ImageManager.requestCharacter(params[1]);
+                ImageManager.requestFace(params[3]);
+                ImageManager.requestSvActor(params[5]);
                 break;
 
             // Change Vehicle Image
             case 323:
                 var vehicle = $gameMap.vehicle(params[0]);
-                if(vehicle && params[1]){
+                if(vehicle){
                     ImageManager.requestCharacter(params[1]);
                 }
                 break;
@@ -1845,12 +1847,10 @@ Game_Interpreter.requestImages = function(list){
                 var enemy = $dataEnemies[params[1]];
                 var name = enemy.battlerName;
                 var hue = enemy.battlerHue;
-                if (name) {
-                    if ($gameSystem.isSideView()) {
-                        ImageManager.requestSvEnemy(name, hue);
-                    } else {
-                        ImageManager.requestEnemy(name, hue);
-                    }
+                if ($gameSystem.isSideView()) {
+                    ImageManager.requestSvEnemy(name, hue);
+                } else {
+                    ImageManager.requestEnemy(name, hue);
                 }
                 break;
         }
