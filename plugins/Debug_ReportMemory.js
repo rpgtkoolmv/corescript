@@ -1,4 +1,28 @@
+/*:
+ * @plugindesc Show memory usage.
+ * @author RM CoreScript team
+ *
+ * @help
+ * This plugin shows memory related usages.
+ * size: size in MPixel
+ * totalCount: count of Bitmaps
+ * requestCount: count of requested Bitmaps
+ * reservedCount: count of reserved Bitmaps
+ *
+ * All number should be stable.
+ * If you find that It increases gradually after reaching limit, Please report to team!!
+ *
+ * @param Max Pixels In MPix
+ * @default 20
+ *
+ */
+
 (function(){
+    var parameters = PluginManager.parameters('Debug_ReportMemory');
+    var pixels = +parameters['Max Pixels In MPix'] || 20;
+
+    ImageCache.limit = pixels * 1000 * 1000;
+
     var div = document.createElement('div');
     div.style.backgroundColor = 'AliceBlue';
     div.style.position = 'fixed';
