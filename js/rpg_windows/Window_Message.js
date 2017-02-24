@@ -22,6 +22,7 @@ Window_Message.prototype.initialize = function() {
 };
 
 Window_Message.prototype.initMembers = function() {
+    this._imageReservationId = Utils.generateRuntimeId();
     this._background = 0;
     this._positionType = 2;
     this._waitCount = 0;
@@ -251,11 +252,12 @@ Window_Message.prototype.newPage = function(textState) {
 };
 
 Window_Message.prototype.loadMessageFace = function() {
-    this._faceBitmap = ImageManager.loadFace($gameMessage.faceName());
+    this._faceBitmap = ImageManager.reserveFace($gameMessage.faceName(), 0, this._imageReservationId);
 };
 
 Window_Message.prototype.drawMessageFace = function() {
     this.drawFace($gameMessage.faceName(), $gameMessage.faceIndex(), 0, 0);
+    ImageManager.releaseReservation(this._imageReservationId);
 };
 
 Window_Message.prototype.newLineX = function() {
