@@ -91,7 +91,7 @@ ImageCache.prototype.isReady = function(){
 ImageCache.prototype.getErrorBitmap = function(){
     var items = this._items;
     var bitmap = null;
-    if(!Object.keys(items).some(function(key){
+    if(Object.keys(items).some(function(key){
             if(items[key].bitmap.isError()){
                 bitmap = items[key].bitmap;
                 return true;
