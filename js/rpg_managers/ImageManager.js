@@ -278,10 +278,14 @@ ImageManager.requestTitle2 = function(filename, hue) {
 };
 
 ImageManager.requestBitmap = function(folder, filename, hue, smooth) {
-    var path = folder + encodeURIComponent(filename) + '.png';
-    var bitmap = ImageManager.requestNormalBitmap(path, hue || 0);
-    bitmap.smooth = smooth;
-    return bitmap;
+    if (filename) {
+        var path = folder + encodeURIComponent(filename) + '.png';
+        var bitmap = this.requestNormalBitmap(path, hue || 0);
+        bitmap.smooth = smooth;
+        return bitmap;
+    } else {
+        return this.loadEmptyBitmap();
+    }
 };
 
 ImageManager.requestNormalBitmap = function(path, hue){

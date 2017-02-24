@@ -1746,11 +1746,22 @@ Game_Interpreter.requestImages = function(list){
         switch(command.code){
             // Show Text
             case 101:
-                if(params[0]) ImageManager.requestFace(params[0]);
+                ImageManager.requestFace(params[0]);
                 break;
 
-            //Change Party Member
+            // Common Event
+            case 117:
+                var commonEvent = $dataCommonEvents[params[0]];
+                if (commonEvent) this.requestImages(commonEvent.list);
+                break;
+
+            // Change Party Member
             case 129:
+                var actor = $gameActors.actor(params[0]);
+                if (actor && params[1] === 0) {
+                    var name = actor.characterName();
+                    ImageManager.requestCharacter(name);
+                }
                 break;
 
             // Set Movement Route
@@ -1765,50 +1776,82 @@ Game_Interpreter.requestImages = function(list){
                 }
                 break;
 
-            //Show Animation
-            case 212:
+            // Show Animation, Show Battle Animation
+            case 212: case 337:
+                if(params[1]) {
+                    var animation = $dataAnimations[params[1]];
+                    var name1 = animation.animation1Name;
+                    var name2 = animation.animation2Name;
+                    var hue1 = animation.animation1Hue;
+                    var hue2 = animation.animation2Hue;
+                    ImageManager.requestAnimation(name1, hue1);
+                    ImageManager.requestAnimation(name2, hue2);
+                }
+                break;
+
+            // Change Player Followers
+            case 216:
+                if (params[0] === 0) {
+                    $gamePlayer.followers().forEach(function(follower) {
+                        var name = follower.characterName();
+                        ImageManager.requestCharacter(name);
+                    });
+                }
                 break;
 
             // Show Picture
             case 231:
-                if(params[1]) ImageManager.requestPicture(params[1]);
+                ImageManager.requestPicture(params[1]);
                 break;
 
             // Change Tileset
             case 282:
                 var tileset = $dataTilesets[params[0]];
                 tileset.tilesetNames.forEach(function(tilesetName){
-                    if(tilesetName) ImageManager.requestTileset(tilesetName);
+                    ImageManager.requestTileset(tilesetName);
                 });
                 break;
 
-            // Chage Battle Back
+            // Change Battle Back
             case 283:
+                if ($gameParty.inBattle()) {
+                    ImageManager.requestBattleback1(params[0]);
+                    ImageManager.requestBattleback2(params[1]);
+                }
                 break;
 
             // Change Parallax
             case 284:
+                if (!$gameParty.inBattle()) {
+                    ImageManager.requestParallax(params[0]);
+                }
                 break;
-
 
             // Change Actor Images
             case 322:
-                if(params[1]) ImageManager.requestCharacter(params[1]);
-                if(params[3]) ImageManager.requestFace(params[3]);
-                if(params[5]) ImageManager.requestEnemy(params[5]);
+                ImageManager.requestCharacter(params[1]);
+                ImageManager.requestFace(params[3]);
+                ImageManager.requestSvActor(params[5]);
                 break;
 
             // Change Vehicle Image
             case 323:
                 var vehicle = $gameMap.vehicle(params[0]);
-                if(vehicle && params[1]){
+                if(vehicle){
                     ImageManager.requestCharacter(params[1]);
                 }
                 break;
 
-            // Show Battle Animation
-            case 337:
-                if(params[1]) ImageManager.requestAnimation(params[1]);
+            // Enemy Transform
+            case 336:
+                var enemy = $dataEnemies[params[1]];
+                var name = enemy.battlerName;
+                var hue = enemy.battlerHue;
+                if ($gameSystem.isSideView()) {
+                    ImageManager.requestSvEnemy(name, hue);
+                } else {
+                    ImageManager.requestEnemy(name, hue);
+                }
                 break;
         }
     });
