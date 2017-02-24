@@ -134,7 +134,7 @@ Window_Message.prototype.updateWait = function() {
 
 Window_Message.prototype.updateLoading = function() {
     if (this._faceBitmap) {
-        if (ImageManager.isReady()) {
+        if (this._faceBitmap.isReady()) {
             this.drawMessageFace();
             this._faceBitmap = null;
             return false;

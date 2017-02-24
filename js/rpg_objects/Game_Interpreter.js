@@ -1290,15 +1290,15 @@ Game_Interpreter.prototype.command281 = function() {
 // Change Tileset
 Game_Interpreter.prototype.command282 = function() {
     var tileset = $dataTilesets[this._params[0]];
-    if(!this._imageReservationId){
+    if(!this._imageReservationId) {
         this._imageReservationId = Utils.generateRuntimeId();
-
-        for (var i = 0; i < tileset.tilesetNames.length; i++) {
-            ImageManager.reserveTileset(tileset.tilesetNames[i], 0, this._imageReservationId);
-        }
     }
 
-    if (ImageManager.isReady()) {
+    var allReady = tileset.tilesetNames.map(function(tilesetName) {
+        return ImageManager.reserveTileset(tilesetName, 0, this._imageReservationId);
+    }, this).every(function(bitmap) {return bitmap.isReady();});
+
+    if (allReady) {
         $gameMap.changeTileset(this._params[0]);
         ImageManager.releaseReservation(this._imageReservationId);
         this._imageReservationId = null;

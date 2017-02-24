@@ -140,7 +140,7 @@ Sprite_Animation.prototype.loadBitmaps = function() {
 };
 
 Sprite_Animation.prototype.isReady = function() {
-    return ImageManager.isReady();
+    return this._bitmap1 && this._bitmap1.isReady() && this._bitmap2 && this._bitmap2.isReady();
 };
 
 Sprite_Animation.prototype.createSprites = function() {
