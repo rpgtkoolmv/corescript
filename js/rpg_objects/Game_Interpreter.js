@@ -1290,7 +1290,7 @@ Game_Interpreter.prototype.command281 = function() {
 // Change Tileset
 Game_Interpreter.prototype.command282 = function() {
     var tileset = $dataTilesets[this._params[0]];
-    if(!this._imageReservationId) {
+    if(!this._imageReservationId){
         this._imageReservationId = Utils.generateRuntimeId();
     }
 
