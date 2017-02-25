@@ -1741,6 +1741,8 @@ Game_Interpreter.prototype.pluginCommand = function(command, args) {
 };
 
 Game_Interpreter.requestImages = function(list){
+    if(!list) return;
+
     list.forEach(function(command){
         var params = command.parameters;
         switch(command.code){
