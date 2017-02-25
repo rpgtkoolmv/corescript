@@ -110,6 +110,8 @@ Scene_Map.prototype.terminate = function() {
         this._spriteset.update();
         this._mapNameWindow.hide();
         SceneManager.snapForBackground();
+    } else {
+        ImageManager.clearRequest();
     }
 
     if (SceneManager.isNextScene(Scene_Map)) {
