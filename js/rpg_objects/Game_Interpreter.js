@@ -1754,7 +1754,7 @@ Game_Interpreter.requestImages = function(list){
             // Common Event
             case 117:
                 var commonEvent = $dataCommonEvents[params[0]];
-                if (commonEvent) this.requestImages(commonEvent.list);
+                if (commonEvent) Game_Interpreter.requestImages(commonEvent.list);
                 break;
 
             // Change Party Member
