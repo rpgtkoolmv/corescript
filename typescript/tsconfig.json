@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "listEmittedFiles": true,
+    "module": "commonjs",
+    "noEmitOnError": false,
+    "noImplicitAny": false,
+    "outDir": "./bin",
+    "removeComments": true,
+    "sourceMap": false,
+    "target": "es5"
+  },
+    "exclude": [
+        "./node_modules/**/*",
+        "./corescript-master/**/*"
+    ],
+
+    "include": [
+        "./libs/**/*",
+        "./src/**/*",
+        "./extra/**/*"
+
+    ]
+}
