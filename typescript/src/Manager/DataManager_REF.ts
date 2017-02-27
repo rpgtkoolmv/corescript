@@ -3,11 +3,7 @@
 //
 // The static class that manages the database and game objects.
 
-function DataManager() {
-    throw new Error('This is a static class');
-}
 
-var $dataActors       = null;
 var $dataClasses      = null;
 var $dataSkills       = null;
 var $dataItems        = null;
@@ -37,10 +33,9 @@ var $gameMap          = null;
 var $gamePlayer       = null;
 var $testEvent        = null;
 
-DataManager._globalId       = 'RPGMV';
-DataManager._lastAccessedId = 1;
-DataManager._errorUrl       = null;
 
+
+function DataManager(){};
 DataManager._databaseFiles = [
     { name: '$dataActors',       src: 'Actors.json'       },
     { name: '$dataClasses',      src: 'Classes.json'      },
