@@ -163,6 +163,9 @@ Graphics.render = function(stage) {
         var startTime = Date.now();
         if (stage) {
             this._renderer.render(stage);
+            if (this._renderer.gl && this._renderer.gl.flush) {
+                this._renderer.gl.flush();
+            }
         }
         var endTime = Date.now();
         var elapsed = endTime - startTime;

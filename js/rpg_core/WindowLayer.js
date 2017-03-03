@@ -178,7 +178,11 @@ WindowLayer.prototype.renderWebGL = function(renderer) {
         return;
     }
 
-    renderer.currentRenderer.flush();
+    if (this.children.length==0) {
+        return;
+    }
+
+    renderer.flush();
     this.filterArea.copy(this);
     renderer.filterManager.pushFilter(this, this.filters);
     renderer.currentRenderer.start();
@@ -202,6 +206,7 @@ WindowLayer.prototype.renderWebGL = function(renderer) {
         }
     }
 
+    renderer.flush();
     renderer.filterManager.popFilter();
     renderer.maskManager.popScissorMask();
 
