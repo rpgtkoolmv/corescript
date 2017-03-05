@@ -136,6 +136,7 @@ JsonEx._encode = function(value, circular, depth) {
                 if(value[key] && typeof value[key] === 'object'){
                     if(!value[key]['@m']){
                         value[key] = this._encode(value[key], circular, depth + 1);
+                        delete value[key]['@m'];
                     }else{
                         circular.push([key, value, value[key]]);
                         value[key] = {'@r': value[key]['@c']};
