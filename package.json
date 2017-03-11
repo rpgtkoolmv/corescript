@@ -18,12 +18,16 @@
     "copy:main": "cpx ./js/main.js ./game/js/",
     "copy:template": "cpx ./template/**/* ./game/",
     "copy": "run-p copy:*",
+    "copy-all": "node copy-all.js ./corescript",
+    "zip": "bestzip corescript.zip ./corescript/",
     "test": "run-s build copy",
-    "start": "http-server ./game/"
+    "start": "http-server ./game/",
+    "package": "run-s build copy-all zip"
   },
   "author": "rpgtkoolmv team",
   "license": "MIT",
   "devDependencies": {
+    "bestzip": "^1.1.3",
     "concat-with-sourcemaps": "^1.0.4",
     "cpx": "^1.5.0",
     "http-server": "^0.9.0",
