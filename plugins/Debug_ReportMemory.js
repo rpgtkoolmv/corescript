@@ -17,6 +17,25 @@
  *
  */
 
+/*:ja
+ * @plugindesc メモリ使用量を表示します。
+ * @author RM CoreScript team
+ *
+ * @help
+ * メモリ使用量を表示します。
+ * size: 使用量です。単位はMPixelです。
+ * totalCount: Bitmapの数です
+ * requestCount: 先行読み込みの数です
+ * reservedCount: 予約の数です
+ *
+ * もしプラグインパラメータのリミットを超えてもずっと数値が上がり
+ * 続ける場合は、教えていただけると幸いです。
+ *
+ * @param Max Pixels In MPix
+ * @default 20
+ *
+ */
+
 (function(){
     var parameters = PluginManager.parameters('Debug_ReportMemory');
     var pixels = +parameters['Max Pixels In MPix'] || 20;
