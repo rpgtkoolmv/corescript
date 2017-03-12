@@ -19,6 +19,7 @@
     "copy:template": "cpx ./template/**/* ./game/",
     "copy": "run-p copy:*",
     "test": "run-s build copy",
+    "unittest": "node ./tests/test-save.js",
     "start": "http-server ./game/"
   },
   "author": "rpgtkoolmv team",

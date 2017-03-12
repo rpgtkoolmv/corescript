@@ -125,22 +125,38 @@ JsonEx._encode = function(value, circular, depth) {
     }
     var type = Object.prototype.toString.call(value);
     if (type === '[object Object]' || type === '[object Array]') {
-        value['@m'] = true;
         value['@c'] = JsonEx._generateId();
+
         var constructorName = this._getConstructorName(value);
         if (constructorName !== 'Object' && constructorName !== 'Array') {
             value['@'] = constructorName;
         }
         for (var key in value) {
-            if (value.hasOwnProperty(key)) {
+            if (value.hasOwnProperty(key) && !key.match(/^@./)) {
                 if(value[key] && typeof value[key] === 'object'){
-                    if(!value[key]['@m']){
-                        value[key] = this._encode(value[key], circular, depth + 1);
-                        delete value[key]['@m'];
+                    if(value[key] instanceof Array){
+                        if(value[key]['@c']){
+                            circular.push([key, value, value[key]]);
+                            value[key] = {'@r': value[key]['@c']};
+                        }else{
+                            value[key] = this._encode(value[key], circular, depth + 1);
+                            circular.push([key, value, value[key]]);
+
+                            //wrap array
+                            value[key] = {
+                                '@c': value[key]['@c'],
+                                '@a': value[key]
+                            };
+                        }
                     }else{
-                        circular.push([key, value, value[key]]);
-                        value[key] = {'@r': value[key]['@c']};
+                        if(value[key]['@c']){
+                            circular.push([key, value, value[key]]);
+                            value[key] = {'@r': value[key]['@c']};
+                        }else{
+                            value[key] = this._encode(value[key], circular, depth + 1);
+                        }
                     }
+
                 }else{
                     value[key] = this._encode(value[key], circular, depth + 1);
                 }
@@ -173,7 +189,14 @@ JsonEx._decode = function(value, circular, registry) {
         }
         for (var key in value) {
             if (value.hasOwnProperty(key)) {
+                if(value[key] && value[key]['@a']){
+                    //object is array wrapper
+                    var body = value[key]['@a'];
+                    body['@c'] = value[key]['@c'];
+                    value[key] = body;
+                }
                 if(value[key] && value[key]['@r']){
+                    //object is reference
                     circular.push([key, value, value[key]['@r']])
                 }
                 value[key] = this._decode(value[key], circular, registry);
