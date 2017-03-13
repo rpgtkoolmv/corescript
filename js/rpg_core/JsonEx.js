@@ -84,7 +84,6 @@ JsonEx._cleanMetadata = function(object){
 
     delete object['@'];
     delete object['@c'];
-    delete object['@m'];
 
     if(typeof object === 'object'){
         Object.keys(object).forEach(function(key){
