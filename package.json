@@ -21,6 +21,7 @@
     "copy-all": "node copy-all.js ./corescript",
     "zip": "bestzip corescript.zip ./corescript/",
     "test": "run-s build copy",
+    "unittest": "node ./tests/test-save.js",
     "start": "http-server ./game/",
     "package": "run-s build copy-all zip"
   },
