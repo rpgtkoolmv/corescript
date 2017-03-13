@@ -10,6 +10,17 @@
  * @default 2000
  */
 
+/*:ja
+ * @plugindesc 画像読み込みを遅くします
+ * @author RM CoreScript team
+ *
+ * @help
+ * デバッグ用途で、画像読み込みを遅くします。
+ *
+ * @param Delay
+ * @default 2000
+ */
+
 (function(){
     var parameters = PluginManager.parameters('Debug_ThrottleImage');
     var delay = +parameters['Delay'] || 2000;

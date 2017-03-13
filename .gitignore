@@ -53,3 +53,5 @@ dist/
 *.iml
 game/**/*
 todo.md
+corescript/**/*
+corescript.zip
