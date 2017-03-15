@@ -41,14 +41,78 @@ function Bitmap() {
  *
  */
 
-Bitmap.prototype.initialize = function(width, height) {
-    this._canvas = document.createElement('canvas');
-    this._context = this._canvas.getContext('2d');
-    this._canvas.width = Math.max(width || 0, 1);
-    this._canvas.height = Math.max(height || 0, 1);
-    this._baseTexture = new PIXI.BaseTexture(this._canvas);
-    this._baseTexture.mipmap = false;
-    this._baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+
+Bitmap.prototype._createCanvas = function(width, height){
+    this.__canvas = document.createElement('canvas');
+    this.__context = this.__canvas.getContext('2d');
+
+    this.__canvas.width = Math.max(width || 0, 1);
+    this.__canvas.height = Math.max(height || 0, 1);
+
+    if(this._image){
+        var w = Math.max(this._image.width || 0, 1);
+        var h = Math.max(this._image.height || 0, 1);
+        this.__canvas.width = w;
+        this.__canvas.height = h;
+
+        this._createBaseTexture(this._canvas);
+        this._baseTexture.width = w;
+        this._baseTexture.height = h;
+        this.smooth = this._smooth;
+
+        this.__context.drawImage(this._image, 0, 0);
+    }
+
+    console.log('canvas created: ', this.url);
+
+    this._setDirty();
+};
+
+Bitmap.prototype._createBaseTexture = function(source){
+    this.__baseTexture = new PIXI.BaseTexture(source);
+    this.__baseTexture.mipmap = false;
+    this.__baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+};
+
+//
+//We don't want to waste memory, so creating canvas is deferred.
+//
+Object.defineProperties(Bitmap.prototype, {
+    _canvas: {
+        set: function(){
+            throw new Error('cannot set');
+        },
+        get: function(){
+            if(!this.__canvas)this._createCanvas();
+            return this.__canvas;
+        }
+    },
+    _context: {
+        set: function(){
+            throw new Error('cannot set');
+        },
+        get: function(){
+            if(!this.__context)this._createCanvas();
+            return this.__context;
+        }
+    },
+
+    _baseTexture: {
+        set: function(){
+            throw new Error('cannot set');
+        },
+        get: function(){
+            if(!this.__baseTexture)this._createBaseTexture(this._image || this._canvas);
+            return this.__baseTexture;
+        }
+    }
+});
+
+Bitmap.prototype.initialize = function(width, height, defer) {
+    if(!defer){
+        this._createCanvas(width, height);
+    }
+
     this._image = null;
     this._url = '';
     this._paintOpacity = 255;
@@ -121,7 +185,7 @@ Bitmap.prototype.initialize = function(width, height) {
  * @return Bitmap
  */
 Bitmap.load = function(url) {
-    var bitmap = new Bitmap();
+    var bitmap = new Bitmap(0, 0, true);
     bitmap._decodeAfterRequest = true;
     bitmap._requestImage(url);
 
@@ -250,7 +314,11 @@ Object.defineProperty(Bitmap.prototype, 'context', {
  */
 Object.defineProperty(Bitmap.prototype, 'width', {
     get: function() {
-        return !this.isReady() ? 0 : this._canvas.width;
+        if(this.isReady()){
+            return this._image? this._image.width: this._canvas.width;
+        }
+
+        return 0;
     },
     configurable: true
 });
@@ -263,7 +331,11 @@ Object.defineProperty(Bitmap.prototype, 'width', {
  */
 Object.defineProperty(Bitmap.prototype, 'height', {
     get: function() {
-        return !this.isReady() ? 0 : this._canvas.height;
+        if(this.isReady()){
+            return this._image? this._image.height: this._canvas.height;
+        }
+
+        return 0;
     },
     configurable: true
 });
@@ -294,10 +366,12 @@ Object.defineProperty(Bitmap.prototype, 'smooth', {
     set: function(value) {
         if (this._smooth !== value) {
             this._smooth = value;
-            if (this._smooth) {
-                this._baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
-            } else {
-                this._baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+            if(this.__baseTexture){
+                if (this._smooth) {
+                    this._baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
+                } else {
+                    this._baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+                }
             }
         }
     },
@@ -762,6 +836,8 @@ Bitmap.prototype._drawTextBody = function(text, tx, ty, maxWidth) {
  * @private
  */
 Bitmap.prototype._onLoad = function() {
+    this._image.removeEventListener('load', this._loadListener);
+
     switch(this._loadingState){
         case 'requesting':
             this._loadingState = 'requestCompleted';
@@ -783,12 +859,11 @@ Bitmap.prototype._onLoad = function() {
 Bitmap.prototype.decode = function(){
     switch(this._loadingState){
         case 'requestCompleted': case 'decryptCompleted':
-            this.resize(this._image.width, this._image.height);
-            this._context.drawImage(this._image, 0, 0);
             this._loadingState = 'loaded';
 
             this._setDirty();
             this._callLoadListeners();
+            if(!this.__canvas)this._createBaseTexture(this._image);
             break;
 
             case 'requesting': case 'decrypting':
@@ -818,6 +893,7 @@ Bitmap.prototype._callLoadListeners = function() {
  * @private
  */
 Bitmap.prototype._onError = function() {
+    this._image.removeEventListener('error', this._errorListener);
     this._loadingState = 'error';
 };
 
@@ -841,7 +917,7 @@ Bitmap.prototype.checkDirty = function() {
 };
 
 Bitmap.request = function(url){
-    var bitmap = new Bitmap();
+    var bitmap = new Bitmap(0, 0, true);
     bitmap._url = url;
     bitmap._loadingState = 'pending';
 
@@ -858,8 +934,9 @@ Bitmap.prototype._requestImage = function(url){
         Decrypter.decryptImg(url, this);
     } else {
         this._image.src = url;
-        this._image.onload = Bitmap.prototype._onLoad.bind(this);
-        this._image.onerror = Bitmap.prototype._onError.bind(this);
+
+        this._image.addEventListener('load', this._loadListener = Bitmap.prototype._onLoad.bind(this));
+        this._image.addEventListener('error', this._errorListener = Bitmap.prototype._onError.bind(this));
     }
 };
 
