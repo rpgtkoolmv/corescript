@@ -63,8 +63,6 @@ Bitmap.prototype._createCanvas = function(width, height){
         this.__context.drawImage(this._image, 0, 0);
     }
 
-    console.log('canvas created: ', this.url);
-
     this._setDirty();
 };
 
