@@ -149,7 +149,7 @@ Utils.isSupportPassiveEvent = function() {
     // https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md#feature-detection
     var passive = false;
     var options = Object.defineProperty({}, "passive", {
-        get() { passive = true; }
+        get: function() { passive = true; }
     });
     window.addEventListener("test", null, options);
     Utils._supportPassiveEvent = passive;
