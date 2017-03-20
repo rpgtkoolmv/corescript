@@ -421,7 +421,7 @@ WebAudio.prototype.fadeOut = function(duration) {
     if (this._gainNode) {
         var gain = this._gainNode.gain;
         var currentTime = WebAudio._context.currentTime;
-        gain.setValueAtTime(gain.value, currentTime);
+        gain.setValueAtTime(this._volume, currentTime);
         gain.linearRampToValueAtTime(0, currentTime + duration);
     }
     this._autoPlay = false;
