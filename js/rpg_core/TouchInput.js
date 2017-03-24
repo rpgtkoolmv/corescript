@@ -231,6 +231,21 @@ Object.defineProperty(TouchInput, 'y', {
 });
 
 /**
+ * [read-only] Whether the latest touch event was caused by an actual touch
+ * device (true) or a mouse pointer (false)
+ *
+ * @static
+ * @property y
+ * @type Number
+ */
+Object.defineProperty(TouchInput, 'isTouch', {
+    get: function() {
+        return this._isTouch;
+    },
+    configurable: true
+});
+
+/**
  * [read-only] The time of the last input in milliseconds.
  *
  * @static
@@ -289,7 +304,7 @@ TouchInput._onLeftButtonDown = function(event) {
     if (Graphics.isInsideCanvas(x, y)) {
         this._mousePressed = true;
         this._pressedTime = 0;
-        this._onTrigger(x, y);
+        this._onTrigger(x, y, false);
     }
 };
 
@@ -374,7 +389,7 @@ TouchInput._onTouchStart = function(event) {
             if (event.touches.length >= 2) {
                 this._onCancel(x, y);
             } else {
-                this._onTrigger(x, y);
+                this._onTrigger(x, y, true);
             }
             event.preventDefault();
         }
@@ -450,10 +465,11 @@ TouchInput._onPointerDown = function(event) {
  * @param {Number} y
  * @private
  */
-TouchInput._onTrigger = function(x, y) {
+TouchInput._onTrigger = function(x, y, isTouch) {
     this._events.triggered = true;
     this._x = x;
     this._y = y;
+    this._isTouch = isTouch;
     this._date = Date.now();
 };
 
