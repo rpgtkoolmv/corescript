@@ -384,14 +384,11 @@ Window_Selectable.prototype.onTouch = function(triggered,
 
             // If not a touch event, trigger new entry immediately
             // (since that's expected by a mouse user)
-            if (!isTouch) {
+            if (!isTouch && triggered && this.isTouchOkEnabled()) {
                 // Mute select since trigger sound will play:
                 muteSelect = true;
 
-                // Process click:
-                if (triggered && this.isTouchOkEnabled()) {
-                    this.processOk();
-                }
+                this.processOk();
             }
         }
     } else if (this._stayCount >= 10) {
