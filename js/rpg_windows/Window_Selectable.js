@@ -389,7 +389,9 @@ Window_Selectable.prototype.onTouch = function(triggered,
                 muteSelect = true;
 
                 // Process click:
-                this.processOk();
+                if (triggered && this.isTouchOkEnabled()) {
+                    this.processOk();
+                }
             }
         }
     } else if (this._stayCount >= 10) {
