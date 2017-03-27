@@ -272,6 +272,40 @@ Graphics.endLoading = function() {
 };
 
 /**
+ * Displays the loading error text to the screen.
+ *
+ * @static
+ * @method printLoadingError
+ * @param {String} url The url of the resource failed to load
+ */
+Graphics.printLoadingError = function(url) {
+    if (this._errorPrinter && !this._errorShowed) {
+        this._errorPrinter.innerHTML = this._makeErrorHtml('Loading Error', 'Failed to load: ' + url);
+        var button = document.createElement('button');
+        button.innerHTML = 'Retry';
+        button.style.fontSize = '24px';
+        button.style.color = '#ffffff';
+        button.style.backgroundColor = '#000000';
+        button.onclick = ResourceLoader.retry.bind(ResourceLoader);
+        this._errorPrinter.appendChild(button);
+        this._loadingCount = -Infinity;
+    }
+};
+
+/**
+ * Erases the loading error text.
+ *
+ * @static
+ * @method eraseLoadingError
+ */
+Graphics.eraseLoadingError = function() {
+    if (this._errorPrinter && !this._errorShowed) {
+        this._errorPrinter.innerHTML = '';
+        this.startLoading();
+    }
+};
+
+/**
  * Displays the error text to the screen.
  *
  * @static
@@ -280,6 +314,7 @@ Graphics.endLoading = function() {
  * @param {String} message The message of the error
  */
 Graphics.printError = function(name, message) {
+    this._errorShowed = true;
     if (this._errorPrinter) {
         this._errorPrinter.innerHTML = this._makeErrorHtml(name, message);
     }
@@ -369,9 +404,20 @@ Graphics.isFontLoaded = function(name) {
  * @param {String} src
  */
 Graphics.playVideo = function(src) {
+    this._videoLoader = new ResourceLoader(null, this._playVideo.bind(this, src), this._onVideoError.bind(this));
+    this._playVideo(src);
+};
+
+/**
+ * @static
+ * @method _playVideo
+ * @param {String} src
+ * @private
+ */
+Graphics._playVideo = function(src) {
     this._video.src = src;
     this._video.onloadeddata = this._onVideoLoad.bind(this);
-    this._video.onerror = this._onVideoError.bind(this);
+    this._video.onerror = this._videoLoader.onError();
     this._video.onended = this._onVideoEnd.bind(this);
     this._video.load();
     this._videoLoading = true;

@@ -15,6 +15,9 @@ WebAudio.prototype.initialize = function(url) {
         WebAudio.initialize();
     }
     this.clear();
+    this._loader = new ResourceLoader(url, this._load.bind(this, url), function() {
+        this._hasError = true;
+    });
     this._load(url);
     this._url = url;
 };
@@ -482,9 +485,7 @@ WebAudio.prototype._load = function(url) {
                 this._onXhrLoad(xhr);
             }
         }.bind(this);
-        xhr.onerror = function() {
-            this._hasError = true;
-        }.bind(this);
+        xhr.onerror = this._loader.onError();
         xhr.send();
     }
 };

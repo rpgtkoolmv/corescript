@@ -123,6 +123,7 @@ Bitmap.prototype.initialize = function(width, height) {
 Bitmap.load = function(url) {
     var bitmap = new Bitmap();
     bitmap._decodeAfterRequest = true;
+    bitmap._loader = new ResourceLoader(url, bitmap._requestImage.bind(bitmap, url), bitmap._onError.bind(bitmap));
     bitmap._requestImage(url);
 
     return bitmap;
@@ -791,12 +792,19 @@ Bitmap.prototype.decode = function(){
             this._callLoadListeners();
             break;
 
-            case 'requesting': case 'decrypting':
+        case 'requesting': case 'decrypting':
             this._decodeAfterRequest = true;
+            if (!this._loader) {
+                this._loader = new ResourceLoader(this._url, this._requestImage.bind(this, this._url), this._onError.bind(this));
+                this._image.onerror = this._loader.onError();
+            }
             break;
 
-        case 'pending':
+        case 'pending': case 'error':
             this._decodeAfterRequest = true;
+            if (!this._loader) {
+                this._loader = new ResourceLoader(this._url, this._requestImage.bind(this, this._url), this._onError.bind(this));
+            }
             this._requestImage(this._url);
             break;
     }
@@ -859,7 +867,7 @@ Bitmap.prototype._requestImage = function(url){
     } else {
         this._image.src = url;
         this._image.onload = Bitmap.prototype._onLoad.bind(this);
-        this._image.onerror = Bitmap.prototype._onError.bind(this);
+        this._image.onerror = this._loader ? this._loader.onError() : Bitmap.prototype._onError.bind(this);
     }
 };
 
