@@ -17,7 +17,7 @@ WebAudio.prototype.initialize = function(url) {
     this.clear();
     this._loader = new ResourceLoader(url, this._load.bind(this, url), function() {
         this._hasError = true;
-    });
+    }.bind(this));
     this._load(url);
     this._url = url;
 };
