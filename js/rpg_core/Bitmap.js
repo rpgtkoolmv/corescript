@@ -77,18 +77,12 @@ Bitmap.prototype._createBaseTexture = function(source){
 //
 Object.defineProperties(Bitmap.prototype, {
     _canvas: {
-        set: function(){
-            throw new Error('cannot set');
-        },
         get: function(){
             if(!this.__canvas)this._createCanvas();
             return this.__canvas;
         }
     },
     _context: {
-        set: function(){
-            throw new Error('cannot set');
-        },
         get: function(){
             if(!this.__context)this._createCanvas();
             return this.__context;
@@ -96,9 +90,6 @@ Object.defineProperties(Bitmap.prototype, {
     },
 
     _baseTexture: {
-        set: function(){
-            throw new Error('cannot set');
-        },
         get: function(){
             if(!this.__baseTexture)this._createBaseTexture(this._image || this._canvas);
             return this.__baseTexture;
@@ -835,6 +826,7 @@ Bitmap.prototype._drawTextBody = function(text, tx, ty, maxWidth) {
  */
 Bitmap.prototype._onLoad = function() {
     this._image.removeEventListener('load', this._loadListener);
+    this._image.removeEventListener('error', this._errorListener);
 
     switch(this._loadingState){
         case 'requesting':
@@ -891,6 +883,7 @@ Bitmap.prototype._callLoadListeners = function() {
  * @private
  */
 Bitmap.prototype._onError = function() {
+    this._image.removeEventListener('load', this._loadListener);
     this._image.removeEventListener('error', this._errorListener);
     this._loadingState = 'error';
 };
