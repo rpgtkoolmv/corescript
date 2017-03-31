@@ -97,6 +97,7 @@ Goal: Fix a fatal bug
 Goal: Responding to problems where games can not continue
 - Retry at load error
 - Development of a standard plugin for options
+- Volume Change API
 
 ### ver 1.3
 
