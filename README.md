@@ -98,7 +98,7 @@ Goal: Responding to problems where games can not continue
 - Retry at load error
 - Development of a standard plugin for options
 
-###ver 1.3
+### ver 1.3
 
 Goal: Assist in game development
 - AutoSave
