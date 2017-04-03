@@ -862,6 +862,7 @@ Bitmap.prototype.decode = function(){
             this._setDirty();
             this._callLoadListeners();
             if(!this.__canvas)this._createBaseTexture(this._image);
+            this._image = null;
             break;
 
             case 'requesting': case 'decrypting':
