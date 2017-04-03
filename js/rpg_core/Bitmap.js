@@ -54,11 +54,7 @@ Bitmap.prototype._createCanvas = function(width, height){
         var h = Math.max(this._image.height || 0, 1);
         this.__canvas.width = w;
         this.__canvas.height = h;
-
         this._createBaseTexture(this._canvas);
-        this._baseTexture.width = w;
-        this._baseTexture.height = h;
-        this.smooth = this._smooth;
 
         this.__context.drawImage(this._image, 0, 0);
     }
@@ -70,6 +66,9 @@ Bitmap.prototype._createBaseTexture = function(source){
     this.__baseTexture = new PIXI.BaseTexture(source);
     this.__baseTexture.mipmap = false;
     this.__baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+    this.__baseTexture.width = source.width;
+    this.__baseTexture.height = source.height;
+    this.smooth = this._smooth;
 };
 
 //
@@ -91,11 +90,18 @@ Object.defineProperties(Bitmap.prototype, {
 
     _baseTexture: {
         get: function(){
-            if(!this.__baseTexture)this._createBaseTexture(this._image || this._canvas);
+            if(!this.__baseTexture) this._createBaseTexture(this._image || this.__canvas);
             return this.__baseTexture;
         }
     }
 });
+
+Bitmap.prototype._renewCanvas = function(){
+    var newImage = this._image;
+    if(newImage && this.__canvas && (this.__canvas.width < newImage.width || this.__canvas.height < newImage.height)){
+        this._createCanvas();
+    }
+};
 
 Bitmap.prototype.initialize = function(width, height, defer) {
     if(!defer){
@@ -827,6 +833,8 @@ Bitmap.prototype._drawTextBody = function(text, tx, ty, maxWidth) {
 Bitmap.prototype._onLoad = function() {
     this._image.removeEventListener('load', this._loadListener);
     this._image.removeEventListener('error', this._errorListener);
+
+    this._renewCanvas();
 
     switch(this._loadingState){
         case 'requesting':
