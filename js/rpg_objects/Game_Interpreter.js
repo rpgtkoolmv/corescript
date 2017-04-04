@@ -1740,7 +1740,7 @@ Game_Interpreter.prototype.pluginCommand = function(command, args) {
     // to be overridden by plugins
 };
 
-Game_Interpreter.requestImages = function(list){
+Game_Interpreter.requestImages = function(list, commonList){
     if(!list) return;
 
     list.forEach(function(command){
@@ -1754,7 +1754,15 @@ Game_Interpreter.requestImages = function(list){
             // Common Event
             case 117:
                 var commonEvent = $dataCommonEvents[params[0]];
-                if (commonEvent) Game_Interpreter.requestImages(commonEvent.list);
+                if (commonEvent) {
+                    if (!commonList) {
+                        commonList = [];
+                    }
+                    if (!commonList.contains(params[0])) {
+                        commonList.push(params[0]);
+                        Game_Interpreter.requestImages(commonEvent.list, commonList);
+                    }
+                }
                 break;
 
             // Change Party Member
