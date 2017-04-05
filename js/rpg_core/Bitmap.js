@@ -11,6 +11,9 @@ function Bitmap() {
     this.initialize.apply(this, arguments);
 }
 
+//for iOS. img consumes memory. so reuse it.
+Bitmap._reuseImages = [];
+
 
 /**
  * Bitmap states(Bitmap._loadingState):
@@ -841,6 +844,10 @@ Bitmap.prototype._onLoad = function() {
             this._loadingState = 'requestCompleted';
             if(this._decodeAfterRequest){
                 this.decode();
+            }else{
+                this._loadingState = 'pending';
+                this._reuseImages.push(this._image);
+                this._image = null;
             }
             break;
 
@@ -849,6 +856,10 @@ Bitmap.prototype._onLoad = function() {
             this._loadingState = 'decryptCompleted';
             if(this._decodeAfterRequest){
                 this.decode();
+            }else{
+                this._loadingState = 'pending';
+                this._reuseImages.push(this._image);
+                this._image = null;
             }
             break;
     }
@@ -862,6 +873,7 @@ Bitmap.prototype.decode = function(){
             this._setDirty();
             this._callLoadListeners();
             if(!this.__canvas)this._createBaseTexture(this._image);
+            Bitmap._reuseImages.push(this._image);
             this._image = null;
             break;
 
@@ -925,7 +937,11 @@ Bitmap.request = function(url){
 };
 
 Bitmap.prototype._requestImage = function(url){
-    this._image = new Image();
+    if(Bitmap._reuseImages.length !== 0){
+        this._image = Bitmap._reuseImages.pop();
+    }else{
+        this._image = new Image();
+    }
     this._url = url;
     this._loadingState = 'requesting';
 
