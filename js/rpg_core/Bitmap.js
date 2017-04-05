@@ -24,6 +24,9 @@ Bitmap._reuseImages = [];
  * pending:
  * Url requested, but pending to load until startRequest called
  *
+ * purged:
+ * Url request completed and purged.
+ *
  * requesting:
  * Requesting supplied URI now.
  *
@@ -46,7 +49,7 @@ Bitmap._reuseImages = [];
 
 
 Bitmap.prototype._createCanvas = function(width, height){
-    this.__canvas = document.createElement('canvas');
+    this.__canvas = this.__canvas || document.createElement('canvas');
     this.__context = this.__canvas.getContext('2d');
 
     this.__canvas.width = Math.max(width || 0, 1);
@@ -72,6 +75,17 @@ Bitmap.prototype._createBaseTexture = function(source){
     this.__baseTexture.width = source.width;
     this.__baseTexture.height = source.height;
     this.smooth = this._smooth;
+};
+
+Bitmap.prototype._clearImgInstance = function(){
+    this._image.src = "";
+    this._image.onload = null;
+    this._image.onerror = null;
+    this._errorListener = null;
+    this._loadListener = null;
+
+    Bitmap._reuseImages.push(this._image);
+    this._image = null;
 };
 
 //
@@ -101,9 +115,10 @@ Object.defineProperties(Bitmap.prototype, {
 
 Bitmap.prototype._renewCanvas = function(){
     var newImage = this._image;
-    if(newImage && this.__canvas && (this.__canvas.width < newImage.width || this.__canvas.height < newImage.height)){
-        this._createCanvas();
-    }
+    this._createCanvas();
+    // if(newImage && this.__canvas && (this.__canvas.width < newImage.width || this.__canvas.height < newImage.height)){
+    //     this._createCanvas();
+    // }
 };
 
 Bitmap.prototype.initialize = function(width, height, defer) {
@@ -845,9 +860,8 @@ Bitmap.prototype._onLoad = function() {
             if(this._decodeAfterRequest){
                 this.decode();
             }else{
-                this._loadingState = 'pending';
-                this._reuseImages.push(this._image);
-                this._image = null;
+                this._loadingState = 'purged';
+                this._clearImgInstance();
             }
             break;
 
@@ -857,9 +871,8 @@ Bitmap.prototype._onLoad = function() {
             if(this._decodeAfterRequest){
                 this.decode();
             }else{
-                this._loadingState = 'pending';
-                this._reuseImages.push(this._image);
-                this._image = null;
+                this._loadingState = 'purged';
+                this._clearImgInstance();
             }
             break;
     }
@@ -872,16 +885,14 @@ Bitmap.prototype.decode = function(){
 
             this._setDirty();
             this._callLoadListeners();
-            if(!this.__canvas)this._createBaseTexture(this._image);
-            Bitmap._reuseImages.push(this._image);
-            this._image = null;
+            if(!this.__canvas) this._createBaseTexture(this._image);
             break;
 
             case 'requesting': case 'decrypting':
             this._decodeAfterRequest = true;
             break;
 
-        case 'pending':
+        case 'pending': case 'purged':
             this._decodeAfterRequest = true;
             this._requestImage(this._url);
             break;
