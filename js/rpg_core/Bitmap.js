@@ -123,7 +123,6 @@ Bitmap.prototype.initialize = function(width, height) {
 Bitmap.load = function(url) {
     var bitmap = new Bitmap();
     bitmap._decodeAfterRequest = true;
-    bitmap._loader = new ResourceLoader(url, bitmap._requestImage.bind(bitmap, url), bitmap._onError.bind(bitmap));
     bitmap._requestImage(url);
 
     return bitmap;
@@ -795,16 +794,13 @@ Bitmap.prototype.decode = function(){
         case 'requesting': case 'decrypting':
             this._decodeAfterRequest = true;
             if (!this._loader) {
-                this._loader = new ResourceLoader(this._url, this._requestImage.bind(this, this._url), this._onError.bind(this));
-                this._image.onerror = this._loader.onError();
+                this._loader = ResourceHandler.createLoader(this._url, this._requestImage.bind(this, this._url), this._onError.bind(this));
+                this._image.onerror = this._loader;
             }
             break;
 
         case 'pending': case 'error':
             this._decodeAfterRequest = true;
-            if (!this._loader) {
-                this._loader = new ResourceLoader(this._url, this._requestImage.bind(this, this._url), this._onError.bind(this));
-            }
             this._requestImage(this._url);
             break;
     }
@@ -857,6 +853,9 @@ Bitmap.request = function(url){
 };
 
 Bitmap.prototype._requestImage = function(url){
+    if (this._decodeAfterRequest && !this._loader) {
+        this._loader = ResourceHandler.createLoader(url, this._requestImage.bind(this, url), this._onError.bind(this));
+    }
     this._image = new Image();
     this._url = url;
     this._loadingState = 'requesting';
@@ -867,7 +866,7 @@ Bitmap.prototype._requestImage = function(url){
     } else {
         this._image.src = url;
         this._image.onload = Bitmap.prototype._onLoad.bind(this);
-        this._image.onerror = this._loader ? this._loader.onError() : Bitmap.prototype._onError.bind(this);
+        this._image.onerror = this._loader || Bitmap.prototype._onError.bind(this);
     }
 };
 

@@ -32,6 +32,7 @@ Graphics.initialize = function(width, height, type) {
     this._scale = 1;
     this._realScale = 1;
 
+    this._errorShowed = false;
     this._errorPrinter = null;
     this._canvas = null;
     this._video = null;
@@ -286,7 +287,7 @@ Graphics.printLoadingError = function(url) {
         button.style.fontSize = '24px';
         button.style.color = '#ffffff';
         button.style.backgroundColor = '#000000';
-        button.onclick = ResourceLoader.retry.bind(ResourceLoader);
+        button.onclick = ResourceHandler.retry.bind(ResourceHandler);
         this._errorPrinter.appendChild(button);
         this._loadingCount = -Infinity;
     }
@@ -404,7 +405,7 @@ Graphics.isFontLoaded = function(name) {
  * @param {String} src
  */
 Graphics.playVideo = function(src) {
-    this._videoLoader = new ResourceLoader(null, this._playVideo.bind(this, src), this._onVideoError.bind(this));
+    this._videoLoader = ResourceHandler.createLoader(null, this._playVideo.bind(this, src), this._onVideoError.bind(this));
     this._playVideo(src);
 };
 
@@ -417,7 +418,7 @@ Graphics.playVideo = function(src) {
 Graphics._playVideo = function(src) {
     this._video.src = src;
     this._video.onloadeddata = this._onVideoLoad.bind(this);
-    this._video.onerror = this._videoLoader.onError();
+    this._video.onerror = this._videoLoader;
     this._video.onended = this._onVideoEnd.bind(this);
     this._video.load();
     this._videoLoading = true;

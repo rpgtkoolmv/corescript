@@ -36,7 +36,7 @@ Decrypter.decryptImg = function(url, bitmap) {
             var arrayBuffer = Decrypter.decryptArrayBuffer(requestFile.response);
             bitmap._image.src = Decrypter.createBlobUrl(arrayBuffer);
             bitmap._image.onload = Bitmap.prototype._onLoad.bind(bitmap);
-            bitmap._image.onerror = bitmap._loader ? bitmap._loader.onError() : Bitmap.prototype._onError.bind(bitmap);
+            bitmap._image.onerror = bitmap._loader || Bitmap.prototype._onError.bind(bitmap);
         }
     };
 };

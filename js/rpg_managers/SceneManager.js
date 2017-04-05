@@ -246,8 +246,9 @@ SceneManager.changeScene = function() {
 };
 
 SceneManager.updateScene = function() {
-    if (Input.isTriggered('ok')) {
-        ResourceLoader.retry();
+    if (ResourceHandler.exists() && Input.isTriggered('ok')) {
+        ResourceHandler.retry();
+        this.updateInputData();
     }
     if (this._scene) {
         if (!this._sceneStarted && this._scene.isReady()) {

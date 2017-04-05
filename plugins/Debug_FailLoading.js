@@ -73,7 +73,7 @@
                     this._onXhrLoad(xhr);
                 }
             }.bind(this);
-            xhr.onerror = this._loader.onError();
+            xhr.onerror = this._loader;
             xhr.send();
         }
     };
@@ -100,7 +100,7 @@
                 DataManager.onLoad(window[name]);
             }
         };
-        xhr.onerror = this._mapLoader ? this._mapLoader.onError() : function() {
+        xhr.onerror = this._mapLoader || function() {
             DataManager._errorUrl = DataManager._errorUrl || url;
         };
         window[name] = null;
