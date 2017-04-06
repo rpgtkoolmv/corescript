@@ -68,8 +68,10 @@ SceneManager.initGraphics = function() {
 SceneManager.preferableRendererType = function() {
     if (Utils.isOptionValid('canvas')) {
         return 'canvas';
-    } else {
+    } else if (Utils.isOptionValid('webgl')) {
         return 'webgl';
+    } else {
+        return 'auto';
     }
 };
 

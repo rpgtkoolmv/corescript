@@ -74,7 +74,7 @@ npm start
 
 ## Roadmap
 
-Development will be done according to the roadmap. Currently we are developing ver 1.1.
+Development will be done according to the roadmap. Currently we are developing ver 1.2
 
 ### ver 1.0
 
@@ -91,45 +91,33 @@ Goal: Fix a fatal bug
 - Responding to sound problems of google Chrome
 - Fixed bugs already known
 
+
 ### ver 1.2
+
 Goal: Responding to problems where games can not continue
 - Retry at load error
-- WebGL conversion
-- Resolving font load error
 - Development of a standard plugin for options
+- Volume Change API
 
 ### ver 1.3
 
-Goal: Refactoring
-- 'Use strict';
-- Make the overall outlook better
-- Add some comment to the source code
- 
-### ver 1.4
-
-Goal: Confirm specification
-- Development of test game
-- Make json's datasheet
-- Identification of edge case
-
-### ver 1.5
-
-
 Goal: Assist in game development
+- AutoSave
 - Simple conflict check for plugins
 - Guidelines and sample writing for plugins
 - Refined bug report
 
-### ver 1.6
+### ver 1.4
 
 Goal: Accelerate speed, reduce experience time
 - High-speed loading of sound source
 - Progress bar on load screen
 - Lightweight Save File
 
-### ver 1.7
+### ver 1.5
 
 Goal: Improve UI
+- Multilingual
 - Multi-touch
 - Battle system touch compliance
 - Touch correspondence of basic system such as equipment
