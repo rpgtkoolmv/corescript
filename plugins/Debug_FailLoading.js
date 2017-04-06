@@ -3,19 +3,19 @@
  * @author RM CoreScript team
  *
  * @param failImage
- * @desc Probability of image loading failure
+ * @desc Probability of image loading failure (0-1)
  * @default 0.5
  *
  * @param failAudio
- * @desc Probability of audio loading failure
+ * @desc Probability of audio loading failure (0-1)
  * @default 0.5
  *
  * @param failMovie
- * @desc Probability of movie loading failure
+ * @desc Probability of movie loading failure (0-1)
  * @default 0.5
  *
  * @param failMapData
- * @desc Probability of map data loading failure
+ * @desc Probability of map data loading failure (0-1)
  * @default 0.5
  */
 
@@ -24,19 +24,19 @@
  * @author RM CoreScript team
  *
  * @param failImage
- * @desc 画像の読み込みに失敗する確率
+ * @desc 画像の読み込みに失敗する確率 (0-1)
  * @default 0.5
  *
  * @param failAudio
- * @desc 音声の読み込みに失敗する確率
+ * @desc 音声の読み込みに失敗する確率 (0-1)
  * @default 0.5
  *
  * @param failMovie
- * @desc 動画の読み込みに失敗する確率
+ * @desc 動画の読み込みに失敗する確率 (0-1)
  * @default 0.5
  *
  * @param failMapData
- * @desc マップデータ読み込みに失敗する確率
+ * @desc マップデータ読み込みに失敗する確率 (0-1)
  * @default 0.5
  */
 
