@@ -448,8 +448,8 @@ Bitmap.prototype.clear = function() {
  * @method fillRect
  * @param {Number} x The x coordinate for the upper-left corner
  * @param {Number} y The y coordinate for the upper-left corner
- * @param {Number} width The width of the rectangle to clear
- * @param {Number} height The height of the rectangle to clear
+ * @param {Number} width The width of the rectangle to fill
+ * @param {Number} height The height of the rectangle to fill
  * @param {String} color The color of the rectangle in CSS format
  */
 Bitmap.prototype.fillRect = function(x, y, width, height, color) {
@@ -477,11 +477,11 @@ Bitmap.prototype.fillAll = function(color) {
  * @method gradientFillRect
  * @param {Number} x The x coordinate for the upper-left corner
  * @param {Number} y The y coordinate for the upper-left corner
- * @param {Number} width The width of the rectangle to clear
- * @param {Number} height The height of the rectangle to clear
- * @param {String} color1 The start color of the gradation
- * @param {String} color2 The end color of the gradation
- * @param {Boolean} vertical Whether it draws a vertical gradient
+ * @param {Number} width The width of the rectangle to fill
+ * @param {Number} height The height of the rectangle to fill
+ * @param {String} color1 The gradient starting color
+ * @param {String} color2 The gradient ending color
+ * @param {Boolean} vertical Wether the gradient should be draw as vertical or not
  */
 Bitmap.prototype.gradientFillRect = function(x, y, width, height, color1,
                                              color2, vertical) {
@@ -502,11 +502,11 @@ Bitmap.prototype.gradientFillRect = function(x, y, width, height, color1,
 };
 
 /**
- * Draw the filled circle.
+ * Draw a bitmap in the shape of a circle
  *
  * @method drawCircle
- * @param {Number} x The x coordinate of the center of the circle
- * @param {Number} y The y coordinate of the center of the circle
+ * @param {Number} x The x coordinate based on the circle center
+ * @param {Number} y The y coordinate based on the circle center
  * @param {Number} radius The radius of the circle
  * @param {String} color The color of the circle in CSS format
  */
