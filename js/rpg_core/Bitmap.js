@@ -791,11 +791,15 @@ Bitmap.prototype.decode = function(){
             this._callLoadListeners();
             break;
 
-            case 'requesting': case 'decrypting':
+        case 'requesting': case 'decrypting':
             this._decodeAfterRequest = true;
+            if (!this._loader) {
+                this._loader = ResourceHandler.createLoader(this._url, this._requestImage.bind(this, this._url), this._onError.bind(this));
+                this._image.onerror = this._loader;
+            }
             break;
 
-        case 'pending':
+        case 'pending': case 'error':
             this._decodeAfterRequest = true;
             this._requestImage(this._url);
             break;
@@ -849,6 +853,9 @@ Bitmap.request = function(url){
 };
 
 Bitmap.prototype._requestImage = function(url){
+    if (this._decodeAfterRequest && !this._loader) {
+        this._loader = ResourceHandler.createLoader(url, this._requestImage.bind(this, url), this._onError.bind(this));
+    }
     this._image = new Image();
     this._url = url;
     this._loadingState = 'requesting';
@@ -859,7 +866,7 @@ Bitmap.prototype._requestImage = function(url){
     } else {
         this._image.src = url;
         this._image.onload = Bitmap.prototype._onLoad.bind(this);
-        this._image.onerror = Bitmap.prototype._onError.bind(this);
+        this._image.onerror = this._loader || Bitmap.prototype._onError.bind(this);
     }
 };
 
