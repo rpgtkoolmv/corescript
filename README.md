@@ -3,35 +3,38 @@
 
 ## Introduction
 
-"RPG Maker MV CoreScript" is a game engine for 2D games that runs on the browser. "RPG Maker MV CoreScript" is designed as a game engine dedicated to "RPG Maker MV", the latest work of "RPG Maker" series of 2DRPG world number one software with more than 20 years history, and more than 1000 games are running. (February 2017)
+"RPG Maker MV CoreScript" is a multiplatform game engine for 2D-RPG development. "RPG Maker MV CoreScript" is designed as a game engine dedicated to "RPG Maker MV", the latest in the award-winning "RPG Maker" series. As the number one 2D-RPG development platform in the world, "RPG Maker" has over 20 years of history and, as of February of 2017, has been used to develop more than 1,000 games worldwide.
 
 ## What is this project?
 
-This project is a project aimed at improving "RPG Maker MV CoreScript" better by the community and supporting many game creators.
+This project is a concerted effort by the community to improve and enhance the "RPG Maker MV CoreScript" for the benefit of game and plugin developers alike.
 
-The core script developed by this project is widely distributed to RPG Maker users through KADOKAWA.
-The RPGMaker MV community is centered around plugins. Therefore, Ver1 series is developed while minimizing destructive change.
+As releases become stable, the core script developed by this project will be widely distributed to RPG Maker users by KADOKAWA, via RPG Maker MV's software updates.
+
+Since much of the RPGMaker MV community revolves around plugins, the version 1.0 series aims to limit sweeping changes in order to minimize incompatability with current plugins.
 
 ## How to use
 
-There are three releases
+There are currently three release versions:
 
-- Develop --- Development version. You can download it with GitHub.
-- RC --- Release candidate version. It is for game developers to do the test. It will be distributed from game posting site "RPG Atsumaru".
-- Stable --- Stable version. KADOKAWA is widely distributed to general users through Steam and official website.
+- Develop --- the Development version, which can be downloaded via GitHub.
+- RC --- the Release candidate, which is available to game developers for testing. This version will be distributed through the "RPG Atsumaru" website, found here: http://blog.nicovideo.jp/atsumaru/atsumaru-corescript.html
+- Stable --- the Stable version, which will be widely distributed by KADOKAWA to general users through Steam and the official RPG Maker website.
 
 ## How to build
 
-To build Corescripts, install Node.js, change working directory, and just type in console:
+To build the RPG Maker MV Corescripts, you'll first need to install "Node.js", which can be downloaded from this website: https://nodejs.org/en/
+
+Next, open a console, change the working directory to the Corescript folder you downloaded (usually "Corescript-________"), and then enter the following commands:
 
 ```
 npm install
 npm run build
 ```
 
-Then you can find Corescripts in folder “dist”
+This will create a folder called "dist" inside the "Corescript-________" directory, inside of which you will find all of the compiled Corescripts.
 
-If you want to build indivisually, Here’s some command,
+If you want to build each Corescript individually, you can use the following commands:
 ```
 npm run build:core
 npm run build:managers
