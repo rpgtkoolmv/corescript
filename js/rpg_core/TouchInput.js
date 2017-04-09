@@ -250,7 +250,7 @@ Object.defineProperty(TouchInput, 'date', {
  * @private
  */
 TouchInput._setupEventHandlers = function() {
-    var isSupportPassive = Utils.isSupportPassive();
+    var isSupportPassive = Utils.isSupportPassiveEvent();
     document.addEventListener('mousedown', this._onMouseDown.bind(this));
     document.addEventListener('mousemove', this._onMouseMove.bind(this));
     document.addEventListener('mouseup', this._onMouseUp.bind(this));
