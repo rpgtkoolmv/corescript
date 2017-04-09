@@ -22,6 +22,29 @@ WebAudio.prototype.initialize = function(url) {
     this._url = url;
 };
 
+WebAudio._masterVolume = 1;
+
+/**
+ * The master volume of the all audio and videos. (min: 0, max: 1)
+ *
+ * @static
+ * @property masterVolume
+ * @type Number
+ */
+Object.defineProperty(WebAudio, 'masterVolume', {
+    get: function() {
+        return this._masterVolume;
+    },
+    set: function(value) {
+        this._masterVolume = value;
+        if (this._masterGainNode) {
+            this._masterGainNode.gain.setValueAtTime(this._masterVolume, this._context.currentTime);
+        }
+        Graphics.setVideoVolume(this._masterVolume);
+    },
+    configurable: true
+});
+
 WebAudio._context        = null;
 WebAudio._masterGainNode = null;
 WebAudio._initialized    = false;
@@ -115,7 +138,7 @@ WebAudio._createMasterGainNode = function() {
     var context = WebAudio._context;
     if (context) {
         this._masterGainNode = context.createGain();
-        this._masterGainNode.gain.setValueAtTime(1, context.currentTime);
+        this._masterGainNode.gain.setValueAtTime(this._masterVolume, context.currentTime);
         this._masterGainNode.connect(context.destination);
     }
 };
@@ -209,8 +232,8 @@ WebAudio._fadeIn = function(duration) {
     if (this._masterGainNode) {
         var gain = this._masterGainNode.gain;
         var currentTime = WebAudio._context.currentTime;
-        gain.setValueAtTime(gain.value, currentTime);
-        gain.linearRampToValueAtTime(1, currentTime + duration);
+        gain.setValueAtTime(0, currentTime);
+        gain.linearRampToValueAtTime(this._masterVolume, currentTime + duration);
     }
 };
 
@@ -224,7 +247,7 @@ WebAudio._fadeOut = function(duration) {
     if (this._masterGainNode) {
         var gain = this._masterGainNode.gain;
         var currentTime = WebAudio._context.currentTime;
-        gain.setValueAtTime(gain.value, currentTime);
+        gain.setValueAtTime(this._masterVolume, currentTime);
         gain.linearRampToValueAtTime(0, currentTime + duration);
     }
 };

@@ -38,6 +38,7 @@ Graphics.initialize = function(width, height, type) {
     this._video = null;
     this._videoUnlocked = !Utils.isMobileDevice();
     this._videoLoading = false;
+    this._videoVolume = 1;
     this._upperCanvas = null;
     this._renderer = null;
     this._fpsMeter = null;
@@ -448,6 +449,20 @@ Graphics.canPlayVideoType = function(type) {
 };
 
 /**
+ * Sets volume of a video.
+ *
+ * @static
+ * @method setVideoVolume
+ * @param {Number} value
+ */
+Graphics.setVideoVolume = function(value) {
+    this._videoVolume = value;
+    if (this._video) {
+        this._video.volume = this._videoVolume;
+    }
+};
+
+/**
  * Converts an x coordinate on the page to the corresponding
  * x coordinate on the canvas area.
  *
@@ -772,6 +787,7 @@ Graphics._createVideo = function() {
     this._video.id = 'GameVideo';
     this._video.style.opacity = 0;
     this._video.setAttribute('playsinline', '');
+    this._video.volume = this._videoVolume;
     this._updateVideo();
     makeVideoPlayableInline(this._video);
     document.body.appendChild(this._video);
