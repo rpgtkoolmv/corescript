@@ -8,6 +8,7 @@
  * @param {Number} height The height of the bitmap
  */
 function Bitmap() {
+    this._defer = arguments[2];
     this.initialize.apply(this, arguments);
 }
 
@@ -115,14 +116,13 @@ Object.defineProperties(Bitmap.prototype, {
 
 Bitmap.prototype._renewCanvas = function(){
     var newImage = this._image;
-    this._createCanvas();
-    // if(newImage && this.__canvas && (this.__canvas.width < newImage.width || this.__canvas.height < newImage.height)){
-    //     this._createCanvas();
-    // }
+    if(newImage && this.__canvas && (this.__canvas.width < newImage.width || this.__canvas.height < newImage.height)){
+        this._createCanvas();
+    }
 };
 
-Bitmap.prototype.initialize = function(width, height, defer) {
-    if(!defer){
+Bitmap.prototype.initialize = function(width, height) {
+    if(!this._defer){
         this._createCanvas(width, height);
     }
 
@@ -883,9 +883,9 @@ Bitmap.prototype.decode = function(){
         case 'requestCompleted': case 'decryptCompleted':
             this._loadingState = 'loaded';
 
+            if(!this.__canvas) this._createBaseTexture(this._image);
             this._setDirty();
             this._callLoadListeners();
-            if(!this.__canvas) this._createBaseTexture(this._image);
             break;
 
             case 'requesting': case 'decrypting':
