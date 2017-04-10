@@ -35,8 +35,8 @@ Decrypter.decryptImg = function(url, bitmap) {
         if(this.status < Decrypter._xhrOk) {
             var arrayBuffer = Decrypter.decryptArrayBuffer(requestFile.response);
             bitmap._image.src = Decrypter.createBlobUrl(arrayBuffer);
-            bitmap._image.addEventListener('load', bitmap._loadListener = Bitmap.prototype._onLoad.bind(this));
-            bitmap._image.addEventListener('error', bitmap._errorListener = Bitmap.prototype._onError.bind(this));
+            bitmap._image.addEventListener('load', bitmap._loadListener = Bitmap.prototype._onLoad.bind(bitmap));
+            bitmap._image.addEventListener('error', bitmap._errorListener = Bitmap.prototype._onError.bind(bitmap));
         }
     };
 };
