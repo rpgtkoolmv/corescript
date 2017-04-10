@@ -22,29 +22,7 @@ WebAudio.prototype.initialize = function(url) {
     this._url = url;
 };
 
-WebAudio._masterVolume = 1;
-
-/**
- * The master volume of the all audio and videos. (min: 0, max: 1)
- *
- * @static
- * @property masterVolume
- * @type Number
- */
-Object.defineProperty(WebAudio, 'masterVolume', {
-    get: function() {
-        return this._masterVolume;
-    },
-    set: function(value) {
-        this._masterVolume = value;
-        if (this._masterGainNode) {
-            this._masterGainNode.gain.setValueAtTime(this._masterVolume, this._context.currentTime);
-        }
-        Graphics.setVideoVolume(this._masterVolume);
-    },
-    configurable: true
-});
-
+WebAudio._masterVolume   = 1;
 WebAudio._context        = null;
 WebAudio._masterGainNode = null;
 WebAudio._initialized    = false;
@@ -97,6 +75,20 @@ WebAudio.canPlayM4a = function() {
         this.initialize();
     }
     return !!this._canPlayM4a;
+};
+
+/**
+ * Sets the master volume of the all audio.
+ *
+ * @static
+ * @method setMasterVolume
+ * @param {Number} value Master volume (min: 0, max: 1)
+ */
+WebAudio.setMasterVolume = function(value) {
+    this._masterVolume = value;
+    if (this._masterGainNode) {
+        this._masterGainNode.gain.setValueAtTime(this._masterVolume, this._context.currentTime);
+    }
 };
 
 /**

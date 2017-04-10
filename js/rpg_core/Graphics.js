@@ -10,7 +10,7 @@ function Graphics() {
 
 Graphics._cssFontLoading =  document.fonts && document.fonts.ready;
 Graphics._fontLoaded = null;
-
+Graphics._videoVolume = 1;
 
 /**
  * Initializes the graphics system.
@@ -38,7 +38,6 @@ Graphics.initialize = function(width, height, type) {
     this._video = null;
     this._videoUnlocked = !Utils.isMobileDevice();
     this._videoLoading = false;
-    this._videoVolume = 1;
     this._upperCanvas = null;
     this._renderer = null;
     this._fpsMeter = null;
