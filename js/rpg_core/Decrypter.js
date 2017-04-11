@@ -39,6 +39,14 @@ Decrypter.decryptImg = function(url, bitmap) {
             bitmap._image.onerror = bitmap._loader || Bitmap.prototype._onError.bind(bitmap);
         }
     };
+
+    requestFile.onerror = function () {
+        if (bitmap._loader) {
+            bitmap._loader();
+        } else {
+            bitmap._onError();
+        }
+    };
 };
 
 Decrypter.decryptHTML5Audio = function(url, bgm, pos) {
