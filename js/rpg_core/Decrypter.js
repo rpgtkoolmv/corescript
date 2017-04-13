@@ -37,6 +37,10 @@ Decrypter.decryptImg = function(url, bitmap) {
             bitmap._image.src = Decrypter.createBlobUrl(arrayBuffer);
             bitmap._image.addEventListener('load', bitmap._loadListener = Bitmap.prototype._onLoad.bind(bitmap));
             bitmap._image.addEventListener('error', bitmap._errorListener = Bitmap.prototype._onError.bind(bitmap));
+
+            //todo liply resource
+            bitmap._image.onload = Bitmap.prototype._onLoad.bind(bitmap);
+            bitmap._image.onerror = bitmap._loader || Bitmap.prototype._onError.bind(bitmap);
         }
     };
 };

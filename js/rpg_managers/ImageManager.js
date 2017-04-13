@@ -116,10 +116,6 @@ ImageManager.clear = function() {
 };
 
 ImageManager.isReady = function() {
-    var bitmap = null;
-    if(bitmap = this._imageCache.getErrorBitmap()){
-        throw new Error('Failed to load: ' + bitmap.url);
-    }
     return this._imageCache.isReady();
 };
 

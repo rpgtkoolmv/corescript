@@ -45,7 +45,6 @@ Scene_Base.prototype.start = function() {
 Scene_Base.prototype.update = function() {
     this.updateFade();
     this.updateChildren();
-    AudioManager.checkErrors();
 };
 
 Scene_Base.prototype.stop = function() {
