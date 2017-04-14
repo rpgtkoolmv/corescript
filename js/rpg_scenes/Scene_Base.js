@@ -129,6 +129,7 @@ Scene_Base.prototype.stop = function() {
  * @method isBusy
  * @instance 
  * @return {boolean} true if the scene is currently busy doing a fade
+ * @memberof Scene_Base
  */
 Scene_Base.prototype.isBusy = function() {
     return this._fadeDuration > 0;
