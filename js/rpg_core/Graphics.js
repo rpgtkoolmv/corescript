@@ -10,7 +10,7 @@ function Graphics() {
 
 Graphics._cssFontLoading =  document.fonts && document.fonts.ready;
 Graphics._fontLoaded = null;
-
+Graphics._videoVolume = 1;
 
 /**
  * Initializes the graphics system.
@@ -448,6 +448,20 @@ Graphics.canPlayVideoType = function(type) {
 };
 
 /**
+ * Sets volume of a video.
+ *
+ * @static
+ * @method setVideoVolume
+ * @param {Number} value
+ */
+Graphics.setVideoVolume = function(value) {
+    this._videoVolume = value;
+    if (this._video) {
+        this._video.volume = this._videoVolume;
+    }
+};
+
+/**
  * Converts an x coordinate on the page to the corresponding
  * x coordinate on the canvas area.
  *
@@ -772,6 +786,7 @@ Graphics._createVideo = function() {
     this._video.id = 'GameVideo';
     this._video.style.opacity = 0;
     this._video.setAttribute('playsinline', '');
+    this._video.volume = this._videoVolume;
     this._updateVideo();
     makeVideoPlayableInline(this._video);
     document.body.appendChild(this._video);
