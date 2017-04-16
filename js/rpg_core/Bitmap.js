@@ -767,6 +767,9 @@ Bitmap.prototype._onLoad = function() {
             this._loadingState = 'requestCompleted';
             if(this._decodeAfterRequest){
                 this.decode();
+            }else{
+                this._loadingState = 'pending';
+                this._image = null;
             }
             break;
 
@@ -775,6 +778,9 @@ Bitmap.prototype._onLoad = function() {
             this._loadingState = 'decryptCompleted';
             if(this._decodeAfterRequest){
                 this.decode();
+            }else{
+                this._loadingState = 'pending';
+                this._image = null;
             }
             break;
     }
