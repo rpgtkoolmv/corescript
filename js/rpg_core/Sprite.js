@@ -122,6 +122,40 @@ Object.defineProperty(Sprite.prototype, 'opacity', {
 });
 
 /**
+ * Flip the sprite on the horizontal axis.
+ *
+ * @property mirrorX
+ * @type Boolean
+ */
+Object.defineProperty(Sprite.prototype, 'mirrorX', {
+    set: function(value){
+        if(value === true){
+            this.scale.x = -1;
+        } else {
+            this.scale.x = 1;
+        }
+    },
+    configurable : true
+});
+
+/**
+ * Flip the sprite on the vertical axis.
+ *
+ * @property mirrorY
+ * @type Boolean
+ */
+Object.defineProperty(Sprite.prototype, 'mirrorY', {
+    set: function(value) {
+        if(value === true){
+            this.scale.y = -1;
+        } else {
+            this.scale.y = 1;
+        }
+    },
+    configurable: true
+});
+
+/**
  * Updates the sprite for each frame.
  *
  * @method update
