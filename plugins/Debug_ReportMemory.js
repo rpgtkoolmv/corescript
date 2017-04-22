@@ -30,7 +30,7 @@
  * usedSize: 今ゲーム中で実際に使用されている画像の合計サイズです。
  * 　　　　　この値が150MPix辺りを越えると、一部モバイルデバイスがクラッシュします。
  * cachedSize: キャッシュされている使用量です。単位はMPixelです。
- * cacheLimit: キャッシュできる上限値です。cachedSizeを越えることもありますが、少しだけなら正常です。
+ * cacheLimit: キャッシュできる上限値です。cachedSizeの方が上回ることもありますが、少しだけなら正常です。
  * totalCount: キャッシュされているBitmapの数です
  * requestCount: 先行読み込みの数です
  * reservedCount: 予約の数です
