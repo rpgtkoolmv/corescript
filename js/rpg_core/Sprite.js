@@ -128,6 +128,13 @@ Object.defineProperty(Sprite.prototype, 'opacity', {
  * @type Boolean
  */
 Object.defineProperty(Sprite.prototype, 'mirrorX', {
+    get: function(){
+        if(this.scale.x === -1){
+            return true;
+        } else {
+            return false;
+        }
+    },
     set: function(value){
         if(value === true){
             this.scale.x = -1;
@@ -145,6 +152,13 @@ Object.defineProperty(Sprite.prototype, 'mirrorX', {
  * @type Boolean
  */
 Object.defineProperty(Sprite.prototype, 'mirrorY', {
+    get: function(){
+        if(scale.y === -1){
+            return true;
+        } else {
+            return false;
+        }
+    },
     set: function(value) {
         if(value === true){
             this.scale.y = -1;
