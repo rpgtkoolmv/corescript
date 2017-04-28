@@ -2,7 +2,7 @@ function ImageCache(){
     this.initialize.apply(this, arguments);
 }
 
-ImageCache.limit = 20 * 1000 * 1000;
+ImageCache.limit = 10 * 1000 * 1000;
 
 ImageCache.prototype.initialize = function(){
     this._items = {};

@@ -8,8 +8,12 @@
  * @param {Number} height The height of the bitmap
  */
 function Bitmap() {
+    this._defer = arguments[2];
     this.initialize.apply(this, arguments);
 }
+
+//for iOS. img consumes memory. so reuse it.
+Bitmap._reuseImages = [];
 
 
 /**
@@ -20,6 +24,9 @@ function Bitmap() {
  *
  * pending:
  * Url requested, but pending to load until startRequest called
+ *
+ * purged:
+ * Url request completed and purged.
  *
  * requesting:
  * Requesting supplied URI now.
@@ -41,14 +48,84 @@ function Bitmap() {
  *
  */
 
+
+Bitmap.prototype._createCanvas = function(width, height){
+    this.__canvas = this.__canvas || document.createElement('canvas');
+    this.__context = this.__canvas.getContext('2d');
+
+    this.__canvas.width = Math.max(width || 0, 1);
+    this.__canvas.height = Math.max(height || 0, 1);
+
+    if(this._image){
+        var w = Math.max(this._image.width || 0, 1);
+        var h = Math.max(this._image.height || 0, 1);
+        this.__canvas.width = w;
+        this.__canvas.height = h;
+        this._createBaseTexture(this._canvas);
+
+        this.__context.drawImage(this._image, 0, 0);
+    }
+
+    this._setDirty();
+};
+
+Bitmap.prototype._createBaseTexture = function(source){
+    this.__baseTexture = new PIXI.BaseTexture(source);
+    this.__baseTexture.mipmap = false;
+    this.__baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+    this.__baseTexture.width = source.width;
+    this.__baseTexture.height = source.height;
+    this.smooth = this._smooth;
+};
+
+Bitmap.prototype._clearImgInstance = function(){
+    this._image.src = "";
+    this._image.onload = null;
+    this._image.onerror = null;
+    this._errorListener = null;
+    this._loadListener = null;
+
+    Bitmap._reuseImages.push(this._image);
+    this._image = null;
+};
+
+//
+//We don't want to waste memory, so creating canvas is deferred.
+//
+Object.defineProperties(Bitmap.prototype, {
+    _canvas: {
+        get: function(){
+            if(!this.__canvas)this._createCanvas();
+            return this.__canvas;
+        }
+    },
+    _context: {
+        get: function(){
+            if(!this.__context)this._createCanvas();
+            return this.__context;
+        }
+    },
+
+    _baseTexture: {
+        get: function(){
+            if(!this.__baseTexture) this._createBaseTexture(this._image || this.__canvas);
+            return this.__baseTexture;
+        }
+    }
+});
+
+Bitmap.prototype._renewCanvas = function(){
+    var newImage = this._image;
+    if(newImage && this.__canvas && (this.__canvas.width < newImage.width || this.__canvas.height < newImage.height)){
+        this._createCanvas();
+    }
+};
+
 Bitmap.prototype.initialize = function(width, height) {
-    this._canvas = document.createElement('canvas');
-    this._context = this._canvas.getContext('2d');
-    this._canvas.width = Math.max(width || 0, 1);
-    this._canvas.height = Math.max(height || 0, 1);
-    this._baseTexture = new PIXI.BaseTexture(this._canvas);
-    this._baseTexture.mipmap = false;
-    this._baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+    if(!this._defer){
+        this._createCanvas(width, height);
+    }
+
     this._image = null;
     this._url = '';
     this._paintOpacity = 255;
@@ -121,7 +198,7 @@ Bitmap.prototype.initialize = function(width, height) {
  * @return Bitmap
  */
 Bitmap.load = function(url) {
-    var bitmap = new Bitmap();
+    var bitmap = new Bitmap(0, 0, true);
     bitmap._decodeAfterRequest = true;
     bitmap._requestImage(url);
 
@@ -250,7 +327,11 @@ Object.defineProperty(Bitmap.prototype, 'context', {
  */
 Object.defineProperty(Bitmap.prototype, 'width', {
     get: function() {
-        return !this.isReady() ? 0 : this._canvas.width;
+        if(this.isReady()){
+            return this._image? this._image.width: this._canvas.width;
+        }
+
+        return 0;
     },
     configurable: true
 });
@@ -263,7 +344,11 @@ Object.defineProperty(Bitmap.prototype, 'width', {
  */
 Object.defineProperty(Bitmap.prototype, 'height', {
     get: function() {
-        return !this.isReady() ? 0 : this._canvas.height;
+        if(this.isReady()){
+            return this._image? this._image.height: this._canvas.height;
+        }
+
+        return 0;
     },
     configurable: true
 });
@@ -294,10 +379,12 @@ Object.defineProperty(Bitmap.prototype, 'smooth', {
     set: function(value) {
         if (this._smooth !== value) {
             this._smooth = value;
-            if (this._smooth) {
-                this._baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
-            } else {
-                this._baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+            if(this.__baseTexture){
+                if (this._smooth) {
+                    this._baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
+                } else {
+                    this._baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+                }
             }
         }
     },
@@ -762,11 +849,19 @@ Bitmap.prototype._drawTextBody = function(text, tx, ty, maxWidth) {
  * @private
  */
 Bitmap.prototype._onLoad = function() {
+    this._image.removeEventListener('load', this._loadListener);
+    this._image.removeEventListener('error', this._errorListener);
+
+    this._renewCanvas();
+
     switch(this._loadingState){
         case 'requesting':
             this._loadingState = 'requestCompleted';
             if(this._decodeAfterRequest){
                 this.decode();
+            }else{
+                this._loadingState = 'purged';
+                this._clearImgInstance();
             }
             break;
 
@@ -775,6 +870,9 @@ Bitmap.prototype._onLoad = function() {
             this._loadingState = 'decryptCompleted';
             if(this._decodeAfterRequest){
                 this.decode();
+            }else{
+                this._loadingState = 'purged';
+                this._clearImgInstance();
             }
             break;
     }
@@ -783,10 +881,9 @@ Bitmap.prototype._onLoad = function() {
 Bitmap.prototype.decode = function(){
     switch(this._loadingState){
         case 'requestCompleted': case 'decryptCompleted':
-            this.resize(this._image.width, this._image.height);
-            this._context.drawImage(this._image, 0, 0);
             this._loadingState = 'loaded';
 
+            if(!this.__canvas) this._createBaseTexture(this._image);
             this._setDirty();
             this._callLoadListeners();
             break;
@@ -799,7 +896,7 @@ Bitmap.prototype.decode = function(){
             }
             break;
 
-        case 'pending': case 'error':
+        case 'pending': case 'purged': case 'error':
             this._decodeAfterRequest = true;
             this._requestImage(this._url);
             break;
@@ -822,6 +919,8 @@ Bitmap.prototype._callLoadListeners = function() {
  * @private
  */
 Bitmap.prototype._onError = function() {
+    this._image.removeEventListener('load', this._loadListener);
+    this._image.removeEventListener('error', this._errorListener);
     this._loadingState = 'error';
 };
 
@@ -845,7 +944,7 @@ Bitmap.prototype.checkDirty = function() {
 };
 
 Bitmap.request = function(url){
-    var bitmap = new Bitmap();
+    var bitmap = new Bitmap(0, 0, true);
     bitmap._url = url;
     bitmap._loadingState = 'pending';
 
@@ -853,9 +952,16 @@ Bitmap.request = function(url){
 };
 
 Bitmap.prototype._requestImage = function(url){
+    if(Bitmap._reuseImages.length !== 0){
+        this._image = Bitmap._reuseImages.pop();
+    }else{
+        this._image = new Image();
+    }
+
     if (this._decodeAfterRequest && !this._loader) {
         this._loader = ResourceHandler.createLoader(url, this._requestImage.bind(this, url), this._onError.bind(this));
     }
+
     this._image = new Image();
     this._url = url;
     this._loadingState = 'requesting';
@@ -865,8 +971,9 @@ Bitmap.prototype._requestImage = function(url){
         Decrypter.decryptImg(url, this);
     } else {
         this._image.src = url;
-        this._image.onload = Bitmap.prototype._onLoad.bind(this);
-        this._image.onerror = this._loader || Bitmap.prototype._onError.bind(this);
+
+        this._image.addEventListener('load', this._loadListener = Bitmap.prototype._onLoad.bind(this));
+        this._image.addEventListener('error', this._errorListener = this._loader || Bitmap.prototype._onError.bind(this));
     }
 };
 
