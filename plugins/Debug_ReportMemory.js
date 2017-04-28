@@ -5,7 +5,7 @@
  * @help
  * This plugin shows memory related usages.
  * usedSize: the total size of the image actually being used in the game now.
- *           If this value exceeds about 150MPix, some mobile devices will crash.
+ *           If this value exceeds about 50MPix, some mobile devices may crash.
  * cachedSize: cached size in MPixel
  * cacheLimit: the upper limit of cached size (It doesn't matter if cachedSize exceeds just a little)
  * totalCount: count of cached Bitmaps
@@ -28,7 +28,7 @@
  * @help
  * メモリ使用量を表示します。
  * usedSize: 今ゲーム中で実際に使用されている画像の合計サイズです。
- * 　　　　　この値が150MPix辺りを越えると、一部モバイルデバイスがクラッシュします。
+ * 　　　　　この値が50MPix辺りを越えると、一部モバイルデバイスがクラッシュする可能性があります。
  * cachedSize: キャッシュされている使用量です。単位はMPixelです。
  * cacheLimit: キャッシュできる上限値です。cachedSizeの方が上回ることもありますが、少しだけなら正常です。
  * totalCount: キャッシュされているBitmapの数です
