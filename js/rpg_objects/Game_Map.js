@@ -393,7 +393,11 @@ Game_Map.prototype.canvasToMapY = function(y) {
 
 Game_Map.prototype.autoplay = function() {
     if ($dataMap.autoplayBgm) {
-        AudioManager.playBgm($dataMap.bgm);
+        if ($gamePlayer.isInVehicle()) {
+            $gameSystem.saveWalkingBgm2();
+        } else {
+            AudioManager.playBgm($dataMap.bgm);
+        }
     }
     if ($dataMap.autoplayBgs) {
         AudioManager.playBgs($dataMap.bgs);
