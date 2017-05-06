@@ -23,7 +23,7 @@ Window_NameEdit.prototype.initialize = function(actor, maxLength) {
     this._defaultName = this._name;
     this.deactivate();
     this.refresh();
-    ImageManager.reserveFace(actor.faceName());
+    ImageManager.loadFace(actor.faceName());
 };
 
 Window_NameEdit.prototype.windowWidth = function() {

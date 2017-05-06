@@ -58,12 +58,10 @@ Object.defineProperty(Sprite.prototype, 'bitmap', {
     set: function(value) {
         if (this._bitmap !== value) {
             this._bitmap = value;
-
-            if(value){
-                this._refreshFrame = true;
-                value.addLoadListener(this._onBitmapLoad.bind(this));
-            }else{
-                this._refreshFrame = false;
+            if (this._bitmap) {
+                this.setFrame(0, 0, 0, 0);
+                this._bitmap.addLoadListener(this._onBitmapLoad.bind(this));
+            } else {
                 this.texture.frame = Rectangle.emptyRectangle;
             }
         }
@@ -156,7 +154,6 @@ Sprite.prototype.move = function(x, y) {
  * @param {Number} height The height of the frame
  */
 Sprite.prototype.setFrame = function(x, y, width, height) {
-    this._refreshFrame = false;
     var frame = this._frame;
     if (x !== frame.x || y !== frame.y ||
             width !== frame.width || height !== frame.height) {
@@ -224,15 +221,11 @@ Sprite.prototype.setColorTone = function(tone) {
  * @method _onBitmapLoad
  * @private
  */
-Sprite.prototype._onBitmapLoad = function(bitmapLoaded) {
-    if(bitmapLoaded === this._bitmap){
-        if (this._refreshFrame && this._bitmap) {
-            this._refreshFrame = false;
-            this._frame.width = this._bitmap.width;
-            this._frame.height = this._bitmap.height;
-        }
+Sprite.prototype._onBitmapLoad = function() {
+    if (this._frame.width === 0 && this._frame.height === 0) {
+        this._frame.width = this._bitmap.width;
+        this._frame.height = this._bitmap.height;
     }
-
     this._refresh();
 };
 

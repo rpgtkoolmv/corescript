@@ -8,10 +8,10 @@ function SceneManager() {
 }
 
 /*
- * Gets the current time in ms without on iOS Safari.
+ * Gets the current time in ms.
  * @private
  */
-SceneManager._getTimeInMsWithoutMobileSafari = function() {
+SceneManager._getTimeInMs = function() {
     return performance.now();
 };
 
@@ -28,7 +28,7 @@ SceneManager._screenHeight      = 624;
 SceneManager._boxWidth          = 816;
 SceneManager._boxHeight         = 624;
 SceneManager._deltaTime = 1.0 / 60.0;
-if (!Utils.isMobileSafari()) SceneManager._currentTime = SceneManager._getTimeInMsWithoutMobileSafari();
+SceneManager._currentTime = SceneManager._getTimeInMs();
 SceneManager._accumulator = 0.0;
 
 SceneManager.run = function(sceneClass) {
@@ -70,6 +70,8 @@ SceneManager.preferableRendererType = function() {
         return 'canvas';
     } else if (Utils.isOptionValid('webgl')) {
         return 'webgl';
+    } else if (this.shouldUseCanvasRenderer()) {
+        return 'canvas';
     } else {
         return 'auto';
     }
@@ -137,7 +139,6 @@ SceneManager.update = function() {
         if (Utils.isMobileSafari()) {
             this.updateInputData();
         }
-        this.updateManagers();
         this.updateMain();
         this.tickEnd();
     } catch (e) {
@@ -206,7 +207,7 @@ SceneManager.updateMain = function() {
         this.changeScene();
         this.updateScene();
     } else {
-        var newTime = this._getTimeInMsWithoutMobileSafari();
+        var newTime = this._getTimeInMs();
         var fTime = (newTime - this._currentTime) / 1000;
         if (fTime > 0.25) fTime = 0.25;
         this._currentTime = newTime;
@@ -222,20 +223,18 @@ SceneManager.updateMain = function() {
     this.requestUpdate();
 };
 
-SceneManager.updateManagers = function() {
-    ImageManager.update();
+SceneManager.updateManagers = function(ticks, delta) {
+    ImageManager.cache.update(ticks, delta);
 };
 
 SceneManager.changeScene = function() {
     if (this.isSceneChanging() && !this.isCurrentSceneBusy()) {
         if (this._scene) {
             this._scene.terminate();
-            this._scene.detachReservation();
             this._previousClass = this._scene.constructor;
         }
         this._scene = this._nextScene;
         if (this._scene) {
-            this._scene.attachReservation();
             this._scene.create();
             this._nextScene = null;
             this._sceneStarted = false;
@@ -248,10 +247,6 @@ SceneManager.changeScene = function() {
 };
 
 SceneManager.updateScene = function() {
-    if (ResourceHandler.exists() && Input.isTriggered('ok')) {
-        ResourceHandler.retry();
-        this.updateInputData();
-    }
     if (this._scene) {
         if (!this._sceneStarted && this._scene.isReady()) {
             this._scene.start();

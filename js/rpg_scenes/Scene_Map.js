@@ -110,16 +110,8 @@ Scene_Map.prototype.terminate = function() {
         this._spriteset.update();
         this._mapNameWindow.hide();
         SceneManager.snapForBackground();
-    } else {
-        ImageManager.clearRequest();
     }
-
-    if (SceneManager.isNextScene(Scene_Map)) {
-        ImageManager.clearRequest();
-    }
-
     $gameScreen.clearZoom();
-
     this.removeChild(this._fadeSprite);
     this.removeChild(this._mapNameWindow);
     this.removeChild(this._windowLayer);
@@ -163,15 +155,11 @@ Scene_Map.prototype.processMapTouch = function() {
             if (this._touchCount === 0 || this._touchCount >= 15) {
                 var x = $gameMap.canvasToMapX(TouchInput.x);
                 var y = $gameMap.canvasToMapY(TouchInput.y);
-                if (!TouchInput.isMousePressed()) {
-                    $gameTemp.setIsMapTouched(true);
-                }
                 $gameTemp.setDestination(x, y);
             }
             this._touchCount++;
         } else {
             this._touchCount = 0;
-            $gameTemp.setIsMapTouched(false);
         }
     }
 };

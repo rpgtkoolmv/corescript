@@ -23,20 +23,20 @@ Scene_Boot.prototype.create = function() {
 };
 
 Scene_Boot.prototype.loadSystemWindowImage = function() {
-    ImageManager.reserveSystem('Window');
+    ImageManager.loadSystem('Window');
 };
 
 Scene_Boot.loadSystemImages = function() {
-    ImageManager.reserveSystem('IconSet');
-    ImageManager.reserveSystem('Balloon');
-    ImageManager.reserveSystem('Shadow1');
-    ImageManager.reserveSystem('Shadow2');
-    ImageManager.reserveSystem('Damage');
-    ImageManager.reserveSystem('States');
-    ImageManager.reserveSystem('Weapons1');
-    ImageManager.reserveSystem('Weapons2');
-    ImageManager.reserveSystem('Weapons3');
-    ImageManager.reserveSystem('ButtonSet');
+    ImageManager.loadSystem('IconSet');
+    ImageManager.loadSystem('Balloon');
+    ImageManager.loadSystem('Shadow1');
+    ImageManager.loadSystem('Shadow2');
+    ImageManager.loadSystem('Damage');
+    ImageManager.loadSystem('States');
+    ImageManager.loadSystem('Weapons1');
+    ImageManager.loadSystem('Weapons2');
+    ImageManager.loadSystem('Weapons3');
+    ImageManager.loadSystem('ButtonSet');
 };
 
 Scene_Boot.prototype.isReady = function() {
@@ -50,9 +50,9 @@ Scene_Boot.prototype.isReady = function() {
 Scene_Boot.prototype.isGameFontLoaded = function() {
     if (Graphics.isFontLoaded('GameFont')) {
         return true;
-    } else if (!Graphics.canUseCssFontLoading()){
+    } else {
         var elapsed = Date.now() - this._startDate;
-        if (elapsed >= 60000) {
+        if (elapsed >= 20000) {
             throw new Error('Failed to load GameFont');
         }
     }

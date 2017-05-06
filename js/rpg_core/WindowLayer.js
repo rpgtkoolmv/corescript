@@ -178,11 +178,7 @@ WindowLayer.prototype.renderWebGL = function(renderer) {
         return;
     }
 
-    if (this.children.length==0) {
-        return;
-    }
-
-    renderer.flush();
+    renderer.currentRenderer.flush();
     this.filterArea.copy(this);
     renderer.filterManager.pushFilter(this, this.filters);
     renderer.currentRenderer.start();
@@ -206,7 +202,6 @@ WindowLayer.prototype.renderWebGL = function(renderer) {
         }
     }
 
-    renderer.flush();
     renderer.filterManager.popFilter();
     renderer.maskManager.popScissorMask();
 
@@ -226,8 +221,8 @@ WindowLayer.prototype._maskWindow = function(window, shift) {
     this._windowMask._currentBounds = null;
     this._windowMask.boundsDirty = true;
     var rect = this._windowRect;
-    rect.x = this.x + shift.x + window.x;
-    rect.y = this.x + shift.y + window.y + window.height / 2 * (1 - window._openness / 255);
+    rect.x = shift.x + window.x;
+    rect.y = shift.y + window.y + window.height / 2 * (1 - window._openness / 255);
     rect.width = window.width;
     rect.height = window.height * window._openness / 255;
 };

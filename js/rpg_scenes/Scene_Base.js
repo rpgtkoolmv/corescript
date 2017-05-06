@@ -16,15 +16,6 @@ Scene_Base.prototype.initialize = function() {
     this._fadeSign = 0;
     this._fadeDuration = 0;
     this._fadeSprite = null;
-    this._imageReservationId = Utils.generateRuntimeId();
-};
-
-Scene_Base.prototype.attachReservation = function() {
-    ImageManager.setDefaultReservationId(this._imageReservationId);
-};
-
-Scene_Base.prototype.detachReservation = function() {
-    ImageManager.releaseReservation(this._imageReservationId);
 };
 
 Scene_Base.prototype.create = function() {
@@ -45,6 +36,7 @@ Scene_Base.prototype.start = function() {
 Scene_Base.prototype.update = function() {
     this.updateFade();
     this.updateChildren();
+    AudioManager.checkErrors();
 };
 
 Scene_Base.prototype.stop = function() {

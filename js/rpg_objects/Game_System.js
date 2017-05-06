@@ -208,3 +208,7 @@ Game_System.prototype.replayWalkingBgm = function() {
         AudioManager.playBgm(this._walkingBgm);
     }
 };
+
+Game_System.prototype.saveWalkingBgm2 = function() {
+	this._walkingBgm = $dataMap.bgm;
+};

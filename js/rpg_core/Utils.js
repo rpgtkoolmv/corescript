@@ -26,9 +26,7 @@ Utils.RPGMAKER_NAME = 'MV';
  * @type String
  * @final
  */
-Utils.RPGMAKER_VERSION = "1.3.5";
-
-Utils.RPGMAKER_ENGINE = "community-1.1b";
+Utils.RPGMAKER_VERSION = "1.4.1";
 
 /**
  * Checks whether the option is in the query string.
@@ -127,31 +125,3 @@ Utils.rgbToCssColor = function(r, g, b) {
     b = Math.round(b);
     return 'rgb(' + r + ',' + g + ',' + b + ')';
 };
-
-Utils._id = 1;
-Utils.generateRuntimeId = function(){
-    return Utils._id++;
-};
-
-Utils._supportPassiveEvent = null;
-/**
- * Test this browser support passive event feature
- * 
- * @static
- * @method isSupportPassiveEvent
- * @return {Boolean} this browser support passive event or not
- */
-Utils.isSupportPassiveEvent = function() {
-    if (typeof Utils._supportPassiveEvent === "boolean") {
-        return Utils._supportPassiveEvent;
-    }
-    // test support passive event
-    // https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md#feature-detection
-    var passive = false;
-    var options = Object.defineProperty({}, "passive", {
-        get: function() { passive = true; }
-    });
-    window.addEventListener("test", null, options);
-    Utils._supportPassiveEvent = passive;
-    return passive;
-}

@@ -140,7 +140,7 @@ Sprite_Animation.prototype.loadBitmaps = function() {
 };
 
 Sprite_Animation.prototype.isReady = function() {
-    return this._bitmap1 && this._bitmap1.isReady() && this._bitmap2 && this._bitmap2.isReady();
+    return ImageManager.isReady();
 };
 
 Sprite_Animation.prototype.createSprites = function() {
@@ -250,18 +250,14 @@ Sprite_Animation.prototype.updateCellSprite = function(sprite, cell) {
         sprite.setFrame(sx, sy, 192, 192);
         sprite.x = cell[1];
         sprite.y = cell[2];
+        if (this._mirror) {
+            sprite.x *= -1;
+        }
         sprite.rotation = cell[4] * Math.PI / 180;
         sprite.scale.x = cell[3] / 100;
-
-        if(cell[5]){
+        if ((cell[5] && !mirror) || (!cell[5] && mirror)) {
             sprite.scale.x *= -1;
         }
-        if(mirror){
-            sprite.x *= -1;
-            sprite.rotation *= -1;
-            sprite.scale.x *= -1;
-        }
-
         sprite.scale.y = cell[3] / 100;
         sprite.opacity = cell[6];
         sprite.blendMode = cell[7];

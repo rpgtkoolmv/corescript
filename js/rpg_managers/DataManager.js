@@ -82,7 +82,7 @@ DataManager.loadDataFile = function(name, src) {
             DataManager.onLoad(window[name]);
         }
     };
-    xhr.onerror = this._mapLoader || function() {
+    xhr.onerror = function() {
         DataManager._errorUrl = DataManager._errorUrl || url;
     };
     window[name] = null;
@@ -102,7 +102,6 @@ DataManager.isDatabaseLoaded = function() {
 DataManager.loadMapData = function(mapId) {
     if (mapId > 0) {
         var filename = 'Map%1.json'.format(mapId.padZero(3));
-        this._mapLoader = ResourceHandler.createLoader('data/' + filename, this.loadDataFile.bind(this, '$dataMap', filename));
         this.loadDataFile('$dataMap', filename);
     } else {
         this.makeEmptyMap();
@@ -316,12 +315,12 @@ DataManager.loadAllSavefileImages = function() {
 DataManager.loadSavefileImages = function(info) {
     if (info.characters) {
         for (var i = 0; i < info.characters.length; i++) {
-            ImageManager.reserveCharacter(info.characters[i][0]);
+            ImageManager.loadCharacter(info.characters[i][0]);
         }
     }
     if (info.faces) {
         for (var j = 0; j < info.faces.length; j++) {
-            ImageManager.reserveFace(info.faces[j][0]);
+            ImageManager.loadFace(info.faces[j][0]);
         }
     }
 };
