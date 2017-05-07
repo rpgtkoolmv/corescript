@@ -100,10 +100,6 @@ TouchInput.isPressed = function() {
     return this._mousePressed || this._screenPressed;
 };
 
-TouchInput.isMousePressed = function() {
-    return this._mousePressed;
-};
-
 /**
  * Checks whether the left mouse button or touchscreen is just pressed.
  *
