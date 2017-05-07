@@ -84,6 +84,8 @@ Scene_Battle.prototype.terminate = function() {
     $gameParty.onBattleEnd();
     $gameTroop.onBattleEnd();
     AudioManager.stopMe();
+
+    ImageManager.clearRequest();
 };
 
 Scene_Battle.prototype.needsSlowFadeOut = function() {

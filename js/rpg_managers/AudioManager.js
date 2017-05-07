@@ -7,6 +7,7 @@ function AudioManager() {
     throw new Error('This is a static class');
 }
 
+AudioManager._masterVolume   = 1;   // (min: 0, max: 1)
 AudioManager._bgmVolume      = 100;
 AudioManager._bgsVolume      = 100;
 AudioManager._meVolume       = 100;
@@ -21,6 +22,18 @@ AudioManager._staticBuffers  = [];
 AudioManager._replayFadeTime = 0.5;
 AudioManager._path           = 'audio/';
 AudioManager._blobUrl        = null;
+
+Object.defineProperty(AudioManager, 'masterVolume', {
+    get: function() {
+        return this._masterVolume;
+    },
+    set: function(value) {
+        this._masterVolume = value;
+        WebAudio.setMasterVolume(this._masterVolume);
+        Graphics.setVideoVolume(this._masterVolume);
+    },
+    configurable: true
+});
 
 Object.defineProperty(AudioManager, 'bgmVolume', {
     get: function() {

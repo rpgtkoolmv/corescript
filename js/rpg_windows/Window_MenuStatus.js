@@ -16,7 +16,6 @@ Window_MenuStatus.prototype.initialize = function(x, y) {
     Window_Selectable.prototype.initialize.call(this, x, y, width, height);
     this._formationMode = false;
     this._pendingIndex = -1;
-    this.loadImages();
     this.refresh();
 };
 
@@ -43,7 +42,7 @@ Window_MenuStatus.prototype.numVisibleRows = function() {
 
 Window_MenuStatus.prototype.loadImages = function() {
     $gameParty.members().forEach(function(actor) {
-        ImageManager.loadFace(actor.faceName());
+        ImageManager.reserveFace(actor.faceName());
     }, this);
 };
 

@@ -246,12 +246,13 @@ Object.defineProperty(TouchInput, 'date', {
  * @private
  */
 TouchInput._setupEventHandlers = function() {
+    var isSupportPassive = Utils.isSupportPassiveEvent();
     document.addEventListener('mousedown', this._onMouseDown.bind(this));
     document.addEventListener('mousemove', this._onMouseMove.bind(this));
     document.addEventListener('mouseup', this._onMouseUp.bind(this));
     document.addEventListener('wheel', this._onWheel.bind(this));
-    document.addEventListener('touchstart', this._onTouchStart.bind(this));
-    document.addEventListener('touchmove', this._onTouchMove.bind(this));
+    document.addEventListener('touchstart', this._onTouchStart.bind(this), isSupportPassive ? {passive: false} : false);
+    document.addEventListener('touchmove', this._onTouchMove.bind(this), isSupportPassive ? {passive: false} : false);
     document.addEventListener('touchend', this._onTouchEnd.bind(this));
     document.addEventListener('touchcancel', this._onTouchCancel.bind(this));
     document.addEventListener('pointerdown', this._onPointerDown.bind(this));

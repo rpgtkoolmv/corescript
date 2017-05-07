@@ -21,6 +21,10 @@ Scene_Skill.prototype.create = function() {
     this.createStatusWindow();
     this.createItemWindow();
     this.createActorWindow();
+};
+
+Scene_Skill.prototype.start = function() {
+    Scene_ItemBase.prototype.start.call(this);
     this.refreshActor();
 };
 
@@ -41,6 +45,7 @@ Scene_Skill.prototype.createStatusWindow = function() {
     var ww = Graphics.boxWidth - wx;
     var wh = this._skillTypeWindow.height;
     this._statusWindow = new Window_SkillStatus(wx, wy, ww, wh);
+    this._statusWindow.reserveFaceImages();
     this.addWindow(this._statusWindow);
 };
 

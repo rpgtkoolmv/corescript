@@ -15,10 +15,14 @@ WebAudio.prototype.initialize = function(url) {
         WebAudio.initialize();
     }
     this.clear();
+    this._loader = ResourceHandler.createLoader(url, this._load.bind(this, url), function() {
+        this._hasError = true;
+    }.bind(this));
     this._load(url);
     this._url = url;
 };
 
+WebAudio._masterVolume   = 1;
 WebAudio._context        = null;
 WebAudio._masterGainNode = null;
 WebAudio._initialized    = false;
@@ -74,6 +78,20 @@ WebAudio.canPlayM4a = function() {
 };
 
 /**
+ * Sets the master volume of the all audio.
+ *
+ * @static
+ * @method setMasterVolume
+ * @param {Number} value Master volume (min: 0, max: 1)
+ */
+WebAudio.setMasterVolume = function(value) {
+    this._masterVolume = value;
+    if (this._masterGainNode) {
+        this._masterGainNode.gain.setValueAtTime(this._masterVolume, this._context.currentTime);
+    }
+};
+
+/**
  * @static
  * @method _createContext
  * @private
@@ -112,7 +130,7 @@ WebAudio._createMasterGainNode = function() {
     var context = WebAudio._context;
     if (context) {
         this._masterGainNode = context.createGain();
-        this._masterGainNode.gain.value = 1;
+        this._masterGainNode.gain.setValueAtTime(this._masterVolume, context.currentTime);
         this._masterGainNode.connect(context.destination);
     }
 };
@@ -206,8 +224,8 @@ WebAudio._fadeIn = function(duration) {
     if (this._masterGainNode) {
         var gain = this._masterGainNode.gain;
         var currentTime = WebAudio._context.currentTime;
-        gain.setValueAtTime(gain.value, currentTime);
-        gain.linearRampToValueAtTime(1, currentTime + duration);
+        gain.setValueAtTime(0, currentTime);
+        gain.linearRampToValueAtTime(this._masterVolume, currentTime + duration);
     }
 };
 
@@ -221,7 +239,7 @@ WebAudio._fadeOut = function(duration) {
     if (this._masterGainNode) {
         var gain = this._masterGainNode.gain;
         var currentTime = WebAudio._context.currentTime;
-        gain.setValueAtTime(gain.value, currentTime);
+        gain.setValueAtTime(this._masterVolume, currentTime);
         gain.linearRampToValueAtTime(0, currentTime + duration);
     }
 };
@@ -278,7 +296,7 @@ Object.defineProperty(WebAudio.prototype, 'volume', {
     set: function(value) {
         this._volume = value;
         if (this._gainNode) {
-            this._gainNode.gain.value = this._volume;
+            this._gainNode.gain.setValueAtTime(this._volume, WebAudio._context.currentTime);
         }
     },
     configurable: true
@@ -421,7 +439,7 @@ WebAudio.prototype.fadeOut = function(duration) {
     if (this._gainNode) {
         var gain = this._gainNode.gain;
         var currentTime = WebAudio._context.currentTime;
-        gain.setValueAtTime(gain.value, currentTime);
+        gain.setValueAtTime(this._volume, currentTime);
         gain.linearRampToValueAtTime(0, currentTime + duration);
     }
     this._autoPlay = false;
@@ -482,9 +500,7 @@ WebAudio.prototype._load = function(url) {
                 this._onXhrLoad(xhr);
             }
         }.bind(this);
-        xhr.onerror = function() {
-            this._hasError = true;
-        }.bind(this);
+        xhr.onerror = this._loader;
         xhr.send();
     }
 };
@@ -539,9 +555,9 @@ WebAudio.prototype._createNodes = function() {
     this._sourceNode.buffer = this._buffer;
     this._sourceNode.loopStart = this._loopStart;
     this._sourceNode.loopEnd = this._loopStart + this._loopLength;
-    this._sourceNode.playbackRate.value = this._pitch;
+    this._sourceNode.playbackRate.setValueAtTime(this._pitch, context.currentTime);
     this._gainNode = context.createGain();
-    this._gainNode.gain.value = this._volume;
+    this._gainNode.gain.setValueAtTime(this._volume, context.currentTime);
     this._pannerNode = context.createPanner();
     this._pannerNode.panningModel = 'equalpower';
     this._updatePanner();

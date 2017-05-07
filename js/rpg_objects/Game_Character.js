@@ -482,7 +482,6 @@ Game_Character.prototype.findDirectionTo = function(goalX, goalY) {
 
         if (current.x === goalX && current.y === goalY) {
             best = current;
-            goaled = true;
             break;
         }
 
