@@ -5,3 +5,6 @@
 
 # Contributors
 - ivanpopelyshev
+- wilfrem
+- rutan
+- niokasgami
