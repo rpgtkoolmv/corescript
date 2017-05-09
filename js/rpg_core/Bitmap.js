@@ -72,10 +72,14 @@ Bitmap.prototype._createCanvas = function(width, height){
 Bitmap.prototype._createBaseTexture = function(source){
     this.__baseTexture = new PIXI.BaseTexture(source);
     this.__baseTexture.mipmap = false;
-    this.__baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
     this.__baseTexture.width = source.width;
     this.__baseTexture.height = source.height;
-    this.smooth = this._smooth;
+
+    if (this._smooth) {
+        this._baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
+    } else {
+        this._baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+    }
 };
 
 Bitmap.prototype._clearImgInstance = function(){
