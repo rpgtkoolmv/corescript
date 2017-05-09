@@ -28,7 +28,7 @@ Utils.RPGMAKER_NAME = 'MV';
  */
 Utils.RPGMAKER_VERSION = "1.4.1";
 
-Utils.RPGMAKER_ENGINE = "community-1.2";
+Utils.RPGMAKER_ENGINE = "community-1.2b";
 
 /**
  * Checks whether the option is in the query string.
