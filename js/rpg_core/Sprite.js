@@ -442,6 +442,9 @@ Sprite.prototype._renderWebGL = function(renderer) {
     if (this.bitmap) {
         this.bitmap.touch();
     }
+    if(this.bitmap && !this.bitmap.isReady()){
+        return;
+    }
     if (this.texture.frame.width > 0 && this.texture.frame.height > 0) {
         if (this._bitmap) {
             this._bitmap.checkDirty();
