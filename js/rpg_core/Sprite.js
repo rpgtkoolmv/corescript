@@ -403,6 +403,10 @@ Sprite.prototype._renderCanvas = function(renderer) {
     if (this.bitmap) {
         this.bitmap.touch();
     }
+    if(this.bitmap && !this.bitmap.isReady()){
+        return;
+    }
+
     if (this.texture.frame.width > 0 && this.texture.frame.height > 0) {
         this._renderCanvas_PIXI(renderer);
     }
