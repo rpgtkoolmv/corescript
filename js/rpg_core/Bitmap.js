@@ -202,7 +202,7 @@ Bitmap.prototype.initialize = function(width, height) {
  */
 Bitmap.load = function(url) {
     var bitmap = Object.create(Bitmap.prototype);
-    bitmap.defer = true;
+    bitmap._defer = true;
     bitmap.initialize(0, 0);
 
     bitmap._decodeAfterRequest = true;
