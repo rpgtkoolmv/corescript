@@ -126,6 +126,10 @@
     function healthCheckAll(){
         var CRC = __CRC__;
 
+        if(!window.makeVideoPlayableInline){
+            return 'index.html';
+        }
+
         var fs = require('fs');
         var path = require('path');
 
