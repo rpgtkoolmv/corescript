@@ -8,7 +8,6 @@
  * @param {Number} height The height of the bitmap
  */
 function Bitmap() {
-    this._defer = arguments[2];
     this.initialize.apply(this, arguments);
 }
 
@@ -202,7 +201,10 @@ Bitmap.prototype.initialize = function(width, height) {
  * @return Bitmap
  */
 Bitmap.load = function(url) {
-    var bitmap = new Bitmap(0, 0, true);
+    var bitmap = Object.create(Bitmap.prototype);
+    bitmap._defer = true;
+    bitmap.initialize();
+
     bitmap._decodeAfterRequest = true;
     bitmap._requestImage(url);
 
@@ -948,7 +950,10 @@ Bitmap.prototype.checkDirty = function() {
 };
 
 Bitmap.request = function(url){
-    var bitmap = new Bitmap(0, 0, true);
+    var bitmap = Object.create(Bitmap.prototype);
+    bitmap._defer = true;
+    bitmap.initialize();
+
     bitmap._url = url;
     bitmap._loadingState = 'pending';
 
