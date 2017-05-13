@@ -67,9 +67,13 @@
     SceneManager._boxHeight = screenHeight;
 
     SceneManager.preferableRendererType = function() {
-        if (Utils.isOptionValid('canvas') || renderingMode === 'canvas') {
+        if (Utils.isOptionValid('canvas')) {
             return 'canvas';
-        } else if (Utils.isOptionValid('webgl') || renderingMode === 'webgl') {
+        } else if (Utils.isOptionValid('webgl')) {
+            return 'webgl';
+        } else if (renderingMode === 'canvas') {
+            return 'canvas';
+        } else if (renderingMode === 'webgl') {
             return 'webgl';
         } else {
             return 'auto';
