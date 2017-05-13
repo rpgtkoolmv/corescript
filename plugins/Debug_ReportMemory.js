@@ -65,21 +65,22 @@
         return Math.floor(size / 1000) / 1000 + 'MPix';
     }
 
-    function usedSize(item) {
+    function usedSize(item, bitmaps) {
         var totalSize = 0;
-        if (item && item.bitmap) {
+        if (item && item.bitmap && !bitmaps.contains(item.bitmap)) {
             totalSize += item.bitmap.width * item.bitmap.height;
+            bitmaps.push(item.bitmap);
         }
         if (item && item.children) {
             totalSize += item.children.reduce(function(sum, child) {
-                return sum + usedSize(child);
+                return sum + usedSize(child, bitmaps);
             }, 0);
         }
         return totalSize;
     }
 
     function updateInfo(){
-        var content = 'usedSize: ' + toMPix(usedSize(SceneManager._scene)) + '<br>';
+        var content = 'usedSize: ' + toMPix(usedSize(SceneManager._scene, [])) + '<br>';
         content += 'cachedSize: ' + toMPix(ImageManager._imageCache._getSize()) + '<br>';
         content += '(cacheLimit: ' + pixels + 'MPix)<br>';
         content += 'totalCount: ' + ImageManager._imageCache._countBitmap() + '<br>';
