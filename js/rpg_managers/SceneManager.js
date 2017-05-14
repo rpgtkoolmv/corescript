@@ -202,22 +202,16 @@ SceneManager.updateInputData = function() {
 };
 
 SceneManager.updateMain = function() {
-    if (Utils.isMobileSafari()) {
+    if(!SceneManager._stabilizer){
+        SceneManager._stabilizer = new FrameStabilizer(SceneManager._deltaTime);
+    }
+
+    SceneManager._stabilizer.frame(function(){
+        this.updateInputData();
         this.changeScene();
         this.updateScene();
-    } else {
-        var newTime = this._getTimeInMsWithoutMobileSafari();
-        var fTime = (newTime - this._currentTime) / 1000;
-        if (fTime > 0.25) fTime = 0.25;
-        this._currentTime = newTime;
-        this._accumulator += fTime;
-        while (this._accumulator >= this._deltaTime) {
-            this.updateInputData();
-            this.changeScene();
-            this.updateScene();
-            this._accumulator -= this._deltaTime;
-        }
-    }
+    }.bind(this));
+
     this.renderScene();
     this.requestUpdate();
 };

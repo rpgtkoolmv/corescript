@@ -27,5 +27,6 @@
   "js/rpg_core/Html5Audio.js",
   "js/rpg_core/JsonEx.js",
   "js/rpg_core/Decrypter.js",
-  "js/rpg_core/ResourceHandler.js"
+  "js/rpg_core/ResourceHandler.js",
+  "js/rpg_core/FrameStabilizer.js"
 ]
