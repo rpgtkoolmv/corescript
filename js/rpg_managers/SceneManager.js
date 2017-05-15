@@ -357,5 +357,6 @@ SceneManager.resume = function() {
     this.requestUpdate();
     if (!Utils.isMobileSafari()) {
         this._currentTime = this._getTimeInMsWithoutMobileSafari();
+        this._accumulator = 0;
     }
 };
