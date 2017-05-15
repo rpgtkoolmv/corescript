@@ -47,6 +47,13 @@
 (function(){
     var parameters = PluginManager.parameters('Debug_ReportMemory');
     var pixels = toNumber(parameters['Max Pixels In MPix'], 20);
+    var communityPixels = PluginManager.parameters('Community_Basic')['cacheLimit'];
+
+    if (communityPixels) {
+        pixels = toNumber(communityPixels, 20);
+        console.log('Community_Basic plugin has been installed, so it overwrites the setting value of cacheLimit. ' +
+        'cacheLimit: ' + pixels + 'MPix');
+    }
 
     ImageCache.limit = pixels * 1000 * 1000;
 
