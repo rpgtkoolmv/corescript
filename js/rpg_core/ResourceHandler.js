@@ -26,6 +26,7 @@ ResourceHandler.createLoader = function(url, retryMethod, resignMethod, retryInt
             if (url) {
                 if (reloaders.length === 0) {
                     Graphics.printLoadingError(url);
+                    SceneManager.stop();
                 }
                 reloaders.push(function() {
                     retryCount = 0;
@@ -43,6 +44,7 @@ ResourceHandler.exists = function() {
 ResourceHandler.retry = function() {
     if (this._reloaders.length > 0) {
         Graphics.eraseLoadingError();
+        SceneManager.resume();
         this._reloaders.forEach(function(reloader) {
             reloader();
         });

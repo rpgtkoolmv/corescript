@@ -248,10 +248,6 @@ SceneManager.changeScene = function() {
 };
 
 SceneManager.updateScene = function() {
-    if (ResourceHandler.exists() && Input.isTriggered('ok')) {
-        ResourceHandler.retry();
-        this.updateInputData();
-    }
     if (this._scene) {
         if (!this._sceneStarted && this._scene.isReady()) {
             this._scene.start();
@@ -354,4 +350,12 @@ SceneManager.snapForBackground = function() {
 
 SceneManager.backgroundBitmap = function() {
     return this._backgroundBitmap;
+};
+
+SceneManager.resume = function() {
+    this._stopped = false;
+    this.requestUpdate();
+    if (!Utils.isMobileSafari()) {
+        this._currentTime = this._getTimeInMsWithoutMobileSafari();
+    }
 };

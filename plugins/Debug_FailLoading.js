@@ -54,7 +54,7 @@
     var _Bitmap_onLoad = Bitmap.prototype._onLoad;
     Bitmap.prototype._onLoad = function() {
         if (Math.random() < failImage) {
-            this._image.onerror();
+            this._errorListener();
         } else {
             _Bitmap_onLoad.apply(this, arguments);
         }
