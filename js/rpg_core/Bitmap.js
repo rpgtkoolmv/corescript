@@ -976,8 +976,7 @@ Bitmap.prototype._requestImage = function(url){
         Decrypter.decryptImg(url, this);
     } else {
         this._image.src = url;
-        this._image.removeEventListener('load', this._loadListener);
-        this._image.removeEventListener('error', this._errorListener);
+
         this._image.addEventListener('load', this._loadListener = Bitmap.prototype._onLoad.bind(this));
         this._image.addEventListener('error', this._errorListener = this._loader || Bitmap.prototype._onError.bind(this));
     }
