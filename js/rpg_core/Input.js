@@ -287,7 +287,9 @@ Input._onKeyDown = function(event) {
         this.clear();
     }
     var buttonName = this.keyMapper[event.keyCode];
-    if (buttonName) {
+    if (ResourceHandler.exists() && buttonName === 'ok') {
+        ResourceHandler.retry();
+    } else if (buttonName) {
         this._currentState[buttonName] = true;
     }
 };

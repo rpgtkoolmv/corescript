@@ -898,7 +898,8 @@ Bitmap.prototype.decode = function(){
             this._decodeAfterRequest = true;
             if (!this._loader) {
                 this._loader = ResourceHandler.createLoader(this._url, this._requestImage.bind(this, this._url), this._onError.bind(this));
-                this._image.onerror = this._loader;
+                this._image.removeEventListener('error', this._errorListener);
+                this._image.addEventListener('error', this._errorListener = this._loader);
             }
             break;
 
