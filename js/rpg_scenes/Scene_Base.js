@@ -1,6 +1,4 @@
 //=============================================================================
-// ■ Scene_Base V.1.4.0 (community-1.1b)
-//-----------------------------------------------------------------------------
 
 /**
  * The Superclass of all scene within the game.
@@ -65,7 +63,7 @@ Scene_Base.prototype.create = function() {
 };
 
 /**
- * Returns wether the scene is active or not.
+ * Returns whether the scene is active or not.
  * 
  * @method isActive
  * @instance 
@@ -77,7 +75,7 @@ Scene_Base.prototype.isActive = function() {
 };
 
 /**
- * Return wether the scene is ready to start or not.
+ * Return whether the scene is ready to start or not.
  * 
  * @method isReady
  * @instance 
@@ -123,13 +121,14 @@ Scene_Base.prototype.stop = function() {
     this._active = false;
 };
 
+
 /**
- * Return wether the scene is busy or not.
+ * Return whether the scene is busy or not.
  * 
  * @method isBusy
- * @instance 
- * @return {boolean} true if the scene is currently busy doing a fade
+ * @instance
  * @memberof Scene_Base
+ * @return {Boolean} Return true if the scene is currently busy
  */
 Scene_Base.prototype.isBusy = function() {
     return this._fadeDuration > 0;
@@ -275,7 +274,7 @@ Scene_Base.prototype.popScene = function() {
 };
 
 /**
- * Check wether the game should be triggering a gameover.
+ * Check whether the game should be triggering a gameover.
  * 
  * @method checkGameover
  * @instance 
@@ -320,9 +319,8 @@ Scene_Base.prototype.fadeSpeed = function() {
  * @method slowFadeSpeed
  * @instance 
  * @memberof Scene_Base
- * @return {Number} Return the fade speed.
+ * @return {Number} Return the fade speed
  */
 Scene_Base.prototype.slowFadeSpeed = function() {
     return this.fadeSpeed() * 2;
 };
-
