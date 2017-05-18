@@ -14,6 +14,12 @@
  * @desc The resolution of screen height
  * @default 624
  *
+ * @param changeWindowWidthTo
+ * @desc If set, change window width to this value
+ *
+ * @param changeWindowHeightTo
+ * @desc If set, change window height to this value
+ *
  * @param renderingMode
  * @desc The rendering mode (canvas/webgl/auto)
  * @default auto
@@ -39,6 +45,12 @@
  * @desc 画面サイズの高さ
  * @default 624
  *
+ * @param changeWindowWidthTo
+ * @desc 値が設定された場合、ウインドウの幅を指定した値に変更
+ *
+ * @param changeWindowHeightTo
+ * @desc 値が設定された場合、ウインドウの高さを指定した値に変更
+ *
  * @param renderingMode
  * @desc レンダリングモード (canvas/webgl/auto)
  * @default auto
@@ -59,6 +71,16 @@
     var screenHeight = toNumber(parameters['screenHeight'], 624);
     var renderingMode = parameters['renderingMode'].toLowerCase();
     var alwaysDash = parameters['alwaysDash'].toLowerCase() === 'on';
+    var windowWidth = toNumber(parameters['changeWindowWidthTo'], 0);
+    var windowHeight = toNumber(parameters['changeWindowHeightTo'], 0);
+
+    if(screenWidth !== SceneManager._screenWidth && !windowWidth) {
+        windowWidth = screenWidth;
+    }
+
+    if(screenHeight !== SceneManager._screenHeight && !windowHeight) {
+        windowHeight = screenHeight;
+    }
 
     ImageCache.limit = cacheLimit * 1000 * 1000;
     SceneManager._screenWidth = screenWidth;
@@ -85,6 +107,19 @@
         _ConfigManager_applyData.apply(this, arguments);
         if (config['alwaysDash'] === undefined) {
             this.alwaysDash = alwaysDash;
+        }
+    };
+
+
+    var _SceneManager_initNwjs = SceneManager.initNwjs;
+    SceneManager.initNwjs = function() {
+        _SceneManager_initNwjs.apply(this, arguments);
+
+        if (Utils.isNwjs() && windowWidth && windowHeight) {
+            var dw = windowWidth - window.innerWidth;
+            var dh = windowHeight - window.innerHeight;
+            window.moveBy(-dw / 2, -dh / 2);
+            window.resizeBy(dw, dh);
         }
     };
 })();
