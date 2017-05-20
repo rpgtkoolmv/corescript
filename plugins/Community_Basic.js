@@ -2,6 +2,10 @@
  * @plugindesc Basic plugin for manipulating important parameters..
  * @author RM CoreScript team
  *
+ * @help
+ * Basic plugin for manipulating important parameters..
+ * There is no plugin command.
+ *
  * @param cacheLimit
  * @desc The upper limit of images' cached size (MPixel)
  * @default 20
@@ -13,6 +17,10 @@
  * @param screenHeight
  * @desc The resolution of screen height
  * @default 624
+ *
+ * @pram scaleFactor
+ * @desc Scale window to (screen size * value).
+ * @default 1
  *
  * @param changeWindowWidthTo
  * @desc If set, change window width to this value
@@ -33,6 +41,10 @@
  * @plugindesc 基本的なパラメーターを設定するプラグインです。
  * @author RM CoreScript team
  *
+ * @help
+ * 基本的なパラメーターを設定するプラグインです。
+ * このプラグインにはプラグインコマンドはありません。
+ *
  * @param cacheLimit
  * @desc 画像のメモリへのキャッシュの上限値 (MPix)
  * @default 20
@@ -44,6 +56,10 @@
  * @param screenHeight
  * @desc 画面サイズの高さ
  * @default 624
+ *
+ * @pram scaleFactor
+ * @desc ウインドウを、画面サイズの指定された値分拡大・縮小します
+ * @default 1
  *
  * @param changeWindowWidthTo
  * @desc 値が設定された場合、ウインドウの幅を指定した値に変更
@@ -67,6 +83,7 @@
 
     var parameters = PluginManager.parameters('Community_Basic');
     var cacheLimit = toNumber(parameters['cacheLimit'], 20);
+    var scaleFactor = toNumber(parameters['scaleFactor'], 1);
     var screenWidth = toNumber(parameters['screenWidth'], 816);
     var screenHeight = toNumber(parameters['screenHeight'], 624);
     var renderingMode = parameters['renderingMode'].toLowerCase();
@@ -74,12 +91,12 @@
     var windowWidth = toNumber(parameters['changeWindowWidthTo'], 0);
     var windowHeight = toNumber(parameters['changeWindowHeightTo'], 0);
 
-    if(screenWidth !== SceneManager._screenWidth && !windowWidth) {
-        windowWidth = screenWidth;
+    if(scaleFactor !== 1 && !windowWidth) {
+        windowWidth = screenWidth * scaleFactor;
     }
 
-    if(screenHeight !== SceneManager._screenHeight && !windowHeight) {
-        windowHeight = screenHeight;
+    if(scaleFactor !== 1 && !windowHeight) {
+        windowHeight = screenHeight * scaleFactor;
     }
 
     ImageCache.limit = cacheLimit * 1000 * 1000;
