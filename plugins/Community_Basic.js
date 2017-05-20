@@ -18,7 +18,7 @@
  * @desc The resolution of screen height
  * @default 624
  *
- * @pram scaleFactor
+ * @param scaleFactor
  * @desc Scale window to (screen size * value).
  * @default 1
  *
@@ -57,7 +57,7 @@
  * @desc 画面サイズの高さ
  * @default 624
  *
- * @pram scaleFactor
+ * @param scaleFactor
  * @desc ウインドウを、画面サイズの指定された値分拡大・縮小します
  * @default 1
  *
@@ -91,13 +91,14 @@
     var windowWidth = toNumber(parameters['changeWindowWidthTo'], 0);
     var windowHeight = toNumber(parameters['changeWindowHeightTo'], 0);
 
-    if(scaleFactor !== 1 && !windowWidth) {
+    if(screenWidth !== SceneManager._screenWidth || (scaleFactor !== 1 && !windowWidth)) {
         windowWidth = screenWidth * scaleFactor;
     }
 
-    if(scaleFactor !== 1 && !windowHeight) {
+    if(screenHeight !== SceneManager._screenHeight || (scaleFactor !== 1 && !windowHeight)) {
         windowHeight = screenHeight * scaleFactor;
     }
+
 
     ImageCache.limit = cacheLimit * 1000 * 1000;
     SceneManager._screenWidth = screenWidth;
