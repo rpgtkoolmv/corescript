@@ -18,7 +18,7 @@
  * @desc The resolution of screen height
  * @default 624
  *
- * @param scaleFactor
+ * @param windowScaleFactor
  * @desc Scale window to (screen size * value).
  * @default 1
  *
@@ -57,7 +57,7 @@
  * @desc 画面サイズの高さ
  * @default 624
  *
- * @param scaleFactor
+ * @param windowScaleFactor
  * @desc ウインドウを、画面サイズの指定された値分拡大・縮小します
  * @default 1
  *
@@ -83,7 +83,7 @@
 
     var parameters = PluginManager.parameters('Community_Basic');
     var cacheLimit = toNumber(parameters['cacheLimit'], 20);
-    var scaleFactor = toNumber(parameters['scaleFactor'], 1);
+    var scaleFactor = toNumber(parameters['windowScaleFactor'], 1);
     var screenWidth = toNumber(parameters['screenWidth'], 816);
     var screenHeight = toNumber(parameters['screenHeight'], 624);
     var renderingMode = parameters['renderingMode'].toLowerCase();
