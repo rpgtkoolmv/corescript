@@ -88,15 +88,26 @@
     var screenHeight = toNumber(parameters['screenHeight'], 624);
     var renderingMode = parameters['renderingMode'].toLowerCase();
     var alwaysDash = parameters['alwaysDash'].toLowerCase() === 'on';
-    var windowWidth = toNumber(parameters['changeWindowWidthTo'], 0);
-    var windowHeight = toNumber(parameters['changeWindowHeightTo'], 0);
+    var windowWidthTo = toNumber(parameters['changeWindowWidthTo'], 0);
+    var windowHeightTo = toNumber(parameters['changeWindowHeightTo'], 0);
 
-    if(screenWidth !== SceneManager._screenWidth || (scaleFactor !== 1 && !windowWidth)) {
+    var windowWidth;
+    var windowHeight;
+
+    if(windowWidthTo){
+        windowWidth = windowWidthTo;
+    }else if(scaleFactor !== 1){
         windowWidth = screenWidth * scaleFactor;
+    }else if(screenWidth !== SceneManager._screenWidth){
+        windowWidth = screenWidth;
     }
 
-    if(screenHeight !== SceneManager._screenHeight || (scaleFactor !== 1 && !windowHeight)) {
+    if(windowHeightTo){
+        windowHeight = windowHeightTo;
+    }else if(scaleFactor !== 1){
         windowHeight = screenHeight * scaleFactor;
+    }else if(screenHeight !== SceneManager._screenHeight){
+        windowHeight = screenHeight;
     }
 
 
