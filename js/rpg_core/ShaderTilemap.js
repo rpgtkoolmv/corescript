@@ -17,6 +17,7 @@ ShaderTilemap.prototype.constructor = ShaderTilemap;
 PIXI.glCore.VertexArrayObject.FORCE_NATIVE = true;
 PIXI.GC_MODES.DEFAULT = PIXI.GC_MODES.AUTO;
 PIXI.tilemap.TileRenderer.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
+PIXI.tilemap.TileRenderer.DO_CLEAR = true;
 
 /**
  * Uploads animation state in renderer
