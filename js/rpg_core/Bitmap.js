@@ -82,9 +82,9 @@ Bitmap.prototype._createBaseTexture = function(source){
 };
 
 Bitmap.prototype._clearImgInstance = function(){
-    this._image.src = "";
     this._image.onload = null;
     this._image.onerror = null;
+    this._image.src = "";
     this._errorListener = null;
     this._loadListener = null;
 
@@ -980,10 +980,9 @@ Bitmap.prototype._requestImage = function(url){
         this._loadingState = 'decrypting';
         Decrypter.decryptImg(url, this);
     } else {
-        this._image.src = url;
-
         this._image.addEventListener('load', this._loadListener = Bitmap.prototype._onLoad.bind(this));
         this._image.addEventListener('error', this._errorListener = this._loader || Bitmap.prototype._onError.bind(this));
+        this._image.src = url;
     }
 };
 
