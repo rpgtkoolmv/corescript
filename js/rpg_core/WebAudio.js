@@ -10,14 +10,21 @@ function WebAudio() {
     this.initialize.apply(this, arguments);
 }
 
+WebAudio._standAlone = (function(top){
+    return !top.ResourceHandler;
+})(this);
+
 WebAudio.prototype.initialize = function(url) {
     if (!WebAudio._initialized) {
         WebAudio.initialize();
     }
     this.clear();
-    this._loader = ResourceHandler.createLoader(url, this._load.bind(this, url), function() {
-        this._hasError = true;
-    }.bind(this));
+
+    if(!WebAudio._standAlone){
+        this._loader = ResourceHandler.createLoader(url, this._load.bind(this, url), function() {
+            this._hasError = true;
+        }.bind(this));
+    }
     this._load(url);
     this._url = url;
 };
@@ -500,7 +507,7 @@ WebAudio.prototype._load = function(url) {
                 this._onXhrLoad(xhr);
             }
         }.bind(this);
-        xhr.onerror = this._loader;
+        xhr.onerror = this._loader || function(){this._hasError = true;}.bind(this);
         xhr.send();
     }
 };
