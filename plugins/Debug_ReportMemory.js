@@ -17,7 +17,7 @@
  *
  * @param Max Pixels In MPix
  * @desc decide the value of "cacheLimit" displayed in the upper right
- * @default 20
+ * @default 10
  *
  */
 
@@ -40,17 +40,17 @@
  *
  * @param Max Pixels In MPix
  * @desc 右上に表示されているcacheLimitの値を決めます
- * @default 20
+ * @default 10
  *
  */
 
 (function(){
     var parameters = PluginManager.parameters('Debug_ReportMemory');
-    var pixels = toNumber(parameters['Max Pixels In MPix'], 20);
+    var pixels = toNumber(parameters['Max Pixels In MPix'], 10);
     var communityPixels = PluginManager.parameters('Community_Basic')['cacheLimit'];
 
     if (communityPixels) {
-        pixels = toNumber(communityPixels, 20);
+        pixels = toNumber(communityPixels, 10);
         console.log('Community_Basic plugin has been installed, so it overwrites the setting value of cacheLimit. ' +
         'cacheLimit: ' + pixels + 'MPix');
     }

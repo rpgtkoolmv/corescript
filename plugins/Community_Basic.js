@@ -8,7 +8,7 @@
  *
  * @param cacheLimit
  * @desc The upper limit of images' cached size (MPixel)
- * @default 20
+ * @default 10
  *
  * @param screenWidth
  * @desc The resolution of screen width
@@ -43,7 +43,7 @@
  *
  * @param cacheLimit
  * @desc 画像のメモリへのキャッシュの上限値 (MPix)
- * @default 20
+ * @default 10
  *
  * @param screenWidth
  * @desc 画面サイズの幅
@@ -74,7 +74,7 @@
     }
 
     var parameters = PluginManager.parameters('Community_Basic');
-    var cacheLimit = toNumber(parameters['cacheLimit'], 20);
+    var cacheLimit = toNumber(parameters['cacheLimit'], 10);
     var screenWidth = toNumber(parameters['screenWidth'], 816);
     var screenHeight = toNumber(parameters['screenHeight'], 624);
     var renderingMode = parameters['renderingMode'].toLowerCase();
