@@ -1732,6 +1732,7 @@ Game_Interpreter.prototype.command355 = function() {
 Game_Interpreter.prototype.command356 = function() {
     var args = this._params[0].split(" ");
     var command = args.shift();
+    PluginManager.runProgram(command, args);
     this.pluginCommand(command, args);
     return true;
 };
