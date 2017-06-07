@@ -287,7 +287,10 @@ Graphics.printLoadingError = function(url) {
         button.style.fontSize = '24px';
         button.style.color = '#ffffff';
         button.style.backgroundColor = '#000000';
-        button.onclick = ResourceHandler.retry.bind(ResourceHandler);
+        button.onmousedown = button.ontouchstart = function(event) {
+            ResourceHandler.retry();
+            event.stopPropagation();
+        };
         this._errorPrinter.appendChild(button);
         this._loadingCount = -Infinity;
     }
