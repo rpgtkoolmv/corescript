@@ -31,6 +31,10 @@
  * @param alwaysDash
  * @desc The initial value whether the player always dashes (on/off)
  * @default off
+ *
+ * @param autoSave
+ * @desc auto save to file 1 when "Transfer Player" (on/off)
+ * @default off
  */
 
 /*:ja
@@ -66,6 +70,10 @@
  * @param alwaysDash
  * @desc プレイヤーが常時ダッシュするかどうかの初期値 (on/off)
  * @default off
+ *
+ * @param autoSave
+ * @desc 「場所移動」の際にファイル１にオートセーブ (on/off)
+ * @default off
  */
 
 (function() {
@@ -81,6 +89,7 @@
     var alwaysDash = parameters['alwaysDash'].toLowerCase() === 'on';
     var windowWidthTo = toNumber(parameters['changeWindowWidthTo'], 0);
     var windowHeightTo = toNumber(parameters['changeWindowHeightTo'], 0);
+    var autoSave = parameters['autoSave'].toLowerCase() === 'on';
 
     var windowWidth;
     var windowHeight;
@@ -138,4 +147,8 @@
             window.resizeBy(dw, dh);
         }
     };
+
+    if (autoSave) {
+        PluginManager.addAutoSaveSystem();
+    }
 })();

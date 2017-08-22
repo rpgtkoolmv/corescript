@@ -51,3 +51,40 @@ PluginManager.loadScript = function(name) {
 PluginManager.onError = function(e) {
     this._errorUrls.push(e.target._url);
 };
+
+PluginManager.addAutoSaveSystem = function() {
+    var autoSaveFileId = 1;
+
+    var _Game_Player_performTransfer = Game_Player.prototype.performTransfer;
+    Game_Player.prototype.performTransfer = function() {
+        var transfer = this.isTransferring();
+        _Game_Player_performTransfer.apply(this, arguments);
+        if (transfer && !DataManager.isEventTest() && $gameSystem.isSaveEnabled()) {
+            $gameSystem.onBeforeSave();
+            if (DataManager.saveGame(autoSaveFileId)) {
+                StorageManager.cleanBackup(autoSaveFileId);
+            }
+        }
+    };
+
+    var _Scene_Save_onSavefileOk = Scene_Save.prototype.onSavefileOk;
+    Scene_Save.prototype.onSavefileOk = function() {
+        if (this.savefileId() === autoSaveFileId) {
+            this.onSaveFailure();
+        } else {
+            _Scene_Save_onSavefileOk.apply(this, arguments);
+        }
+    };
+
+    var _Window_SavefileList_drawFileId = Window_SavefileList.prototype.drawFileId;
+    Window_SavefileList.prototype.drawFileId = function(id, x, y) {
+        if (id === autoSaveFileId) {
+            if (this._mode === 'save') {
+                this.changePaintOpacity(false);
+            }
+            this.drawText(TextManager.file + ' ' + id + '(Auto)', x, y, 180);
+        } else {
+            _Window_SavefileList_drawFileId.apply(this, arguments);
+        }
+    };
+};
