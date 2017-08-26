@@ -1228,8 +1228,8 @@ Graphics._requestFullScreen = function() {
  * @private
  */
 Graphics._cancelFullScreen = function() {
-    if (document.cancelFullscreen) {
-        document.cancelFullscreen();
+    if (document.fullscreenElement) { 
+        document.exitFullscreen();
     } else if (document.mozCancelFullScreen) {
         document.mozCancelFullScreen();
     } else if (document.webkitCancelFullScreen) {
