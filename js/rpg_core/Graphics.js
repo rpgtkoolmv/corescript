@@ -1199,7 +1199,7 @@ Graphics._switchFullScreen = function() {
  * @private
  */
 Graphics._isFullScreen = function() {
-    return ((document.fullScreenElement && document.fullScreenElement !== null) ||
+    return ((document.fullscreenElement && document.fullscreenElement !== null) ||
             (!document.mozFullScreen && !document.webkitFullscreenElement &&
              !document.msFullscreenElement));
 };
@@ -1211,8 +1211,8 @@ Graphics._isFullScreen = function() {
  */
 Graphics._requestFullScreen = function() {
     var element = document.body;
-    if (element.requestFullScreen) {
-        element.requestFullScreen();
+    if (element.requestFullscreen) {
+        element.requestFullscreen();
     } else if (element.mozRequestFullScreen) {
         element.mozRequestFullScreen();
     } else if (element.webkitRequestFullScreen) {
@@ -1228,8 +1228,8 @@ Graphics._requestFullScreen = function() {
  * @private
  */
 Graphics._cancelFullScreen = function() {
-    if (document.cancelFullScreen) {
-        document.cancelFullScreen();
+    if (document.cancelFullscreen) {
+        document.cancelFullscreen();
     } else if (document.mozCancelFullScreen) {
         document.mozCancelFullScreen();
     } else if (document.webkitCancelFullScreen) {
