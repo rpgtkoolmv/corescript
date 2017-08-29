@@ -7,21 +7,26 @@
  * There is no plugin command.
  *
  * @param cacheLimit
+ * @type number
  * @desc The upper limit of images' cached size (MPixel)
  * @default 10
  *
  * @param screenWidth
+ * @type number
  * @desc The resolution of screen width
  * @default 816
  *
  * @param screenHeight
+ * @type number
  * @desc The resolution of screen height
  * @default 624
  *
  * @param changeWindowWidthTo
+ * @type number
  * @desc If set, change window width to this value
  *
  * @param changeWindowHeightTo
+ * @type number
  * @desc If set, change window height to this value
  *
  * @param renderingMode
@@ -32,9 +37,10 @@
  * @desc The initial value whether the player always dashes (on/off)
  * @default off
  *
- * @param autoSave
- * @desc auto save to file 1 when "Transfer Player" (on/off)
- * @default off
+ * @param autoSaveFileId
+ * @type number
+ * @desc The file number to auto save when "Transfer Player" (0: off)
+ * @default 0
  */
 
 /*:ja
@@ -46,21 +52,26 @@
  * このプラグインにはプラグインコマンドはありません。
  *
  * @param cacheLimit
+ * @type number
  * @desc 画像のメモリへのキャッシュの上限値 (MPix)
  * @default 10
  *
  * @param screenWidth
+ * @type number
  * @desc 画面サイズの幅
  * @default 816
  *
  * @param screenHeight
+ * @type number
  * @desc 画面サイズの高さ
  * @default 624
  *
  * @param changeWindowWidthTo
+ * @type number
  * @desc 値が設定された場合、ウインドウの幅を指定した値に変更
  *
  * @param changeWindowHeightTo
+ * @type number
  * @desc 値が設定された場合、ウインドウの高さを指定した値に変更
  *
  * @param renderingMode
@@ -71,9 +82,10 @@
  * @desc プレイヤーが常時ダッシュするかどうかの初期値 (on/off)
  * @default off
  *
- * @param autoSave
- * @desc 「場所移動」の際にファイル１にオートセーブ (on/off)
- * @default off
+ * @param autoSaveFileId
+ * @type number
+ * @desc 「場所移動」の際にオートセーブするファイル番号 (0でoff)
+ * @default 0
  */
 
 (function() {
@@ -89,7 +101,7 @@
     var alwaysDash = parameters['alwaysDash'].toLowerCase() === 'on';
     var windowWidthTo = toNumber(parameters['changeWindowWidthTo'], 0);
     var windowHeightTo = toNumber(parameters['changeWindowHeightTo'], 0);
-    var autoSave = parameters['autoSave'].toLowerCase() === 'on';
+    var autoSaveFileId = toNumber(parameters['autoSaveFileId'].toLowerCase(), 0);
 
     var windowWidth;
     var windowHeight;
@@ -148,7 +160,7 @@
         }
     };
 
-    if (autoSave) {
-        PluginManager.addAutoSaveSystem();
+    if (autoSaveFileId) {
+        PluginManager.enableFeature('autoSave', autoSaveFileId);
     }
 })();
