@@ -101,7 +101,7 @@
     var alwaysDash = parameters['alwaysDash'].toLowerCase() === 'on';
     var windowWidthTo = toNumber(parameters['changeWindowWidthTo'], 0);
     var windowHeightTo = toNumber(parameters['changeWindowHeightTo'], 0);
-    var autoSaveFileId = toNumber(parameters['autoSaveFileId'].toLowerCase(), 0);
+    var autoSaveFileId = toNumber(parameters['autoSaveFileId'], 0);
 
     var windowWidth;
     var windowHeight;
