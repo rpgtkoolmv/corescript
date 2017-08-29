@@ -1199,9 +1199,10 @@ Graphics._switchFullScreen = function() {
  * @private
  */
 Graphics._isFullScreen = function() {
-    return ((document.fullscreenElement && document.fullscreenElement !== null) ||
-            (!document.mozFullScreen && !document.webkitFullscreenElement &&
-             !document.msFullscreenElement));
+    return document.fullscreenElement ||
+           document.mozFullScreen || 
+           document.webkitFullscreenElement ||
+           document.msFullscreenElement;
 };
 
 /**
