@@ -30,12 +30,17 @@
  * @desc If set, change window height to this value
  *
  * @param renderingMode
+ * @type select
+ * @option canvas
+ * @option webgl
+ * @option auto
  * @desc The rendering mode (canvas/webgl/auto)
  * @default auto
  *
  * @param alwaysDash
+ * @type boolean
  * @desc The initial value whether the player always dashes (on/off)
- * @default off
+ * @default false
  *
  * @param autoSaveFileId
  * @type number
@@ -75,12 +80,17 @@
  * @desc 値が設定された場合、ウインドウの高さを指定した値に変更
  *
  * @param renderingMode
+ * @type select
+ * @option canvas
+ * @option webgl
+ * @option auto
  * @desc レンダリングモード (canvas/webgl/auto)
  * @default auto
  *
  * @param alwaysDash
+ * @type boolean
  * @desc プレイヤーが常時ダッシュするかどうかの初期値 (on/off)
- * @default off
+ * @default false
  *
  * @param autoSaveFileId
  * @type number
@@ -98,7 +108,7 @@
     var screenWidth = toNumber(parameters['screenWidth'], 816);
     var screenHeight = toNumber(parameters['screenHeight'], 624);
     var renderingMode = parameters['renderingMode'].toLowerCase();
-    var alwaysDash = parameters['alwaysDash'].toLowerCase() === 'on';
+    var alwaysDash = parameters['alwaysDash'].toLowerCase() === 'true';
     var windowWidthTo = toNumber(parameters['changeWindowWidthTo'], 0);
     var windowHeightTo = toNumber(parameters['changeWindowHeightTo'], 0);
     var autoSaveFileId = toNumber(parameters['autoSaveFileId'], 0);
