@@ -48,7 +48,7 @@ Window_Options.prototype.addVolumeOptions = function() {
 Window_Options.prototype.drawItem = function(index) {
     var rect = this.itemRectForText(index);
     var statusWidth = this.statusWidth();
-    var titleWidth = rect,x+rect.width - statusWidth;
+    var titleWidth = rect.x+rect.width - statusWidth;
     this.resetTextColor();
     this.changePaintOpacity(this.isCommandEnabled(index));
     this.drawText(this.commandName(index), rect.x, rect.y, titleWidth, 'left');
