@@ -62,6 +62,7 @@ Graphics.initialize = function(width, height, type) {
     this._disableContextMenu();
     this._setupEventHandlers();
     this._setupCssFontLoading();
+    this._setupProgress();
 };
 
 
@@ -247,6 +248,40 @@ Graphics.setLoadingImage = function(src) {
  */
 Graphics.startLoading = function() {
     this._loadingCount = 0;
+
+    ProgressWatcher.truncateProgress();
+    ProgressWatcher.setProgressListener(this._updateProgressCount.bind(this));
+    Graphics._showProgress();
+};
+
+Graphics._setupProgress = function(){
+    this._progressElement = document.createElement('progress');
+    this._progressElement.id = 'loading-progress';
+    this._progressElement.max = 100;
+    this._progressElement.value = 0;
+    document.body.appendChild(this._progressElement);
+};
+
+Graphics._showProgress = function(){
+    this._progressElement.value = 0;
+    this._progressElement.style.visibility = 'visible';
+};
+
+Graphics._hideProgress = function(){
+    this._progressElement.style.visibility = 'hidden';
+};
+
+Graphics._updateProgressCount = function(countLoaded, countLoading){
+    if(countLoading !== 0){
+        this._progressElement.value = (countLoaded/countLoading) * 100;
+    }else{
+        this._progressElement.value = 100;
+    }
+};
+
+Graphics._updateProgress = function(){
+    this._progressElement.style.zIndex = 99;
+    this._centerElement(this._progressElement);
 };
 
 /**
@@ -259,6 +294,7 @@ Graphics.updateLoading = function() {
     this._loadingCount++;
     this._paintUpperCanvas();
     this._upperCanvas.style.opacity = 1;
+    this._updateProgress();
 };
 
 /**
@@ -270,6 +306,7 @@ Graphics.updateLoading = function() {
 Graphics.endLoading = function() {
     this._clearUpperCanvas();
     this._upperCanvas.style.opacity = 0;
+    this._hideProgress();
 };
 
 /**
