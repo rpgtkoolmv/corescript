@@ -259,6 +259,7 @@ Graphics._setupProgress = function(){
     this._progressElement.id = 'loading-progress';
     this._progressElement.max = 100;
     this._progressElement.value = 0;
+
     document.body.appendChild(this._progressElement);
 };
 
@@ -282,6 +283,7 @@ Graphics._updateProgressCount = function(countLoaded, countLoading){
 Graphics._updateProgress = function(){
     this._progressElement.style.zIndex = 99;
     this._centerElement(this._progressElement);
+    this._progressElement.style.bottom = '-100px';
 };
 
 /**
