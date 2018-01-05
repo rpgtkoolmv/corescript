@@ -255,10 +255,19 @@ Graphics.startLoading = function() {
 };
 
 Graphics._setupProgress = function(){
-    this._progressElement = document.createElement('progress');
+    this._progressElement = document.createElement('div');
     this._progressElement.id = 'loading-progress';
-    this._progressElement.max = 100;
-    this._progressElement.value = 0;
+    this._progressElement.style.width = '200px';
+    this._progressElement.style.height = '30px';
+    this._progressElement.style.backgroundColor = 'gray';
+
+    this._barElement = document.createElement('div');
+    this._barElement.id = 'loading-bar';
+    this._barElement.style.width = '1%';
+    this._barElement.style.height = '30px';
+    this._barElement.style.backgroundColor = 'green';
+
+    this._progressElement.appendChild(this._barElement);
 
     document.body.appendChild(this._progressElement);
 };
@@ -273,17 +282,20 @@ Graphics._hideProgress = function(){
 };
 
 Graphics._updateProgressCount = function(countLoaded, countLoading){
+    var progressValue;
     if(countLoading !== 0){
-        this._progressElement.value = (countLoaded/countLoading) * 100;
+        progressValue = (countLoaded/countLoading) * 100;
     }else{
-        this._progressElement.value = 100;
+        progressValue = 100;
     }
+
+    this._barElement.style.width = progressValue + '%';
 };
 
 Graphics._updateProgress = function(){
     this._progressElement.style.zIndex = 99;
     this._centerElement(this._progressElement);
-    this._progressElement.style.bottom = '-100px';
+    this._progressElement.style.marginTop = '400px';
 };
 
 /**
