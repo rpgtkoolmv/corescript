@@ -155,6 +155,7 @@ SceneManager.onError = function(e) {
     try {
         this.stop();
         Graphics.printError('Error', e.message);
+        Graphics.printStackTrace(e.stack);
         AudioManager.stopAll();
     } catch (e2) {
     }
@@ -184,6 +185,7 @@ SceneManager.catchException = function(e) {
     } else {
         Graphics.printError('UnknownError', e);
     }
+    Graphics.printStackTrace(e.stack);
     AudioManager.stopAll();
     this.stop();
 };

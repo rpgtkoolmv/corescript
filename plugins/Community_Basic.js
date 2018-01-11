@@ -31,6 +31,10 @@
  * @param alwaysDash
  * @desc The initial value whether the player always dashes (on/off)
  * @default off
+ *
+ * @param errorMessage
+ * @desc The message when error occurred
+ * @default Error occurred. Please ask to the creator of this game.
  */
 
 /*:ja
@@ -66,6 +70,10 @@
  * @param alwaysDash
  * @desc プレイヤーが常時ダッシュするかどうかの初期値 (on/off)
  * @default off
+ *
+ * @param errorMessage
+ * @desc エラーが発生した際に表示するメッセージ
+ * @default エラーが発生しました。ゲームの作者にご連絡ください。
  */
 
 (function() {
@@ -81,6 +89,7 @@
     var alwaysDash = parameters['alwaysDash'].toLowerCase() === 'on';
     var windowWidthTo = toNumber(parameters['changeWindowWidthTo'], 0);
     var windowHeightTo = toNumber(parameters['changeWindowHeightTo'], 0);
+    var errorMessage = parameters['errorMessage'];
 
     var windowWidth;
     var windowHeight;
@@ -138,4 +147,7 @@
             window.resizeBy(dw, dh);
         }
     };
+
+
+    Graphics.setErrorMessage(errorMessage);
 })();
