@@ -462,7 +462,10 @@ DataManager.isAutoSaveFileId = function(saveFileId) {
 };
 
 DataManager.autoSaveGame = function() {
-    if (this._autoSaveFileId !== 0 && this.saveGame(this._autoSaveFileId)) {
-        StorageManager.cleanBackup(this._autoSaveFileId);
+    if (this._autoSaveFileId !== 0 && !this.isEventTest() && $gameSystem.isSaveEnabled()) {
+        $gameSystem.onBeforeSave();
+        if (this.saveGame(this._autoSaveFileId)) {
+            StorageManager.cleanBackup(this._autoSaveFileId);
+        }
     }
 };
