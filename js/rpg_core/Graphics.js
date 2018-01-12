@@ -349,7 +349,7 @@ Graphics.printStackTrace = function(stack) {
 };
 
 /**
- * Sets the error message..
+ * Sets the error message.
  *
  * @static
  * @method setErrorMessage
