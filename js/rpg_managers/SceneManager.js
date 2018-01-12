@@ -181,11 +181,11 @@ SceneManager.onKeyDown = function(event) {
 SceneManager.catchException = function(e) {
     if (e instanceof Error) {
         Graphics.printError(e.name, e.message);
+        Graphics.printStackTrace(e.stack);
         console.error(e.stack);
     } else {
         Graphics.printError('UnknownError', e);
     }
-    Graphics.printStackTrace(e.stack);
     AudioManager.stopAll();
     this.stop();
 };

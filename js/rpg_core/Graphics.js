@@ -281,6 +281,7 @@ Graphics.endLoading = function() {
  */
 Graphics.printLoadingError = function(url) {
     if (this._errorPrinter && !this._errorShowed) {
+        this._updateErrorPrinter();
         this._errorPrinter.innerHTML = this._makeErrorHtml('Loading Error', 'Failed to load: ' + url);
         var button = document.createElement('button');
         button.innerHTML = 'Retry';
@@ -784,6 +785,11 @@ Graphics._updateErrorPrinter = function() {
     this._errorPrinter.style.textShadow = '1px 1px 3px #000';
     this._errorPrinter.style.fontSize = '20px';
     this._errorPrinter.style.zIndex = 99;
+    this._errorPrinter.style.userSelect       = 'text';
+    this._errorPrinter.style.webkitUserSelect = 'text';
+    this._errorPrinter.style.msUserSelect     = 'text';
+    this._errorPrinter.style.mozUserSelect    = 'text';
+    this._errorPrinter.oncontextmenu = null;    // enable context menu
     this._centerElement(this._errorPrinter);
 };
 
@@ -813,10 +819,6 @@ Graphics._makeStackTrace = function(stack) {
     style.color            = 'white';
     style.textAlign        = 'left';
     style.fontSize         = '18px';
-    style.userSelect       = 'text';
-    style.webkitUserSelect = 'text';
-    style.msUserSelect     = 'text';
-    style.mozUserSelect    = 'text';
     stackTrace.innerHTML   = '<br><hr>' + stack + '<hr>';
     this._errorPrinter.appendChild(stackTrace);
 };
