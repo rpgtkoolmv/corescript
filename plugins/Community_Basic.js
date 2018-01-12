@@ -99,8 +99,12 @@
  */
 
 (function() {
+    function isNumber(str) {
+        return !!str && !isNaN(str);
+    }
+
     function toNumber(str, def) {
-        return isNaN(str) ? def : +(str || def);
+        return isNumber(str) ? +str : def;
     }
 
     var parameters = PluginManager.parameters('Community_Basic');
@@ -170,7 +174,5 @@
         }
     };
 
-    if (autoSaveFileId) {
-        PluginManager.enableFeature('autoSave', autoSaveFileId);
-    }
+    DataManager.setAutoSaveFileId(autoSaveFileId);
 })();
