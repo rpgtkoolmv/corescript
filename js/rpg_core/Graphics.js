@@ -1044,7 +1044,7 @@ Graphics._applyCanvasFilter = function() {
  * @private
  */
 Graphics._onVideoLoad = function() {
-    this._video.play();
+    this._video.play().catch(function() { });
     this._updateVisibility(true);
     this._videoLoading = false;
 };
