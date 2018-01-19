@@ -91,18 +91,6 @@ Utils.isAndroidChrome = function() {
 };
 
 /**
- * Checks whether the browser is Mac Safari.
- *
- * @static
- * @method isMacSafari
- * @return {Boolean} True if the browser is Mac Safari
- */
-Utils.isMacSafari = function() {
-    var agent = navigator.userAgent;
-    return !!(agent.match(/Macintosh/) && agent.match(/Safari/) && !agent.match(/Chrome|OPR/));
-};
-
-/**
  * Checks whether the browser can read files in the game folder.
  *
  * @static
