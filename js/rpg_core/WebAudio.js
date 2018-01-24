@@ -157,8 +157,9 @@ WebAudio._setupEventHandlers = function() {
         } else {
             WebAudio._onTouchStart();
         }
-    }
-    document.addEventListener("click", resumeHandler);
+    };
+    document.addEventListener("keydown", resumeHandler);
+    document.addEventListener("mousedown", resumeHandler);
     document.addEventListener("touchend", resumeHandler);
     document.addEventListener('touchstart', this._onTouchStart.bind(this));
     document.addEventListener('visibilitychange', this._onVisibilityChange.bind(this));
