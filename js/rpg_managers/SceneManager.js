@@ -155,7 +155,6 @@ SceneManager.onError = function(e) {
     try {
         this.stop();
         Graphics.printError('Error', e.message);
-        Graphics.printStackTrace(e.stack);
         AudioManager.stopAll();
     } catch (e2) {
     }
