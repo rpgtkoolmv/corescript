@@ -281,6 +281,7 @@ Graphics.endLoading = function() {
  */
 Graphics.printLoadingError = function(url) {
     if (this._errorPrinter && !this._errorShowed) {
+        this._updateErrorPrinter();
         this._errorPrinter.innerHTML = this._makeErrorHtml('Loading Error', 'Failed to load: ' + url);
         var button = document.createElement('button');
         button.innerHTML = 'Retry';
@@ -309,6 +310,7 @@ Graphics.eraseLoadingError = function() {
     }
 };
 
+// The following code is partly borrowed from triacontane.
 /**
  * Displays the error text to the screen.
  *
@@ -319,11 +321,42 @@ Graphics.eraseLoadingError = function() {
  */
 Graphics.printError = function(name, message) {
     this._errorShowed = true;
+    this.hideFps();
     if (this._errorPrinter) {
+        this._updateErrorPrinter();
         this._errorPrinter.innerHTML = this._makeErrorHtml(name, message);
+        this._makeErrorMessage();
     }
     this._applyCanvasFilter();
     this._clearUpperCanvas();
+};
+
+/**
+ * Shows the stacktrace of error.
+ *
+ * @static
+ * @method printStackTrace
+ */
+Graphics.printStackTrace = function(stack) {
+    if (this._errorPrinter) {
+        stack = (stack || '')
+            .replace(/file:.*js\//g, '')
+            .replace(/http:.*js\//g, '')
+            .replace(/https:.*js\//g, '')
+            .replace(/chrome-extension:.*js\//g, '')
+            .replace(/\n/g, '<br>');
+        this._makeStackTrace(decodeURIComponent(stack));
+    }
+};
+
+/**
+ * Sets the error message.
+ *
+ * @static
+ * @method setErrorMessage
+ */
+Graphics.setErrorMessage = function(message) {
+    this._errorMessage = message;
 };
 
 /**
@@ -673,7 +706,7 @@ Graphics._updateRealScale = function() {
  */
 Graphics._makeErrorHtml = function(name, message) {
     return ('<font color="yellow"><b>' + name + '</b></font><br>' +
-            '<font color="white">' + message + '</font><br>');
+            '<font color="white">' + decodeURIComponent(message) + '</font><br>');
 };
 
 /**
@@ -747,12 +780,47 @@ Graphics._createErrorPrinter = function() {
  */
 Graphics._updateErrorPrinter = function() {
     this._errorPrinter.width = this._width * 0.9;
-    this._errorPrinter.height = 40;
+    this._errorPrinter.height = this._errorShowed ? this._height * 0.9 : 40;
     this._errorPrinter.style.textAlign = 'center';
     this._errorPrinter.style.textShadow = '1px 1px 3px #000';
     this._errorPrinter.style.fontSize = '20px';
     this._errorPrinter.style.zIndex = 99;
+    this._errorPrinter.style.userSelect       = 'text';
+    this._errorPrinter.style.webkitUserSelect = 'text';
+    this._errorPrinter.style.msUserSelect     = 'text';
+    this._errorPrinter.style.mozUserSelect    = 'text';
+    this._errorPrinter.oncontextmenu = null;    // enable context menu
     this._centerElement(this._errorPrinter);
+};
+
+/**
+ * @static
+ * @method _makeErrorMessage
+ * @private
+ */
+Graphics._makeErrorMessage = function() {
+    var mainMessage       = document.createElement('div');
+    var style             = mainMessage.style;
+    style.color           = 'white';
+    style.textAlign       = 'left';
+    style.fontSize        = '18px';
+    mainMessage.innerHTML = '<hr>' + (this._errorMessage || '');
+    this._errorPrinter.appendChild(mainMessage);
+};
+
+/**
+ * @static
+ * @method _makeStackTrace
+ * @private
+ */
+Graphics._makeStackTrace = function(stack) {
+    var stackTrace         = document.createElement('div');
+    var style              = stackTrace.style;
+    style.color            = 'white';
+    style.textAlign        = 'left';
+    style.fontSize         = '18px';
+    stackTrace.innerHTML   = '<br><hr>' + stack + '<hr>';
+    this._errorPrinter.appendChild(stackTrace);
 };
 
 /**
