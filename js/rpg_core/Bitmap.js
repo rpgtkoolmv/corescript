@@ -972,7 +972,6 @@ Bitmap.prototype._requestImage = function(url){
         this._loader = ResourceHandler.createLoader(url, this._requestImage.bind(this, url), this._onError.bind(this));
     }
 
-    this._image = new Image();
     this._url = url;
     this._loadingState = 'requesting';
 
