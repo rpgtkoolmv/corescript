@@ -1,6 +1,5 @@
 [
   "js/rpg_core/_header.js",
-  "js/rpg_core/Patch.js",
   "js/rpg_core/JsExtensions.js",
   "js/rpg_core/Utils.js",
   "js/rpg_core/CacheEntry.js",
