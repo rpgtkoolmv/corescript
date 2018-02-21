@@ -1862,7 +1862,6 @@ Game_Interpreter.requestImageForCommand =function(command){
             break;
     }
 };
-
 Game_Interpreter.requestImages = function(list, commonList){
     if(!list) return;
     list.forEach(Game_Interpreter.requestImageForCommand);
