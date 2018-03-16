@@ -99,6 +99,7 @@
  */
 
 (function() {
+    'use strict';
     function isNumber(str) {
         return !!str && !isNaN(str);
     }
