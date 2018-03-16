@@ -261,15 +261,20 @@ WebAudio._fadeOut = function(duration) {
  */
 WebAudio.prototype.clear = function() {
     this.stop();
+    this._arrayBuffer = null;
     this._buffer = null;
     this._sourceNode = null;
     this._gainNode = null;
     this._pannerNode = null;
+    this._chunkGainRate = 5;
+    this._chunkSize = 75 * 1024;
+    this._loadedSize = 0;
     this._totalTime = 0;
     this._sampleRate = 0;
     this._loopStart = 0;
     this._loopLength = 0;
     this._startTime = 0;
+    this._offset = 0;
     this._volume = 1;
     this._pitch = 1;
     this._pan = 0;
@@ -357,7 +362,7 @@ Object.defineProperty(WebAudio.prototype, 'pan', {
  * @return {Boolean} True if the audio data is ready to play
  */
 WebAudio.prototype.isReady = function() {
-    return !!this._buffer;
+    return !!this._buffer && this._buffer.duration >= this._offset;
 };
 
 /**
@@ -388,8 +393,8 @@ WebAudio.prototype.isPlaying = function() {
  * @param {Number} offset The start position to play in seconds
  */
 WebAudio.prototype.play = function(loop, offset) {
+    this._offset = offset = offset || 0;
     if (this.isReady()) {
-        offset = offset || 0;
         this._startPlaying(loop, offset);
     } else if (WebAudio._context) {
         this._autoPlay = true;
@@ -504,6 +509,9 @@ WebAudio.prototype._load = function(url) {
         var xhr = new XMLHttpRequest();
         if(Decrypter.hasEncryptedAudio) url = Decrypter.extToEncryptExt(url);
         xhr.open('GET', url);
+        if (typeof require === 'undefined') {
+            xhr.setRequestHeader('Range', 'bytes=' + this._loadedSize + '-' + (this._loadedSize + this._chunkSize - 1));
+        }
         xhr.responseType = 'arraybuffer';
         xhr.onload = function() {
             if (xhr.status < 400) {
@@ -521,20 +529,48 @@ WebAudio.prototype._load = function(url) {
  * @private
  */
 WebAudio.prototype._onXhrLoad = function(xhr) {
-    var array = xhr.response;
+    var array = xhr && xhr.response || this._arrayBuffer;
+    var rangeEnabled = xhr && xhr.status === 206;
+    if (rangeEnabled) {
+        this._chunkSize = !this._arrayBuffer ? this._chunkSize * (this._chunkGainRate - 1) : this._arrayBuffer.byteLength;
+        this._arrayBuffer = this._arrayBuffer || new Uint8Array(+xhr.getResponseHeader('Content-Range').split('/').pop());
+        this._arrayBuffer.set(new Uint8Array(array), this._loadedSize);
+        this._loadedSize += array.byteLength;
+        if (this._loadedSize === this._arrayBuffer.byteLength) {
+            array = this._arrayBuffer.buffer;
+            this._arrayBuffer = null;
+        } else {
+            array = this._arrayBuffer.buffer.slice(0, this._loadedSize);
+            this._load(this._url);
+        }
+    } else {
+        if (this._chunkSize >= array.byteLength) {
+            this._arrayBuffer = null;
+        } else {
+            var firstTime = !this._arrayBuffer;
+            this._arrayBuffer = array;
+            array = this._arrayBuffer.slice(0, this._chunkSize);
+            this._chunkSize = firstTime ? this._chunkSize * this._chunkGainRate : this._arrayBuffer.byteLength;
+        }
+    }
     if(Decrypter.hasEncryptedAudio) array = Decrypter.decryptArrayBuffer(array);
     this._readLoopComments(new Uint8Array(array));
     WebAudio._context.decodeAudioData(array, function(buffer) {
-        this._buffer = buffer;
-        this._totalTime = buffer.duration;
-        if (this._loopLength > 0 && this._sampleRate > 0) {
-            this._loopStart /= this._sampleRate;
-            this._loopLength /= this._sampleRate;
-        } else {
-            this._loopStart = 0;
-            this._loopLength = this._totalTime;
+        if (!this._buffer || this._buffer.length < buffer.length) {
+            this._buffer = buffer;
+            this._totalTime = buffer.duration;
+            if (this.isPlaying()) {
+                this._startPlaying(this._sourceNode.loop, this.seek());
+            }
+            if (this.isReady()) {
+                this._onLoad();
+            }
+            if (!rangeEnabled && this._arrayBuffer) {
+                this._onXhrLoad();
+            }
         }
-        this._onLoad();
+    }.bind(this), rangeEnabled ? undefined : function() {
+        this._onXhrLoad();
     }.bind(this));
 };
 
@@ -563,8 +599,10 @@ WebAudio.prototype._createNodes = function() {
     var context = WebAudio._context;
     this._sourceNode = context.createBufferSource();
     this._sourceNode.buffer = this._buffer;
-    this._sourceNode.loopStart = this._loopStart;
-    this._sourceNode.loopEnd = this._loopStart + this._loopLength;
+    if (this._buffer.duration > this._loopStart) {
+        this._sourceNode.loopStart = this._loopStart;
+        this._sourceNode.loopEnd = this._loopStart + this._loopLength;
+    }
     this._sourceNode.playbackRate.setValueAtTime(this._pitch, context.currentTime);
     this._gainNode = context.createGain();
     this._gainNode.gain.setValueAtTime(this._volume, context.currentTime);
@@ -650,8 +688,14 @@ WebAudio.prototype._onLoad = function() {
  * @private
  */
 WebAudio.prototype._readLoopComments = function(array) {
-    this._readOgg(array);
-    this._readMp4(array);
+    if (this._sampleRate === 0) {
+        this._readOgg(array);
+        this._readMp4(array);
+        if (this._loopLength > 0 && this._sampleRate > 0) {
+            this._loopStart /= this._sampleRate;
+            this._loopLength /= this._sampleRate;
+        }
+    }
 };
 
 /**
