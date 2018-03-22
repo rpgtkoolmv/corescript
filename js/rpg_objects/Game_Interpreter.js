@@ -1868,7 +1868,7 @@ Game_Interpreter.requestImagesForCommand　=function(command){
         case 356:
             var args = params[0].split(" ");
             var command = args.shift();
-            Game_Interpreter.requestImagesByPluginCommand(args,command);
+            Game_Interpreter.requestImagesByPluginCommand(command,args);
             break;
     }
 };
