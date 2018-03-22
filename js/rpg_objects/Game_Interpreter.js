@@ -1866,7 +1866,7 @@ Game_Interpreter.requestImagesForCommand　=function(command){
             break;
         // Plugin Command
         case 356:
-            var args = this._params[0].split(" ");
+            var args = params[0].split(" ");
             var command = args.shift();
             Game_Interpreter.requestImagesByPluginCommand(args,command);
             break;
