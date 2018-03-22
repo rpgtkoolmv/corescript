@@ -109,6 +109,12 @@ Game_Interpreter.requestImagesForCommand　=function(command){
                 ImageManager.requestEnemy(name, hue);
             }
             break;
+        case 356:
+            var args = params[0].split(" ");
+            var commandName = args.shift();
+            Game_Interpreter.requestImagesByPluginCommand(commandName,args);
+        break;
+            
     }
 };
 
@@ -124,7 +130,6 @@ Game_Interpreter.requestImagesByChildEvent =function(command,commonList){
             Game_Interpreter.requestImages(commonEvent.list, commonList);
         }
     }
-
 };
 
 Game_Interpreter.requestImages = function(list, commonList){
