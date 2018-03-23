@@ -1744,26 +1744,17 @@ Game_Interpreter.requestImagesByPluginCommand=function(command,args){
 
 }
 
+
+Game_Interpreter.requestImagesByPluginCommand=function(command,args){
+
+};
+
 Game_Interpreter.requestImagesForCommand　=function(command){
     var params = command.parameters;
     switch(command.code){
         // Show Text
         case 101:
             ImageManager.requestFace(params[0]);
-            break;
-
-        // Common Event
-        case 117:
-            var commonEvent = $dataCommonEvents[params[0]];
-            if (commonEvent) {
-                if (!commonList) {
-                    commonList = [];
-                }
-                if (!commonList.contains(params[0])) {
-                    commonList.push(params[0]);
-                    Game_Interpreter.requestImages(commonEvent.list, commonList);
-                }
-            }
             break;
 
         // Change Party Member
@@ -1867,12 +1858,37 @@ Game_Interpreter.requestImagesForCommand　=function(command){
         // Plugin Command
         case 356:
             var args = params[0].split(" ");
-            var command = args.shift();
-            Game_Interpreter.requestImagesByPluginCommand(args,command);
-            break;
+            var commandName = args.shift();
+            Game_Interpreter.requestImagesByPluginCommand(commandName,args);
+        break;
+            
     }
 };
+
+Game_Interpreter.requestImagesByChildEvent =function(command,commonList){
+    var params =command.parameters;
+    var commonEvent = $dataCommonEvents[params[0]];
+    if (commonEvent) {
+        if (!commonList) {
+            commonList = [];
+        }
+        if (!commonList.contains(params[0])) {
+            commonList.push(params[0]);
+            Game_Interpreter.requestImages(commonEvent.list, commonList);
+        }
+    }
+};
+
 Game_Interpreter.requestImages = function(list, commonList){
     if(!list) return;
-    list.forEach(Game_Interpreter.requestImagesForCommand);
+    var len = list.length;
+    for(var i=0; i<len; i+=1 ){
+        var command = list[i];
+        // Common Event
+        if(command.code ===117){
+            Game_Interpreter.requestImagesByChildEvent(command,commonList);
+        }else{
+            Game_Interpreter.requestImagesForCommand(command);            
+        }
+    }
 };
