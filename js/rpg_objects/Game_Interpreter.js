@@ -1744,11 +1744,6 @@ Game_Interpreter.requestImagesByPluginCommand=function(command,args){
 
 }
 
-
-Game_Interpreter.requestImagesByPluginCommand=function(command,args){
-
-};
-
 Game_Interpreter.requestImagesForCommand　=function(command){
     var params = command.parameters;
     switch(command.code){
