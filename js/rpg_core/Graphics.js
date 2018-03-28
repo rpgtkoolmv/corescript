@@ -62,6 +62,7 @@ Graphics.initialize = function(width, height, type) {
     this._disableContextMenu();
     this._setupEventHandlers();
     this._setupCssFontLoading();
+    this._setupProgress();
 };
 
 
@@ -247,6 +248,54 @@ Graphics.setLoadingImage = function(src) {
  */
 Graphics.startLoading = function() {
     this._loadingCount = 0;
+
+    ProgressWatcher.truncateProgress();
+    ProgressWatcher.setProgressListener(this._updateProgressCount.bind(this));
+    Graphics._showProgress();
+};
+
+Graphics._setupProgress = function(){
+    this._progressElement = document.createElement('div');
+    this._progressElement.id = 'loading-progress';
+    this._progressElement.style.width = '200px';
+    this._progressElement.style.height = '30px';
+    this._progressElement.style.backgroundColor = 'gray';
+
+    this._barElement = document.createElement('div');
+    this._barElement.id = 'loading-bar';
+    this._barElement.style.width = '1%';
+    this._barElement.style.height = '30px';
+    this._barElement.style.backgroundColor = 'green';
+
+    this._progressElement.appendChild(this._barElement);
+
+    document.body.appendChild(this._progressElement);
+};
+
+Graphics._showProgress = function(){
+    this._progressElement.value = 0;
+    this._progressElement.style.visibility = 'visible';
+};
+
+Graphics._hideProgress = function(){
+    this._progressElement.style.visibility = 'hidden';
+};
+
+Graphics._updateProgressCount = function(countLoaded, countLoading){
+    var progressValue;
+    if(countLoading !== 0){
+        progressValue = (countLoaded/countLoading) * 100;
+    }else{
+        progressValue = 100;
+    }
+
+    this._barElement.style.width = progressValue + '%';
+};
+
+Graphics._updateProgress = function(){
+    this._progressElement.style.zIndex = 99;
+    this._centerElement(this._progressElement);
+    this._progressElement.style.marginTop = '400px';
 };
 
 /**
@@ -259,6 +308,7 @@ Graphics.updateLoading = function() {
     this._loadingCount++;
     this._paintUpperCanvas();
     this._upperCanvas.style.opacity = 1;
+    this._updateProgress();
 };
 
 /**
@@ -270,6 +320,7 @@ Graphics.updateLoading = function() {
 Graphics.endLoading = function() {
     this._clearUpperCanvas();
     this._upperCanvas.style.opacity = 0;
+    this._hideProgress();
 };
 
 /**

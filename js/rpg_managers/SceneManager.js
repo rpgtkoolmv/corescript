@@ -42,6 +42,7 @@ SceneManager.run = function(sceneClass) {
 };
 
 SceneManager.initialize = function() {
+    this.initProgressWatcher();
     this.initGraphics();
     this.checkFileAccess();
     this.initAudio();
@@ -49,6 +50,10 @@ SceneManager.initialize = function() {
     this.initNwjs();
     this.checkPluginErrors();
     this.setupErrorHandlers();
+};
+
+SceneManager.initProgressWatcher = function(){
+    ProgressWatcher.initialize();
 };
 
 SceneManager.initGraphics = function() {
