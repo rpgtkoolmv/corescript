@@ -52,23 +52,6 @@ TilingSprite.prototype._renderCanvas = function(renderer) {
 };
 
 /**
- * @method _renderWebGL
- * @param {Object} renderer
- * @private
- */
-TilingSprite.prototype._renderWebGL = function(renderer) {
-    if (this._bitmap) {
-        this._bitmap.touch();
-    }
-    if (this.texture.frame.width > 0 && this.texture.frame.height > 0) {
-        if (this._bitmap) {
-            this._bitmap.checkDirty();
-        }
-        this._renderWebGL_PIXI(renderer);
-    }
-};
-
-/**
  * The image for the tiling sprite.
  *
  * @property bitmap

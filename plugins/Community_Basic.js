@@ -46,6 +46,11 @@
  * @type number
  * @desc The file number to auto save when "Transfer Player" (0: off)
  * @default 0
+ *
+ * @param errorMessage
+ * @type string
+ * @desc The message when error occurred
+ * @default Error occurred. Please ask to the creator of this game.
  */
 
 /*:ja
@@ -96,6 +101,11 @@
  * @type number
  * @desc 「場所移動」の際にオートセーブするファイル番号 (0でoff)
  * @default 0
+ *
+ * @param errorMessage
+ * @type string
+ * @desc エラーが発生した際に表示するメッセージ
+ * @default エラーが発生しました。ゲームの作者にご連絡ください。
  */
 
 (function() {
@@ -117,6 +127,7 @@
     var windowWidthTo = toNumber(parameters['changeWindowWidthTo'], 0);
     var windowHeightTo = toNumber(parameters['changeWindowHeightTo'], 0);
     var autoSaveFileId = toNumber(parameters['autoSaveFileId'], 0);
+    var errorMessage = parameters['errorMessage'];
 
     var windowWidth;
     var windowHeight;
@@ -176,4 +187,5 @@
     };
 
     DataManager.setAutoSaveFileId(autoSaveFileId);
+    Graphics.setErrorMessage(errorMessage);
 })();
