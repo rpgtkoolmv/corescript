@@ -1256,9 +1256,9 @@ Graphics._switchStretchMode = function() {
  */
 Graphics._switchFullScreen = function() {
     if (this._isFullScreen()) {
-        this._requestFullScreen();
-    } else {
         this._cancelFullScreen();
+    } else {
+        this._requestFullScreen();
     }
 };
 
@@ -1269,9 +1269,10 @@ Graphics._switchFullScreen = function() {
  * @private
  */
 Graphics._isFullScreen = function() {
-    return ((document.fullScreenElement && document.fullScreenElement !== null) ||
-            (!document.mozFullScreen && !document.webkitFullscreenElement &&
-             !document.msFullscreenElement));
+    return document.fullscreenElement ||
+           document.mozFullScreen || 
+           document.webkitFullscreenElement ||
+           document.msFullscreenElement;
 };
 
 /**
@@ -1281,8 +1282,8 @@ Graphics._isFullScreen = function() {
  */
 Graphics._requestFullScreen = function() {
     var element = document.body;
-    if (element.requestFullScreen) {
-        element.requestFullScreen();
+    if (element.requestFullscreen) {
+        element.requestFullscreen();
     } else if (element.mozRequestFullScreen) {
         element.mozRequestFullScreen();
     } else if (element.webkitRequestFullScreen) {
@@ -1298,8 +1299,8 @@ Graphics._requestFullScreen = function() {
  * @private
  */
 Graphics._cancelFullScreen = function() {
-    if (document.cancelFullScreen) {
-        document.cancelFullScreen();
+    if (document.exitFullscreen) { 
+        document.exitFullscreen();
     } else if (document.mozCancelFullScreen) {
         document.mozCancelFullScreen();
     } else if (document.webkitCancelFullScreen) {
