@@ -95,6 +95,7 @@ Game_Player.prototype.performTransfer = function() {
         this.locate(this._newX, this._newY);
         this.refresh();
         this.clearTransferInfo();
+        DataManager.autoSaveGame();
     }
 };
 

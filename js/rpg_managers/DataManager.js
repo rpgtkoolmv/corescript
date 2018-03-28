@@ -40,6 +40,7 @@ var $testEvent        = null;
 DataManager._globalId       = 'RPGMV';
 DataManager._lastAccessedId = 1;
 DataManager._errorUrl       = null;
+DataManager._autoSaveFileId = 0;
 
 DataManager._databaseFiles = [
     { name: '$dataActors',       src: 'Actors.json'       },
@@ -450,4 +451,21 @@ DataManager.extractSaveContents = function(contents) {
     $gameParty         = contents.party;
     $gameMap           = contents.map;
     $gamePlayer        = contents.player;
+};
+
+DataManager.setAutoSaveFileId = function(autoSaveFileId) {
+    this._autoSaveFileId = autoSaveFileId;
+};
+
+DataManager.isAutoSaveFileId = function(saveFileId) {
+    return this._autoSaveFileId !== 0 && this._autoSaveFileId === saveFileId;
+};
+
+DataManager.autoSaveGame = function() {
+    if (this._autoSaveFileId !== 0 && !this.isEventTest() && $gameSystem.isSaveEnabled()) {
+        $gameSystem.onBeforeSave();
+        if (this.saveGame(this._autoSaveFileId)) {
+            StorageManager.cleanBackup(this._autoSaveFileId);
+        }
+    }
 };

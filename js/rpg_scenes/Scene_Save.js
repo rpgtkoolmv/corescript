@@ -27,6 +27,10 @@ Scene_Save.prototype.firstSavefileIndex = function() {
 };
 
 Scene_Save.prototype.onSavefileOk = function() {
+    if (DataManager.isAutoSaveFileId(this.savefileId())) {
+        this.onSaveFailure();
+        return;
+    }
     Scene_File.prototype.onSavefileOk.call(this);
     $gameSystem.onBeforeSave();
     if (DataManager.saveGame(this.savefileId())) {

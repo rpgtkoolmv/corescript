@@ -51,7 +51,14 @@ Window_SavefileList.prototype.drawItem = function(index) {
 };
 
 Window_SavefileList.prototype.drawFileId = function(id, x, y) {
-    this.drawText(TextManager.file + ' ' + id, x, y, 180);
+    if (DataManager.isAutoSaveFileId(id)) {
+        if (this._mode === 'save') {
+            this.changePaintOpacity(false);
+        }
+        this.drawText(TextManager.file + ' ' + id + '(Auto)', x, y, 180);
+    } else {
+        this.drawText(TextManager.file + ' ' + id, x, y, 180);
+    }
 };
 
 Window_SavefileList.prototype.drawContents = function(info, rect, valid) {
