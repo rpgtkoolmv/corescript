@@ -156,12 +156,14 @@ SceneManager.terminate = function() {
 
 SceneManager.onError = function(e) {
     console.error(e.message);
-    console.error(e.filename, e.lineno);
-    try {
-        this.stop();
-        Graphics.printError('Error', e.message);
-        AudioManager.stopAll();
-    } catch (e2) {
+    if (e.filename || e.lineno) {
+        console.error(e.filename, e.lineno);
+        try {
+            this.stop();
+            Graphics.printError('Error', e.message);
+            AudioManager.stopAll();
+        } catch (e2) {
+        }
     }
 };
 
