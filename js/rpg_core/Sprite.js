@@ -346,35 +346,37 @@ Sprite.prototype._executeTint = function(x, y, w, h) {
     context.globalCompositeOperation = 'copy';
     context.drawImage(this._bitmap.canvas, x, y, w, h, 0, 0, w, h);
 
-    if (Graphics.canUseSaturationBlend()) {
-        var gray = Math.max(0, tone[3]);
-        context.globalCompositeOperation = 'saturation';
-        context.fillStyle = 'rgba(255,255,255,' + gray / 255 + ')';
-        context.fillRect(0, 0, w, h);
-    }
+    if (tone[0] || tone[1] || tone[2] || tone[3]) {
+        if (Graphics.canUseSaturationBlend()) {
+            var gray = Math.max(0, tone[3]);
+            context.globalCompositeOperation = 'saturation';
+            context.fillStyle = 'rgba(255,255,255,' + gray / 255 + ')';
+            context.fillRect(0, 0, w, h);
+        }
 
-    var r1 = Math.max(0, tone[0]);
-    var g1 = Math.max(0, tone[1]);
-    var b1 = Math.max(0, tone[2]);
-    context.globalCompositeOperation = 'lighter';
-    context.fillStyle = Utils.rgbToCssColor(r1, g1, b1);
-    context.fillRect(0, 0, w, h);
-
-    if (Graphics.canUseDifferenceBlend()) {
-        context.globalCompositeOperation = 'difference';
-        context.fillStyle = 'white';
-        context.fillRect(0, 0, w, h);
-
-        var r2 = Math.max(0, -tone[0]);
-        var g2 = Math.max(0, -tone[1]);
-        var b2 = Math.max(0, -tone[2]);
+        var r1 = Math.max(0, tone[0]);
+        var g1 = Math.max(0, tone[1]);
+        var b1 = Math.max(0, tone[2]);
         context.globalCompositeOperation = 'lighter';
-        context.fillStyle = Utils.rgbToCssColor(r2, g2, b2);
+        context.fillStyle = Utils.rgbToCssColor(r1, g1, b1);
         context.fillRect(0, 0, w, h);
 
-        context.globalCompositeOperation = 'difference';
-        context.fillStyle = 'white';
-        context.fillRect(0, 0, w, h);
+        if (Graphics.canUseDifferenceBlend()) {
+            context.globalCompositeOperation = 'difference';
+            context.fillStyle = 'white';
+            context.fillRect(0, 0, w, h);
+
+            var r2 = Math.max(0, -tone[0]);
+            var g2 = Math.max(0, -tone[1]);
+            var b2 = Math.max(0, -tone[2]);
+            context.globalCompositeOperation = 'lighter';
+            context.fillStyle = Utils.rgbToCssColor(r2, g2, b2);
+            context.fillRect(0, 0, w, h);
+
+            context.globalCompositeOperation = 'difference';
+            context.fillStyle = 'white';
+            context.fillRect(0, 0, w, h);
+        }
     }
 
     var r3 = Math.max(0, color[0]);
