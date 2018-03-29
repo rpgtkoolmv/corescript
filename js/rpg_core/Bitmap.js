@@ -629,6 +629,25 @@ Bitmap.prototype.drawText = function(text, x, y, maxWidth, lineHeight, align) {
     // Note: Firefox has a bug with textBaseline: Bug 737852
     //       So we use 'alphabetic' here.
     if (text !== undefined) {
+        var minFontSize = Bitmap.minFontSize = Bitmap.minFontSize || 21;
+        if (this.fontSize < minFontSize) {
+            var bitmap = Bitmap.drawSmallTextBitmap = Bitmap.drawSmallTextBitmap || new Bitmap(1632, Bitmap.minFontSize);
+            bitmap.fontFace = this.fontFace;
+            bitmap.fontSize = minFontSize;
+            bitmap.fontItalic = this.fontItalic;
+            bitmap.textColor = this.textColor;
+            bitmap.outlineColor = this.outlineColor;
+            bitmap.outlineWidth = this.outlineWidth * minFontSize / this.fontSize;
+            maxWidth = maxWidth || 816;
+            var scaledMaxWidth = maxWidth * minFontSize / this.fontSize;
+            if (scaledMaxWidth > bitmap.width) {
+                bitmap.width *= 2;
+            }
+            bitmap.drawText(text, 0, 0, scaledMaxWidth, minFontSize, align);
+            this.blt(bitmap, 0, 0, scaledMaxWidth, minFontSize, x, y + (lineHeight - this.fontSize) / 2, maxWidth, this.fontSize);
+            bitmap.clear();
+            return;
+        }
         var tx = x;
         var ty = y + lineHeight - (lineHeight - this.fontSize * 0.7) / 2;
         var context = this._context;
