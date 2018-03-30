@@ -42,6 +42,11 @@
  * @desc The initial value whether the player always dashes (on/off)
  * @default false
  *
+ * @param textSpeed
+ * @type number
+ * @desc The text speed on "Show Text". The larger this parameter is, the slower text speed. (0: show all texts at once)
+ * @default 1
+ *
  * @param autoSaveFileId
  * @type number
  * @desc The file number to auto save when "Transfer Player" (0: off)
@@ -97,6 +102,12 @@
  * @desc プレイヤーが常時ダッシュするかどうかの初期値 (on/off)
  * @default false
  *
+ * @param textSpeed
+ * @type number
+ * @text 「文章の表示」のスピード
+ * @desc 数字が大きいほど文章の表示スピードが遅くなります (0を指定した場合は一度に全文を表示します)
+ * @default 1
+ *
  * @param autoSaveFileId
  * @type number
  * @desc 「場所移動」の際にオートセーブするファイル番号 (0でoff)
@@ -124,6 +135,7 @@
     var screenHeight = toNumber(parameters['screenHeight'], 624);
     var renderingMode = parameters['renderingMode'].toLowerCase();
     var alwaysDash = parameters['alwaysDash'].toLowerCase() === 'true';
+    var textSpeed = toNumber(parameters['textSpeed'], 1);
     var windowWidthTo = toNumber(parameters['changeWindowWidthTo'], 0);
     var windowHeightTo = toNumber(parameters['changeWindowHeightTo'], 0);
     var autoSaveFileId = toNumber(parameters['autoSaveFileId'], 0);
@@ -173,6 +185,11 @@
         }
     };
 
+    var _Window_Message_clearFlags = Window_Message.prototype.clearFlags;
+    Window_Message.prototype.clearFlags = function(textState) {
+        _Window_Message_clearFlags.apply(this, arguments);
+        this._textSpeed = textSpeed - 1;
+    };
 
     var _SceneManager_initNwjs = SceneManager.initNwjs;
     SceneManager.initNwjs = function() {
