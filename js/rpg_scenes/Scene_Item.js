@@ -52,7 +52,7 @@ Scene_Item.prototype.user = function() {
             bestActor = members[i];
         }
     }
-    return bestActor;
+    return bestActor || $gameParty.members()[0];
 };
 
 Scene_Item.prototype.onCategoryOk = function() {
