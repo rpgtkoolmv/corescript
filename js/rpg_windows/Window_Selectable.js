@@ -41,7 +41,11 @@ Window_Selectable.prototype.cursorAll = function() {
 };
 
 Window_Selectable.prototype.setCursorAll = function(cursorAll) {
-    this._cursorAll = cursorAll;
+    var lastValue = this._cursorAll;
+    this._cursorAll = !!cursorAll;
+    if(lastValue !==this._cursorAll){
+        this.updateCursor();
+    }
 };
 
 Window_Selectable.prototype.maxCols = function() {
