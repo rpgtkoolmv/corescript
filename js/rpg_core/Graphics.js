@@ -339,10 +339,12 @@ Graphics.printLoadingError = function(url) {
         button.style.fontSize = '24px';
         button.style.color = '#ffffff';
         button.style.backgroundColor = '#000000';
-        button.onmousedown = button.ontouchstart = function(event) {
-            ResourceHandler.retry();
+        button.addEventListener('touchstart', function(event) {
             event.stopPropagation();
-        };
+        });
+        button.addEventListener('click', function(event) {
+            ResourceHandler.retry();
+        });
         this._errorPrinter.appendChild(button);
         this._loadingCount = -Infinity;
     }
