@@ -6,6 +6,13 @@
  * Basic plugin for manipulating important parameters..
  * There is no plugin command.
  *
+ * Caching images improves performance but increases memory allocation.
+ * On mobile devices, a lot of memory allocation causes the browser to crash.
+ * Therefore, the upper limit of memory allocation is set with cacheLimit.
+ *
+ * If you want to regain high performance, just increase cacheLimit.
+ * There is no need to revert to 1.4.
+ *
  * @param cacheLimit
  * @type number
  * @desc The upper limit of images' cached size (MPixel)
@@ -61,50 +68,61 @@
  * 基本的なパラメーターを設定するプラグインです。
  * このプラグインにはプラグインコマンドはありません。
  *
+ * 画像をキャッシュするとパフォーマンスは向上しますが、その分メモリ確保も増大します。
+ * モバイルデバイスでは、たくさんのメモリ確保はブラウザをクラッシュさせます。
+ * そこで、メモリ確保の上限を「画像キャッシュ上限値」で設定しています。
+ *
+ * もし高いパフォーマンスを取り戻したければ、ただ画像キャッシュ上限値を増加させればよいです。
+ * 1.4に戻す必要はありません。
+ *
  * @param cacheLimit
  * @type number
+ * @text 画像キャッシュ上限値
  * @desc 画像のメモリへのキャッシュの上限値 (MPix)
  * @default 10
  *
  * @param screenWidth
  * @type number
- * @desc 画面サイズの幅
+ * @text ゲーム画面の幅
  * @default 816
  *
  * @param screenHeight
  * @type number
- * @desc 画面サイズの高さ
+ * @text ゲーム画面の高さ
  * @default 624
  *
  * @param changeWindowWidthTo
  * @type number
- * @desc 値が設定された場合、ウインドウの幅を指定した値に変更
+ * @text ウィンドウの幅
+ * @desc 値が設定されなかった場合、ゲーム画面の幅と同じ
  *
  * @param changeWindowHeightTo
  * @type number
- * @desc 値が設定された場合、ウインドウの高さを指定した値に変更
+ * @text ウィンドウの高さ
+ * @desc 値が設定されなかった場合、ゲーム画面の高さと同じ
  *
  * @param renderingMode
  * @type select
  * @option canvas
  * @option webgl
  * @option auto
- * @desc レンダリングモード (canvas/webgl/auto)
+ * @text レンダリングモード
  * @default auto
  *
  * @param alwaysDash
  * @type boolean
- * @desc プレイヤーが常時ダッシュするかどうかの初期値 (on/off)
+ * @text 「常時ダッシュ」の初期値
  * @default false
  *
  * @param autoSaveFileId
  * @type number
- * @desc 「場所移動」の際にオートセーブするファイル番号 (0でoff)
+ * @text オートセーブ番号
+ * @desc 「場所移動」の際に指定したファイル番号にオートセーブします（0を指定した場合はオートセーブしません）
  * @default 0
  *
  * @param errorMessage
  * @type string
- * @desc エラーが発生した際に表示するメッセージ
+ * @text エラーメッセージ
  * @default エラーが発生しました。ゲームの作者にご連絡ください。
  */
 
