@@ -1744,7 +1744,7 @@ Game_Interpreter.requestImagesByPluginCommand=function(command,args){
 
 }
 
-Game_Interpreter.requestImagesForCommand　=function(command){
+Game_Interpreter.requestImagesForCommand = function(command){
     var params = command.parameters;
     switch(command.code){
         // Show Text
@@ -1875,7 +1875,7 @@ Game_Interpreter.requestImagesByChildEvent =function(command,commonList){
 };
 
 Game_Interpreter.requestImages = function(list, commonList){
-    if(!list) return;
+    if(!list){return;}
     var len = list.length;
     for(var i=0; i<len; i+=1 ){
         var command = list[i];
