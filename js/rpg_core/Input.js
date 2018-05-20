@@ -73,6 +73,33 @@ Input.keyMapper = {
 };
 
 /**
+ * @param {Number} keyNumber
+ * @param {String} symbol
+ */
+Input.addSymbolToKey = function(keyNumber,symbol){
+    this.keyMapper[keyNumber] = symbol;
+};
+
+/**
+ * @param {String} keys
+ * @param {String} symbol
+ */
+Input.addSymbolsToMultipleKeys = function(keys,symbol){
+    var keysCount = keys.length;
+    for(var i=0; i< keysCount;++i){
+        this.addSymbolToKey(keys.charCodeAt(i),symbol);
+    }
+};
+
+/**
+ * @param {Number} keys
+ * @param {String} symbol
+ */
+Input.addSymbolsToPadButton =function(buttonId,symbol){
+    this.gamepadMapper[buttonId]=symbol;
+};
+
+/**
  * A hash table to convert from a gamepad button to a mapped key name.
  *
  * @static
