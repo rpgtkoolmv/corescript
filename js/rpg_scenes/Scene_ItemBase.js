@@ -60,14 +60,17 @@ Scene_ItemBase.prototype.onActorOk = function() {
 Scene_ItemBase.prototype.onActorCancel = function() {
     this.hideSubWindow(this._actorWindow);
 };
+Scene_ItemBase.prototype.action=function(){
+    var action = new Game_Action(this.user());
+    action.setItemObject(this.item());
+    return action;
+};
 
-Scene_Skill.prototype.determineItem = function() {
+Scene_ItemBase.prototype.determineItem = function() {
     var action = this.action();
-
     if (action.isForFriend()) {
         this.showSubWindow(this._actorWindow);
         this._actorWindow.selectForItem(this.item());
-
     } else {
         this.useItem();
         this.activateItemWindow();
@@ -86,12 +89,6 @@ Scene_ItemBase.prototype.useItem = function() {
 Scene_ItemBase.prototype.activateItemWindow = function() {
     this._itemWindow.refresh();
     this._itemWindow.activate();
-};
-
-Scene_ItemBase.prototype.action=function(){
-    var action = new Game_Action(this.user());
-    action.setItemObject(this.item());
-    return action;
 };
 
 Scene_ItemBase.prototype.itemTargetActors =function(){
