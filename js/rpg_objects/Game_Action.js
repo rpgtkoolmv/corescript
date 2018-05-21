@@ -476,11 +476,14 @@ Game_Action.prototype.apply = function(target) {
             var value = this.makeDamageValue(target, result.critical);
             this.executeDamage(target, value);
         }
-        this.item().effects.forEach(function(effect) {
-            this.applyItemEffect(target, effect);
-        }, this);
+        this.applyEachItemEffect(target);
         this.applyItemUserEffect(target);
     }
+};
+Game_Action.prototype.applyEachItemEffect =function(target){
+    this.item().effects.forEach(function(effect) {
+        this.applyItemEffect(target, effect);
+    }, this);
 };
 
 Game_Action.prototype.makeDamageValue = function(target, critical) {
