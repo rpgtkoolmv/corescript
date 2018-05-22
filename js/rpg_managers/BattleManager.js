@@ -247,12 +247,14 @@ BattleManager.startInput = function() {
 };
 
 BattleManager.inputtingAction = function() {
-    return this.actor() ? this.actor().inputtingAction() : null;
+    var actor = this.actor();
+    return actor ? actor.inputtingAction() : null;
 };
 
 BattleManager.selectNextCommand = function() {
     do {
-        if (!this.actor() || !this.actor().selectNextCommand()) {
+        var actor = this.actor();
+        if (!actor || !actor.selectNextCommand()) {
             this.changeActor(this._actorIndex + 1, 'waiting');
             if (this._actorIndex >= $gameParty.size()) {
                 this.startTurn();
@@ -264,7 +266,8 @@ BattleManager.selectNextCommand = function() {
 
 BattleManager.selectPreviousCommand = function() {
     do {
-        if (!this.actor() || !this.actor().selectPreviousCommand()) {
+        var actor =this.actor();
+        if (!actor || !actor.selectPreviousCommand()) {
             this.changeActor(this._actorIndex - 1, 'undecided');
             if (this._actorIndex < 0) {
                 return;
