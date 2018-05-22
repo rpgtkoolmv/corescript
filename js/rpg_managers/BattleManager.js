@@ -468,14 +468,23 @@ BattleManager.abort = function() {
     this._phase = 'aborting';
 };
 
+BattleManager.isDefeat = function(){
+    return $gameParty.isAllDead();
+
+};
+
+BattleManager.isVictory = function(){
+    return $gameTroop.isAllDead();
+};
+
 BattleManager.checkBattleEnd = function() {
     if (this._phase) {
         if (this.checkAbort()) {
             return true;
-        } else if ($gameParty.isAllDead()) {
+        } else if (this.isDefeat()) {
             this.processDefeat();
             return true;
-        } else if ($gameTroop.isAllDead()) {
+        } else if (this.isVictory()) {
             this.processVictory();
             return true;
         }
