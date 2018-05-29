@@ -244,7 +244,7 @@ DataManager.loadGlobalInfo = function() {
         json = StorageManager.load(0);
     } catch (e) {
         console.error(e);
-        return this._globalInfo = [];
+        return [];
     }
     if (json) {
         this._globalInfo = JSON.parse(json);
