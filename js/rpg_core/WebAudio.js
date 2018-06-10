@@ -261,11 +261,12 @@ WebAudio._fadeOut = function(duration) {
  */
 WebAudio.prototype.clear = function() {
     this.stop();
-    this._arrayBuffer = null;
     this._buffer = null;
     this._sourceNode = null;
     this._gainNode = null;
     this._pannerNode = null;
+    this._partialArray = null;
+    this._wholeArray = null;
     this._chunkGainRate = 5;
     this._chunkSize = 75 * 1024;
     this._loadedSize = 0;
@@ -529,49 +530,89 @@ WebAudio.prototype._load = function(url) {
  * @private
  */
 WebAudio.prototype._onXhrLoad = function(xhr) {
-    var array = xhr && xhr.response || this._arrayBuffer;
-    var rangeEnabled = xhr && xhr.status === 206;
-    if (rangeEnabled) {
-        this._chunkSize = !this._arrayBuffer ? this._chunkSize * (this._chunkGainRate - 1) : this._arrayBuffer.byteLength;
-        this._arrayBuffer = this._arrayBuffer || new Uint8Array(+xhr.getResponseHeader('Content-Range').split('/').pop());
-        this._arrayBuffer.set(new Uint8Array(array), this._loadedSize);
-        this._loadedSize += array.byteLength;
-        if (this._loadedSize === this._arrayBuffer.byteLength) {
-            array = this._arrayBuffer.buffer;
-            this._arrayBuffer = null;
-        } else {
-            array = this._arrayBuffer.buffer.slice(0, this._loadedSize);
-            this._load(this._url);
-        }
+    if (xhr.status === 206) {
+        this._onPartialLoad(xhr);
     } else {
-        if (this._chunkSize >= array.byteLength) {
-            this._arrayBuffer = null;
-        } else {
-            var firstTime = !this._arrayBuffer;
-            this._arrayBuffer = array;
-            array = this._arrayBuffer.slice(0, this._chunkSize);
-            this._chunkSize = firstTime ? this._chunkSize * this._chunkGainRate : this._arrayBuffer.byteLength;
+        this._onWholeLoad(xhr.response);
+    }
+};
+
+/**
+ * @method _onPartialLoad
+ * @param {XMLHttpRequest} xhr
+ * @private
+ */
+WebAudio.prototype._onPartialLoad = function(xhr) {
+    var array = xhr.response;
+    if (!this._partialArray) {
+        this._partialArray = new Uint8Array(+xhr.getResponseHeader('Content-Range').split('/').pop());
+        this._chunkSize *= this._chunkGainRate - 1;
+    } else {
+        this._chunkSize = this._partialArray.byteLength;
+    }
+    this._partialArray.set(new Uint8Array(array), this._loadedSize);
+    this._loadedSize += array.byteLength;
+    if (this._loadedSize < this._partialArray.byteLength) {
+        array = this._partialArray.buffer.slice(0, this._loadedSize);
+        this._load(this._url);
+    } else {
+        array = this._partialArray.buffer;
+        this._partialArray = null;
+    }
+    if (Decrypter.hasEncryptedAudio) {
+        array = Decrypter.decryptArrayBuffer(array);
+    }
+    this._readLoopComments(new Uint8Array(array));
+    WebAudio._context.decodeAudioData(array, this._onDecode.bind(this));
+};
+
+/**
+ * @method _onWholeLoad
+ * @param {ArrayBuffer} array
+ * @private
+ */
+WebAudio.prototype._onWholeLoad = function(array) {
+    if (array) {
+        if (Decrypter.hasEncryptedAudio) {
+            array = Decrypter.decryptArrayBuffer(array);
+        }
+        this._readLoopComments(new Uint8Array(array));
+        if (this._chunkSize < array.byteLength) {
+            this._wholeArray = array;
+            array = this._wholeArray.slice(0, this._chunkSize);
+            this._chunkSize *= this._chunkGainRate;
+        }
+    } else if (this._chunkSize < this._wholeArray.byteLength) {
+        array = this._wholeArray.slice(0, this._chunkSize);
+        this._chunkSize = this._wholeArray.byteLength;
+    } else {
+        array = this._wholeArray;
+        this._wholeArray = null;
+    }
+    WebAudio._context.decodeAudioData(array, this._onDecode.bind(this), function() {
+        this._onWholeLoad();
+    }.bind(this));
+};
+
+/**
+ * @method _onDecode
+ * @param {AudioBuffer} buffer
+ * @private
+ */
+WebAudio.prototype._onDecode = function(buffer) {
+    if (!this._buffer || this._buffer.length < buffer.length) {
+        this._buffer = buffer;
+        this._totalTime = buffer.duration;
+        if (this.isPlaying()) {
+            this._startPlaying(this._sourceNode.loop, this.seek());
+        }
+        if (this.isReady()) {
+            this._onLoad();
+        }
+        if (this._wholeArray) {
+            this._onWholeLoad();
         }
     }
-    if(Decrypter.hasEncryptedAudio) array = Decrypter.decryptArrayBuffer(array);
-    this._readLoopComments(new Uint8Array(array));
-    WebAudio._context.decodeAudioData(array, function(buffer) {
-        if (!this._buffer || this._buffer.length < buffer.length) {
-            this._buffer = buffer;
-            this._totalTime = buffer.duration;
-            if (this.isPlaying()) {
-                this._startPlaying(this._sourceNode.loop, this.seek());
-            }
-            if (this.isReady()) {
-                this._onLoad();
-            }
-            if (!rangeEnabled && this._arrayBuffer) {
-                this._onXhrLoad();
-            }
-        }
-    }.bind(this), rangeEnabled ? undefined : function() {
-        this._onXhrLoad();
-    }.bind(this));
 };
 
 /**

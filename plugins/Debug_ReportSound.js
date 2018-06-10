@@ -92,38 +92,58 @@
         }
     };
 
-    var _WebAudio__onXhrLoad = WebAudio.prototype._onXhrLoad;
-    WebAudio.prototype._onXhrLoad = function(xhr) {
-        if (this._url === info.url) {
-            info.rangeEnabled = xhr && xhr.status === 206;
-            if (info.fastLoadEnabled) {
-                if (info.rangeEnabled) {
-                    info.loadingMode = 'Range Enabled<br>(load & decode multiply)';
-                    info.loadTime[info.loadTime.length - 1] += Date.now();
-                    info.decodeTime.push(-Date.now());
-                } else {
-                    info.loadingMode = 'Range Disabled<br>(load once, decode multiply)';
-                    if (info.decodeTime.length === 0) {
-                        info.loadTime[0] += Date.now();
-                    }
-                    info.decodeTime.push(-Date.now());
+    if (WebAudio.prototype._onPartialLoad && WebAudio.prototype._onWholeLoad && WebAudio.prototype._onDecode) {
+        var _WebAudio__onPartialLoad = WebAudio.prototype._onPartialLoad;
+        WebAudio.prototype._onPartialLoad = function(xhr) {
+            if (this._url === info.url) {
+                info.loadingMode = 'Range Enabled<br>(load & decode multiply)';
+                info.loadTime[info.loadTime.length - 1] += Date.now();
+                info.decodeTime.push(-Date.now());
+                updateInfo();
+            }
+            _WebAudio__onPartialLoad.apply(this, arguments);
+        };
+
+        var _WebAudio__onWholeLoad = WebAudio.prototype._onWholeLoad;
+        WebAudio.prototype._onWholeLoad = function(array) {
+            if (this._url === info.url) {
+                info.loadingMode = 'Range Disabled<br>(load once, decode multiply)';
+                if (info.decodeTime.length === 0) {
+                    info.loadTime[0] += Date.now();
                 }
-            } else {
+                info.decodeTime.push(-Date.now());
+                updateInfo();
+            }
+            _WebAudio__onWholeLoad.apply(this, arguments);
+        };
+
+        var _WebAudio__onDecode = WebAudio.prototype._onDecode;
+        WebAudio.prototype._onDecode = function(buffer) {
+            if (this._url === info.url && info.decodeTime[info.decodeTime.length - 1] < 0) {
+                info.decodeTime[info.decodeTime.length - 1] += Date.now();
+                updateInfo();
+            }
+            _WebAudio__onDecode.apply(this, arguments);
+        };
+    } else {
+        var _WebAudio__onXhrLoad = WebAudio.prototype._onXhrLoad;
+        WebAudio.prototype._onXhrLoad = function(xhr) {
+            if (this._url === info.url) {
                 info.loadingMode = 'Legacy<br>(load & decode once)';
                 info.loadTime[0] += Date.now();
                 info.decodeTime.push(-Date.now());
+                updateInfo();
             }
-            updateInfo();
-        }
-        _WebAudio__onXhrLoad.apply(this, arguments);
-    };
+            _WebAudio__onXhrLoad.apply(this, arguments);
+        };
 
-    var _WebAudio__onLoad = WebAudio.prototype._onLoad;
-    WebAudio.prototype._onLoad = function() {
-        _WebAudio__onLoad.apply(this, arguments);
-        if (this._url === info.url && info.decodeTime[info.decodeTime.length - 1] < 0) {
-            info.decodeTime[info.decodeTime.length - 1] += Date.now();
-            updateInfo();
-        }
-    };
+        var _WebAudio__onLoad = WebAudio.prototype._onLoad;
+        WebAudio.prototype._onLoad = function() {
+            if (this._url === info.url && info.decodeTime[info.decodeTime.length - 1] < 0) {
+                info.decodeTime[info.decodeTime.length - 1] += Date.now();
+                updateInfo();
+            }
+            _WebAudio__onLoad.apply(this, arguments);
+        };
+    }
 })();
