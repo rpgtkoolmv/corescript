@@ -101,7 +101,11 @@ Scene_ItemBase.prototype.itemTargetActors = function() {
 };
 
 Scene_ItemBase.prototype.canUse = function() {
-    return this.user().canUse(this.item()) && this.isItemEffectsValid();
+    var user = this.user();
+    if(user){
+        return user.canUse(this.item()) && this.isItemEffectsValid();
+    }
+    return false;
 };
 
 Scene_ItemBase.prototype.isItemEffectsValid = function() {
