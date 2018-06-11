@@ -629,6 +629,10 @@ Bitmap.prototype.drawText = function(text, x, y, maxWidth, lineHeight, align) {
     // Note: Firefox has a bug with textBaseline: Bug 737852
     //       So we use 'alphabetic' here.
     if (text !== undefined) {
+        if (this.fontSize < Bitmap.minFontSize) {
+            this.drawSmallText(text, x, y, maxWidth, lineHeight, align);
+            return;
+        }
         var tx = x;
         var ty = y + lineHeight - (lineHeight - this.fontSize * 0.7) / 2;
         var context = this._context;
@@ -651,6 +655,36 @@ Bitmap.prototype.drawText = function(text, x, y, maxWidth, lineHeight, align) {
         context.restore();
         this._setDirty();
     }
+};
+
+/**
+ * Draws the small text big once and resize it because modern broswers are poor at drawing small text.
+ *
+ * @method drawSmallText
+ * @param {String} text The text that will be drawn
+ * @param {Number} x The x coordinate for the left of the text
+ * @param {Number} y The y coordinate for the top of the text
+ * @param {Number} maxWidth The maximum allowed width of the text
+ * @param {Number} lineHeight The height of the text line
+ * @param {String} align The alignment of the text
+ */
+Bitmap.prototype.drawSmallText = function(text, x, y, maxWidth, lineHeight, align) {
+    var minFontSize = Bitmap.minFontSize;
+    var bitmap = Bitmap.drawSmallTextBitmap;
+    bitmap.fontFace = this.fontFace;
+    bitmap.fontSize = minFontSize;
+    bitmap.fontItalic = this.fontItalic;
+    bitmap.textColor = this.textColor;
+    bitmap.outlineColor = this.outlineColor;
+    bitmap.outlineWidth = this.outlineWidth * minFontSize / this.fontSize;
+    maxWidth = maxWidth || 816;
+    var scaledMaxWidth = maxWidth * minFontSize / this.fontSize;
+    if (scaledMaxWidth > bitmap.width) {
+        bitmap.width *= 2;
+    }
+    bitmap.drawText(text, 0, 0, scaledMaxWidth, minFontSize, align);
+    this.blt(bitmap, 0, 0, scaledMaxWidth, minFontSize, x, y + (lineHeight - this.fontSize) / 2, maxWidth, this.fontSize);
+    bitmap.clear();
 };
 
 /**
@@ -1002,3 +1036,6 @@ Bitmap.prototype.startRequest = function(){
         this._requestImage(this._url);
     }
 };
+
+Bitmap.minFontSize = 21;
+Bitmap.drawSmallTextBitmap = new Bitmap(1632, Bitmap.minFontSize);
