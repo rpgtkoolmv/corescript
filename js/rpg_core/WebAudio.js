@@ -761,7 +761,14 @@ WebAudio.prototype._readOgg = function(array) {
                     if (headerType === 1) {
                         this._sampleRate = this._readLittleEndian(array, index + 12);
                     } else if (headerType === 3) {
-                        this._readMetaData(array, index, segments[i]);
+                        var size = 0;
+                        for (; i < numSegments; i++) {
+                            size += segments[i];
+                            if (segments[i] < 255) {
+                                break;
+                            }
+                        }
+                        this._readMetaData(array, index, size);
                     }
                     vorbisHeaderFound = true;
                 }
