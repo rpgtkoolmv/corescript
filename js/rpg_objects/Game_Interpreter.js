@@ -1740,9 +1740,8 @@ Game_Interpreter.prototype.pluginCommand = function(command, args) {
     // to be overridden by plugins
 };
 
-Game_Interpreter.requestImagesByPluginCommand=function(command,args){
-
-}
+Game_Interpreter.requestImagesByPluginCommand = function(command,args){
+};
 
 Game_Interpreter.requestImagesForCommand　=function(command){
     var params = command.parameters;
@@ -1860,7 +1859,7 @@ Game_Interpreter.requestImagesForCommand　=function(command){
     }
 };
 
-Game_Interpreter.requestImagesByChildEvent =function(command,commonList){
+Game_Interpreter.requestImagesByChildEvent = function(command,commonList){
     var params =command.parameters;
     var commonEvent = $dataCommonEvents[params[0]];
     if (commonEvent) {
