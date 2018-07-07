@@ -251,21 +251,26 @@ Graphics.startLoading = function() {
 
     ProgressWatcher.truncateProgress();
     ProgressWatcher.setProgressListener(this._updateProgressCount.bind(this));
-    Graphics._showProgress();
+    this._progressTimeout = setTimeout(function() {
+        Graphics._showProgress();
+    }, 1500);
 };
 
 Graphics._setupProgress = function(){
     this._progressElement = document.createElement('div');
     this._progressElement.id = 'loading-progress';
-    this._progressElement.style.width = '200px';
-    this._progressElement.style.height = '30px';
-    this._progressElement.style.backgroundColor = 'gray';
+    this._progressElement.width = 600;
+    this._progressElement.height = 30;
+    this._progressElement.style.background = 'linear-gradient(to top, gray, lightgray)';
+    this._progressElement.style.border = '5px solid white';
+    this._progressElement.style.borderRadius = '15px';
 
     this._barElement = document.createElement('div');
     this._barElement.id = 'loading-bar';
-    this._barElement.style.width = '1%';
-    this._barElement.style.height = '30px';
-    this._barElement.style.backgroundColor = 'green';
+    this._barElement.style.width = '0%';
+    this._barElement.style.height = '100%';
+    this._barElement.style.background = 'linear-gradient(to top, lime, palegreen)';
+    this._barElement.style.borderRadius = '10px';
 
     this._progressElement.appendChild(this._barElement);
 
@@ -295,7 +300,7 @@ Graphics._updateProgressCount = function(countLoaded, countLoading){
 Graphics._updateProgress = function(){
     this._progressElement.style.zIndex = 99;
     this._centerElement(this._progressElement);
-    this._progressElement.style.marginTop = '400px';
+    this._progressElement.style.marginTop = 450 * this._realScale + 'px';
 };
 
 /**
@@ -321,6 +326,7 @@ Graphics.endLoading = function() {
     this._clearUpperCanvas();
     this._upperCanvas.style.opacity = 0;
     this._hideProgress();
+    clearTimeout(this._progressTimeout);
 };
 
 /**
