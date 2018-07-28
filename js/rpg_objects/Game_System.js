@@ -182,6 +182,9 @@ Game_System.prototype.onBeforeSave = function() {
 };
 
 Game_System.prototype.onAfterLoad = function() {
+    if (!this._frameCount) {
+        this._frameCount = this._framesOnSave;
+    }
     Graphics.frameCount = this._framesOnSave;
     AudioManager.playBgm(this._bgmOnSave);
     AudioManager.playBgs(this._bgsOnSave);
