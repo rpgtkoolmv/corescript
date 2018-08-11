@@ -634,7 +634,7 @@ Bitmap.prototype.drawText = function(text, x, y, maxWidth, lineHeight, align) {
             return;
         }
         var tx = x;
-        var ty = y + lineHeight - (lineHeight - this.fontSize * 0.7) / 2;
+        var ty = y + lineHeight - Math.round((lineHeight - this.fontSize * 0.7) / 2);
         var context = this._context;
         var alpha = context.globalAlpha;
         maxWidth = maxWidth || 0xffffffff;
