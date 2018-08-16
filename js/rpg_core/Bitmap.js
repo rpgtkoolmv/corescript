@@ -678,12 +678,21 @@ Bitmap.prototype.drawSmallText = function(text, x, y, maxWidth, lineHeight, alig
     bitmap.outlineColor = this.outlineColor;
     bitmap.outlineWidth = this.outlineWidth * minFontSize / this.fontSize;
     maxWidth = maxWidth || 816;
+    var height = this.fontSize * 1.5;
     var scaledMaxWidth = maxWidth * minFontSize / this.fontSize;
-    if (scaledMaxWidth > bitmap.width) {
-        bitmap.width *= 2;
-    }
-    bitmap.drawText(text, 0, 0, scaledMaxWidth, minFontSize, align);
-    this.blt(bitmap, 0, 0, scaledMaxWidth, minFontSize, x, y + (lineHeight - this.fontSize) / 2, maxWidth, this.fontSize);
+    var scaledMaxWidthWithOutline = scaledMaxWidth + bitmap.outlineWidth * 2;
+    var scaledHeight = height * minFontSize / this.fontSize;
+    var scaledHeightWithOutline = scaledHeight + bitmap.outlineWidth * 2;
+
+    var bitmapWidth = bitmap.width;
+    var bitmapHeight = bitmap.height;
+    while (scaledMaxWidthWithOutline > bitmapWidth) bitmapWidth *= 2;
+    while (scaledHeightWithOutline > bitmapHeight) bitmapHeight *= 2;
+    if (bitmap.width !== bitmapWidth || bitmap.height !== bitmapHeight) bitmap.resize(bitmapWidth, bitmapHeight);
+
+    bitmap.drawText(text, bitmap.outlineWidth, bitmap.outlineWidth, scaledMaxWidth, minFontSize, align);
+    this.blt(bitmap, 0, 0, scaledMaxWidthWithOutline, scaledHeightWithOutline,
+        x - this.outlineWidth, y - this.outlineWidth + (lineHeight - this.fontSize) / 2, maxWidth + this.outlineWidth * 2, height + this.outlineWidth * 2);
     bitmap.clear();
 };
 
