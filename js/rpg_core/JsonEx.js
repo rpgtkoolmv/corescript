@@ -131,7 +131,7 @@ JsonEx._encode = function(value, circular, depth) {
             value['@'] = constructorName;
         }
         for (var key in value) {
-            if (value.hasOwnProperty(key) && !key.match(/^@./)) {
+            if ((!value.hasOwnProperty || value.hasOwnProperty(key)) && !key.match(/^@./)) {
                 if(value[key] && typeof value[key] === 'object'){
                     if(value[key]['@c']){
                         circular.push([key, value, value[key]]);
@@ -173,14 +173,16 @@ JsonEx._decode = function(value, circular, registry) {
     if (type === '[object Object]' || type === '[object Array]') {
         registry[value['@c']] = value;
 
-        if (value['@']) {
+        if (value['@'] === 'NoPrototype') {
+            value = this._resetPrototype(value, null);
+        } else if (value['@']) {
             var constructor = window[value['@']];
             if (constructor) {
                 value = this._resetPrototype(value, constructor.prototype);
             }
         }
         for (var key in value) {
-            if (value.hasOwnProperty(key)) {
+            if (!value.hasOwnProperty || value.hasOwnProperty(key)) {
                 if(value[key] && value[key]['@a']){
                     //object is array wrapper
                     var body = value[key]['@a'];
@@ -206,6 +208,9 @@ JsonEx._decode = function(value, circular, registry) {
  * @private
  */
 JsonEx._getConstructorName = function(value) {
+    if (!value.constructor) {
+        return 'NoPrototype';
+    }
     var name = value.constructor.name;
     if (name === undefined) {
         var func = /^\s*function\s*([A-Za-z0-9_$]*)/;
