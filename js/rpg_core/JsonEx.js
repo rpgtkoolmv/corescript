@@ -173,7 +173,7 @@ JsonEx._decode = function(value, circular, registry) {
     if (type === '[object Object]' || type === '[object Array]') {
         registry[value['@c']] = value;
 
-        if (value['@'] === 'NoPrototype') {
+        if (value['@'] === null) {
             value = this._resetPrototype(value, null);
         } else if (value['@']) {
             var constructor = window[value['@']];
@@ -209,7 +209,7 @@ JsonEx._decode = function(value, circular, registry) {
  */
 JsonEx._getConstructorName = function(value) {
     if (!value.constructor) {
-        return 'NoPrototype';
+        return null;
     }
     var name = value.constructor.name;
     if (name === undefined) {
