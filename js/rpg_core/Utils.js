@@ -39,7 +39,16 @@ Utils.RPGMAKER_ENGINE = "community-1.2c";
  * @return {Boolean} True if the option is in the query string
  */
 Utils.isOptionValid = function(name) {
-    return location.search.slice(1).split('&').contains(name);
+    if (location.search.slice(1).split('&').contains(name)) {
+        return true;
+    }
+    if (typeof nw !== "undefined" &&
+        nw.App.argv.length > 0 &&
+        nw.App.argv[0].split('&').contains(name)
+    ) {
+        return true;
+    }
+    return false;
 };
 
 /**
