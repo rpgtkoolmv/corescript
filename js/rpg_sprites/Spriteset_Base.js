@@ -18,7 +18,6 @@ Spriteset_Base.prototype.initialize = function() {
     this.createLowerLayer();
     this.createToneChanger();
     this.createUpperLayer();
-    this.update();
 };
 
 Spriteset_Base.prototype.createLowerLayer = function() {
