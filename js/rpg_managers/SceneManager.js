@@ -30,6 +30,7 @@ SceneManager._boxHeight         = 624;
 SceneManager._deltaTime = 1.0 / 60.0;
 if (!Utils.isMobileSafari()) SceneManager._currentTime = SceneManager._getTimeInMsWithoutMobileSafari();
 SceneManager._accumulator = 0.0;
+SceneManager._frameCount = 0;
 
 SceneManager.run = function(sceneClass) {
     try {
@@ -128,6 +129,14 @@ SceneManager.checkPluginErrors = function() {
 SceneManager.setupErrorHandlers = function() {
     window.addEventListener('error', this.onError.bind(this));
     document.addEventListener('keydown', this.onKeyDown.bind(this));
+};
+
+SceneManager.frameCount = function() {
+    return this._frameCount;
+};
+
+SceneManager.setFrameCount = function(frameCount) {
+    this._frameCount = frameCount;
 };
 
 SceneManager.requestUpdate = function() {
@@ -263,6 +272,7 @@ SceneManager.updateScene = function() {
             this.onSceneStart();
         }
         if (this.isCurrentSceneStarted()) {
+            this.updateFrameCount();
             this._scene.update();
         }
     }
@@ -274,6 +284,10 @@ SceneManager.renderScene = function() {
     } else if (this._scene) {
         this.onSceneLoading();
     }
+};
+
+SceneManager.updateFrameCount = function() {
+    this._frameCount++;
 };
 
 SceneManager.onSceneCreate = function() {

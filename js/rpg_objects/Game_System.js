@@ -16,9 +16,9 @@ Game_System.prototype.initialize = function() {
     this._winCount = 0;
     this._escapeCount = 0;
     this._saveCount = 0;
-    this._frameCount = 0;
     this._versionId = 0;
     this._framesOnSave = 0;
+    this._sceneFramesOnSave = 0;
     this._bgmOnSave = null;
     this._bgsOnSave = null;
     this._windowTone = null;
@@ -118,7 +118,7 @@ Game_System.prototype.saveCount = function() {
 };
 
 Game_System.prototype.frameCount = function() {
-    return this._frameCount;
+    return SceneManager.frameCount();
 };
 
 Game_System.prototype.versionId = function() {
@@ -169,29 +169,24 @@ Game_System.prototype.onBattleEscape = function() {
     this._escapeCount++;
 };
 
-Game_System.prototype.onFrameUpdate = function() {
-    this._frameCount++;
-};
-
 Game_System.prototype.onBeforeSave = function() {
     this._saveCount++;
     this._versionId = $dataSystem.versionId;
     this._framesOnSave = Graphics.frameCount;
+    this._sceneFramesOnSave = SceneManager.frameCount();
     this._bgmOnSave = AudioManager.saveBgm();
     this._bgsOnSave = AudioManager.saveBgs();
 };
 
 Game_System.prototype.onAfterLoad = function() {
-    if (!this._frameCount) {
-        this._frameCount = this._framesOnSave;
-    }
     Graphics.frameCount = this._framesOnSave;
+    SceneManager.setFrameCount(this._sceneFramesOnSave);
     AudioManager.playBgm(this._bgmOnSave);
     AudioManager.playBgs(this._bgsOnSave);
 };
 
 Game_System.prototype.playtime = function() {
-    return Math.floor(this._frameCount / 60);
+    return Math.floor(SceneManager.frameCount() / 60);
 };
 
 Game_System.prototype.playtimeText = function() {
