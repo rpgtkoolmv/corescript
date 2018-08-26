@@ -63,6 +63,16 @@
  * @type string
  * @desc The message when error occurred
  * @default Error occurred. Please ask to the creator of this game.
+ *
+ * @param enableProgressBar
+ * @type boolean
+ * @desc Show progress bar when it takes a long time to load resources
+ * @default true
+ *
+ * @param maxRenderingFps
+ * @type number
+ * @desc The maximum value of rendering frame per seconds (0: unlimited)
+ * @default 0
  */
 
 /*:ja
@@ -135,6 +145,18 @@
  * @type string
  * @text エラーメッセージ
  * @default エラーが発生しました。ゲームの作者にご連絡ください。
+ *
+ * @param enableProgressBar
+ * @type boolean
+ * @text ロード進捗バー有効化
+ * @desc ONにすると、読み込みに時間がかかっている時にロード進捗バーを表示します
+ * @default true
+ *
+ * @param maxRenderingFps
+ * @type number
+ * @text 描画FPS上限値
+ * @desc 描画FPSの上限値を設定します (0を指定した場合は制限なし)
+ * @default 0
  */
 
 (function() {
@@ -152,12 +174,14 @@
     var screenWidth = toNumber(parameters['screenWidth'], 816);
     var screenHeight = toNumber(parameters['screenHeight'], 624);
     var renderingMode = parameters['renderingMode'].toLowerCase();
-    var alwaysDash = parameters['alwaysDash'].toLowerCase() === 'true';
+    var alwaysDash = parameters['alwaysDash'] === 'true';
     var textSpeed = toNumber(parameters['textSpeed'], 1);
     var windowWidthTo = toNumber(parameters['changeWindowWidthTo'], 0);
     var windowHeightTo = toNumber(parameters['changeWindowHeightTo'], 0);
+    var maxRenderingFps = toNumber(parameters['maxRenderingFps'], 0);
     var autoSaveFileId = toNumber(parameters['autoSaveFileId'], 0);
     var errorMessage = parameters['errorMessage'];
+    var enableProgressBar = parameters['enableProgressBar'] === 'true';
 
     var windowWidth;
     var windowHeight;
@@ -221,6 +245,23 @@
         }
     };
 
+    if (maxRenderingFps) {
+        var currentTime = Date.now();
+        var deltaTime = 1000 / maxRenderingFps;
+        var accumulator = 0;
+        var _SceneManager_renderScene = SceneManager.renderScene;
+        SceneManager.renderScene = function() {
+            var newTime = Date.now();
+            accumulator += newTime - currentTime;
+            currentTime = newTime;
+            if (accumulator >= deltaTime) {
+                accumulator -= deltaTime;
+                _SceneManager_renderScene.apply(this, arguments);
+            }
+        };
+    }
+
     DataManager.setAutoSaveFileId(autoSaveFileId);
     Graphics.setErrorMessage(errorMessage);
+    Graphics.setProgressEnabled(enableProgressBar);
 })();
