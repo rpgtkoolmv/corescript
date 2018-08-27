@@ -217,6 +217,7 @@ DataManager.setupNewGame = function() {
     $gamePlayer.reserveTransfer($dataSystem.startMapId,
         $dataSystem.startX, $dataSystem.startY);
     Graphics.frameCount = 0;
+    SceneManager.resetFrameCount();
 };
 
 DataManager.setupBattleTest = function() {

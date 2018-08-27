@@ -139,6 +139,10 @@ SceneManager.setFrameCount = function(frameCount) {
     this._frameCount = frameCount;
 };
 
+SceneManager.resetFrameCount = function() {
+    this._frameCount = 0;
+};
+
 SceneManager.requestUpdate = function() {
     if (!this._stopped) {
         requestAnimationFrame(this.update.bind(this));
