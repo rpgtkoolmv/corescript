@@ -180,7 +180,7 @@ Game_System.prototype.onBeforeSave = function() {
 
 Game_System.prototype.onAfterLoad = function() {
     Graphics.frameCount = this._framesOnSave;
-    SceneManager.setFrameCount(this._sceneFramesOnSave);
+    SceneManager.setFrameCount(this._sceneFramesOnSave || this._framesOnSave);
     AudioManager.playBgm(this._bgmOnSave);
     AudioManager.playBgs(this._bgsOnSave);
 };
