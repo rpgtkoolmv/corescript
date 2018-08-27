@@ -117,10 +117,6 @@ Game_System.prototype.saveCount = function() {
     return this._saveCount;
 };
 
-Game_System.prototype.frameCount = function() {
-    return SceneManager.frameCount();
-};
-
 Game_System.prototype.versionId = function() {
     return this._versionId;
 };
