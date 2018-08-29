@@ -256,6 +256,7 @@ TouchInput._setupEventHandlers = function() {
     document.addEventListener('touchend', this._onTouchEnd.bind(this));
     document.addEventListener('touchcancel', this._onTouchCancel.bind(this));
     document.addEventListener('pointerdown', this._onPointerDown.bind(this));
+    window.addEventListener('blur', this._onLostFocus.bind(this));
 };
 
 /**
@@ -438,6 +439,15 @@ TouchInput._onPointerDown = function(event) {
             event.preventDefault();
         }
     }
+};
+
+/**
+ * @static
+ * @method _onLostFocus
+ * @private
+ */
+TouchInput._onLostFocus = function() {
+    this.clear();
 };
 
 /**
