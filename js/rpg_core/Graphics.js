@@ -241,6 +241,16 @@ Graphics.setLoadingImage = function(src) {
 };
 
 /**
+ * Sets whether the progress bar is enabled.
+ *
+ * @static
+ * @method setEnableProgress
+ */
+Graphics.setProgressEnabled = function(enable) {
+    this._progressEnabled = enable;
+};
+
+/**
  * Initializes the counter for displaying the "Now Loading" image.
  *
  * @static
@@ -260,30 +270,43 @@ Graphics._setupProgress = function(){
     this._progressElement = document.createElement('div');
     this._progressElement.id = 'loading-progress';
     this._progressElement.width = 600;
-    this._progressElement.height = 30;
-    this._progressElement.style.background = 'linear-gradient(to top, gray, lightgray)';
-    this._progressElement.style.border = '5px solid white';
-    this._progressElement.style.borderRadius = '15px';
+    this._progressElement.height = 300;
+    this._progressElement.style.visibility = 'hidden';
 
     this._barElement = document.createElement('div');
     this._barElement.id = 'loading-bar';
-    this._barElement.style.width = '0%';
-    this._barElement.style.height = '100%';
-    this._barElement.style.background = 'linear-gradient(to top, lime, palegreen)';
-    this._barElement.style.borderRadius = '10px';
+    this._barElement.style.width = '100%';
+    this._barElement.style.height = '10%';
+    this._barElement.style.background = 'linear-gradient(to top, gray, lightgray)';
+    this._barElement.style.border = '5px solid white';
+    this._barElement.style.borderRadius = '15px';
+    this._barElement.style.marginTop = '40%';
+
+    this._filledBarElement = document.createElement('div');
+    this._filledBarElement.id = 'loading-filled-bar';
+    this._filledBarElement.style.width = '0%';
+    this._filledBarElement.style.height = '100%';
+    this._filledBarElement.style.background = 'linear-gradient(to top, lime, honeydew)';
+    this._filledBarElement.style.borderRadius = '10px';
 
     this._progressElement.appendChild(this._barElement);
+    this._barElement.appendChild(this._filledBarElement);
+    this._updateProgress();
 
     document.body.appendChild(this._progressElement);
 };
 
 Graphics._showProgress = function(){
-    this._progressElement.value = 0;
-    this._progressElement.style.visibility = 'visible';
+    if (this._progressEnabled) {
+        this._progressElement.value = 0;
+        this._progressElement.style.visibility = 'visible';
+        this._progressElement.style.zIndex = 98;
+    }
 };
 
 Graphics._hideProgress = function(){
     this._progressElement.style.visibility = 'hidden';
+    clearTimeout(this._progressTimeout);
 };
 
 Graphics._updateProgressCount = function(countLoaded, countLoading){
@@ -294,13 +317,11 @@ Graphics._updateProgressCount = function(countLoaded, countLoading){
         progressValue = 100;
     }
 
-    this._barElement.style.width = progressValue + '%';
+    this._filledBarElement.style.width = progressValue + '%';
 };
 
 Graphics._updateProgress = function(){
-    this._progressElement.style.zIndex = 99;
     this._centerElement(this._progressElement);
-    this._progressElement.style.marginTop = 450 * this._realScale + 'px';
 };
 
 /**
@@ -326,7 +347,6 @@ Graphics.endLoading = function() {
     this._clearUpperCanvas();
     this._upperCanvas.style.opacity = 0;
     this._hideProgress();
-    clearTimeout(this._progressTimeout);
 };
 
 /**
@@ -380,6 +400,7 @@ Graphics.eraseLoadingError = function() {
  */
 Graphics.printError = function(name, message) {
     this._errorShowed = true;
+    this._hideProgress();
     this.hideFps();
     if (this._errorPrinter) {
         this._updateErrorPrinter();
