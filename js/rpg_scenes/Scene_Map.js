@@ -68,6 +68,9 @@ Scene_Map.prototype.update = function() {
 Scene_Map.prototype.updateMainMultiply = function() {
     this.updateMain();
     if (this.isFastForward()) {
+        if (!this.isMapTouchOk()) {
+            this.updateDestination();
+        }
         this.updateMain();
     }
 };
