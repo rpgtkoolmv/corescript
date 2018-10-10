@@ -989,6 +989,10 @@ Bitmap.prototype._setDirty = function() {
 Bitmap.prototype.checkDirty = function() {
     if (this._dirty) {
         this._baseTexture.update();
+        var baseTexture = this._baseTexture;
+        setTimeout(function() {
+            baseTexture.update();
+        }, 0);
         this._dirty = false;
     }
 };
