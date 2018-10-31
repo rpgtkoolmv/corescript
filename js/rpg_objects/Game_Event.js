@@ -322,6 +322,7 @@ Game_Event.prototype.updateParallel = function() {
     if (this._interpreter) {
         if (!this._interpreter.isRunning()) {
             this._interpreter.setup(this.list(), this._eventId);
+            this._interpreter.setEventInfo(this.getEventInfo());
         }
         this._interpreter.update();
     }
@@ -335,4 +336,8 @@ Game_Event.prototype.locate = function(x, y) {
 Game_Event.prototype.forceMoveRoute = function(moveRoute) {
     Game_Character.prototype.forceMoveRoute.call(this, moveRoute);
     this._prelockDirection = 0;
+};
+
+Game_Event.prototype.getEventInfo = function() {
+    return { eventType: "map_event", mapId: this._mapId, mapEventId: this._eventId, page: this._pageIndex + 1 };
 };
