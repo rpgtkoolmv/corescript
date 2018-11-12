@@ -148,16 +148,19 @@ WebAudio._createMasterGainNode = function() {
  * @private
  */
 WebAudio._setupEventHandlers = function() {
-    document.addEventListener("touchend", function() {
-            var context = WebAudio._context;
-            if (context && context.state === "suspended" && typeof context.resume === "function") {
-                context.resume().then(function() {
-                    WebAudio._onTouchStart();
-                })
-            } else {
+    var resumeHandler = function() {
+        var context = WebAudio._context;
+        if (context && context.state === "suspended" && typeof context.resume === "function") {
+            context.resume().then(function() {
                 WebAudio._onTouchStart();
-            }
-    });
+            })
+        } else {
+            WebAudio._onTouchStart();
+        }
+    };
+    document.addEventListener("keydown", resumeHandler);
+    document.addEventListener("mousedown", resumeHandler);
+    document.addEventListener("touchend", resumeHandler);
     document.addEventListener('touchstart', this._onTouchStart.bind(this));
     document.addEventListener('visibilitychange', this._onVisibilityChange.bind(this));
 };
@@ -542,6 +545,11 @@ WebAudio.prototype._onXhrLoad = function(xhr) {
  * @private
  */
 WebAudio.prototype._startPlaying = function(loop, offset) {
+    if (this._loopLength > 0) {
+     while (offset >= this._loopStart + this._loopLength) {
+     offset -= this._loopLength;
+     }
+    }
     this._removeEndTimer();
     this._removeNodes();
     this._createNodes();

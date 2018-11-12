@@ -69,7 +69,6 @@ Window_EquipSlot.prototype.setStatusWindow = function(statusWindow) {
 
 Window_EquipSlot.prototype.setItemWindow = function(itemWindow) {
     this._itemWindow = itemWindow;
-    this.update();
 };
 
 Window_EquipSlot.prototype.updateHelp = function() {

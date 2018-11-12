@@ -36,7 +36,7 @@ Graphics.initialize = function(width, height, type) {
     this._errorPrinter = null;
     this._canvas = null;
     this._video = null;
-    this._videoUnlocked = !Utils.isMobileDevice();
+    this._videoUnlocked = false;
     this._videoLoading = false;
     this._upperCanvas = null;
     this._renderer = null;
@@ -657,6 +657,8 @@ Graphics._updateRealScale = function() {
     if (this._stretchEnabled) {
         var h = window.innerWidth / this._width;
         var v = window.innerHeight / this._height;
+        if (h >= 1 && h - 0.01 <= 1) h = 1;
+        if (v >= 1 && v - 0.01 <= 1) v = 1;
         this._realScale = Math.min(h, v);
     } else {
         this._realScale = this._scale;
@@ -1097,6 +1099,8 @@ Graphics._isVideoVisible = function() {
 Graphics._setupEventHandlers = function() {
     window.addEventListener('resize', this._onWindowResize.bind(this));
     document.addEventListener('keydown', this._onKeyDown.bind(this));
+    document.addEventListener('keydown', this._onTouchEnd.bind(this));
+    document.addEventListener('mousedown', this._onTouchEnd.bind(this));
     document.addEventListener('touchend', this._onTouchEnd.bind(this));
 };
 

@@ -38,5 +38,4 @@ Window_ItemCategory.prototype.makeCommandList = function() {
 
 Window_ItemCategory.prototype.setItemWindow = function(itemWindow) {
     this._itemWindow = itemWindow;
-    this.update();
 };

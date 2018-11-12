@@ -26,9 +26,7 @@ Utils.RPGMAKER_NAME = 'MV';
  * @type String
  * @final
  */
-Utils.RPGMAKER_VERSION = "1.4.1";
-
-Utils.RPGMAKER_ENGINE = "community-1.2c";
+Utils.RPGMAKER_VERSION = "1.6.1";
 
 /**
  * Checks whether the option is in the query string.
@@ -39,7 +37,9 @@ Utils.RPGMAKER_ENGINE = "community-1.2c";
  * @return {Boolean} True if the option is in the query string
  */
 Utils.isOptionValid = function(name) {
-    return location.search.slice(1).split('&').contains(name);
+    if (location.search.slice(1).split('&').contains(name)) {return 1;};
+    if (typeof nw !== "undefined" && nw.App.argv.length > 0 && nw.App.argv[0].split('&').contains(name)) {return 1;};
+    return 0;
 };
 
 /**

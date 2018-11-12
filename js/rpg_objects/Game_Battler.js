@@ -433,8 +433,10 @@ Game_Battler.prototype.onAllActionsEnd = function() {
 Game_Battler.prototype.onTurnEnd = function() {
     this.clearResult();
     this.regenerateAll();
-    this.updateStateTurns();
-    this.updateBuffTurns();
+    if (!BattleManager.isForcedTurn()) {
+        this.updateStateTurns();
+        this.updateBuffTurns();
+    }
     this.removeStatesAuto(2);
 };
 
