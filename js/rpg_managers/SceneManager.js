@@ -30,6 +30,7 @@ SceneManager._boxHeight         = 624;
 SceneManager._deltaTime = 1.0 / 60.0;
 if (!Utils.isMobileSafari()) SceneManager._currentTime = SceneManager._getTimeInMsWithoutMobileSafari();
 SceneManager._accumulator = 0.0;
+SceneManager._frameCount = 0;
 
 SceneManager.run = function(sceneClass) {
     try {
@@ -42,6 +43,7 @@ SceneManager.run = function(sceneClass) {
 };
 
 SceneManager.initialize = function() {
+    this.initProgressWatcher();
     this.initGraphics();
     this.checkFileAccess();
     this.initAudio();
@@ -49,6 +51,10 @@ SceneManager.initialize = function() {
     this.initNwjs();
     this.checkPluginErrors();
     this.setupErrorHandlers();
+};
+
+SceneManager.initProgressWatcher = function(){
+    ProgressWatcher.initialize();
 };
 
 SceneManager.initGraphics = function() {
@@ -125,6 +131,18 @@ SceneManager.setupErrorHandlers = function() {
     document.addEventListener('keydown', this.onKeyDown.bind(this));
 };
 
+SceneManager.frameCount = function() {
+    return this._frameCount;
+};
+
+SceneManager.setFrameCount = function(frameCount) {
+    this._frameCount = frameCount;
+};
+
+SceneManager.resetFrameCount = function() {
+    this._frameCount = 0;
+};
+
 SceneManager.requestUpdate = function() {
     if (!this._stopped) {
         requestAnimationFrame(this.update.bind(this));
@@ -151,12 +169,14 @@ SceneManager.terminate = function() {
 
 SceneManager.onError = function(e) {
     console.error(e.message);
-    console.error(e.filename, e.lineno);
-    try {
-        this.stop();
-        Graphics.printError('Error', e.message);
-        AudioManager.stopAll();
-    } catch (e2) {
+    if (e.filename || e.lineno) {
+        console.error(e.filename, e.lineno);
+        try {
+            this.stop();
+            Graphics.printError('Error', e.message);
+            AudioManager.stopAll();
+        } catch (e2) {
+        }
     }
 };
 
@@ -180,6 +200,7 @@ SceneManager.onKeyDown = function(event) {
 SceneManager.catchException = function(e) {
     if (e instanceof Error) {
         Graphics.printError(e.name, e.message);
+        Graphics.printStackTrace(e.stack);
         console.error(e.stack);
     } else {
         Graphics.printError('UnknownError', e);
@@ -207,8 +228,9 @@ SceneManager.updateMain = function() {
         this.updateScene();
     } else {
         var newTime = this._getTimeInMsWithoutMobileSafari();
+        if (this._currentTime === undefined) { this._currentTime = newTime; }
         var fTime = (newTime - this._currentTime) / 1000;
-        if (fTime > 0.25) fTime = 0.25;
+        if (fTime > 0.25) { fTime = 0.25; }
         this._currentTime = newTime;
         this._accumulator += fTime;
         while (this._accumulator >= this._deltaTime) {
@@ -255,6 +277,7 @@ SceneManager.updateScene = function() {
             this.onSceneStart();
         }
         if (this.isCurrentSceneStarted()) {
+            this.updateFrameCount();
             this._scene.update();
         }
     }
@@ -266,6 +289,10 @@ SceneManager.renderScene = function() {
     } else if (this._scene) {
         this.onSceneLoading();
     }
+};
+
+SceneManager.updateFrameCount = function() {
+    this._frameCount++;
 };
 
 SceneManager.onSceneCreate = function() {

@@ -629,8 +629,12 @@ Bitmap.prototype.drawText = function(text, x, y, maxWidth, lineHeight, align) {
     // Note: Firefox has a bug with textBaseline: Bug 737852
     //       So we use 'alphabetic' here.
     if (text !== undefined) {
+        if (this.fontSize < Bitmap.minFontSize) {
+            this.drawSmallText(text, x, y, maxWidth, lineHeight, align);
+            return;
+        }
         var tx = x;
-        var ty = y + lineHeight - (lineHeight - this.fontSize * 0.7) / 2;
+        var ty = y + lineHeight - Math.round((lineHeight - this.fontSize * 0.7) / 2);
         var context = this._context;
         var alpha = context.globalAlpha;
         maxWidth = maxWidth || 0xffffffff;
@@ -651,6 +655,45 @@ Bitmap.prototype.drawText = function(text, x, y, maxWidth, lineHeight, align) {
         context.restore();
         this._setDirty();
     }
+};
+
+/**
+ * Draws the small text big once and resize it because modern broswers are poor at drawing small text.
+ *
+ * @method drawSmallText
+ * @param {String} text The text that will be drawn
+ * @param {Number} x The x coordinate for the left of the text
+ * @param {Number} y The y coordinate for the top of the text
+ * @param {Number} maxWidth The maximum allowed width of the text
+ * @param {Number} lineHeight The height of the text line
+ * @param {String} align The alignment of the text
+ */
+Bitmap.prototype.drawSmallText = function(text, x, y, maxWidth, lineHeight, align) {
+    var minFontSize = Bitmap.minFontSize;
+    var bitmap = Bitmap.drawSmallTextBitmap;
+    bitmap.fontFace = this.fontFace;
+    bitmap.fontSize = minFontSize;
+    bitmap.fontItalic = this.fontItalic;
+    bitmap.textColor = this.textColor;
+    bitmap.outlineColor = this.outlineColor;
+    bitmap.outlineWidth = this.outlineWidth * minFontSize / this.fontSize;
+    maxWidth = maxWidth || 816;
+    var height = this.fontSize * 1.5;
+    var scaledMaxWidth = maxWidth * minFontSize / this.fontSize;
+    var scaledMaxWidthWithOutline = scaledMaxWidth + bitmap.outlineWidth * 2;
+    var scaledHeight = height * minFontSize / this.fontSize;
+    var scaledHeightWithOutline = scaledHeight + bitmap.outlineWidth * 2;
+
+    var bitmapWidth = bitmap.width;
+    var bitmapHeight = bitmap.height;
+    while (scaledMaxWidthWithOutline > bitmapWidth) bitmapWidth *= 2;
+    while (scaledHeightWithOutline > bitmapHeight) bitmapHeight *= 2;
+    if (bitmap.width !== bitmapWidth || bitmap.height !== bitmapHeight) bitmap.resize(bitmapWidth, bitmapHeight);
+
+    bitmap.drawText(text, bitmap.outlineWidth, bitmap.outlineWidth, scaledMaxWidth, minFontSize, align);
+    this.blt(bitmap, 0, 0, scaledMaxWidthWithOutline, scaledHeightWithOutline,
+        x - this.outlineWidth, y - this.outlineWidth + (lineHeight - this.fontSize) / 2, maxWidth + this.outlineWidth * 2, height + this.outlineWidth * 2);
+    bitmap.clear();
 };
 
 /**
@@ -946,6 +989,10 @@ Bitmap.prototype._setDirty = function() {
 Bitmap.prototype.checkDirty = function() {
     if (this._dirty) {
         this._baseTexture.update();
+        var baseTexture = this._baseTexture;
+        setTimeout(function() {
+            baseTexture.update();
+        }, 0);
         this._dirty = false;
     }
 };
@@ -972,7 +1019,6 @@ Bitmap.prototype._requestImage = function(url){
         this._loader = ResourceHandler.createLoader(url, this._requestImage.bind(this, url), this._onError.bind(this));
     }
 
-    this._image = new Image();
     this._url = url;
     this._loadingState = 'requesting';
 
@@ -1003,3 +1049,6 @@ Bitmap.prototype.startRequest = function(){
         this._requestImage(this._url);
     }
 };
+
+Bitmap.minFontSize = 21;
+Bitmap.drawSmallTextBitmap = new Bitmap(1632, Bitmap.minFontSize);

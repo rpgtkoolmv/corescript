@@ -52,7 +52,7 @@ Window_Options.prototype.drawItem = function(index) {
     this.resetTextColor();
     this.changePaintOpacity(this.isCommandEnabled(index));
     this.drawText(this.commandName(index), rect.x, rect.y, titleWidth, 'left');
-    this.drawText(this.statusText(index), titleWidth, rect.y, statusWidth, 'right');
+    this.drawText(this.statusText(index), rect.x+titleWidth, rect.y, statusWidth, 'right');
 };
 
 Window_Options.prototype.statusWidth = function() {

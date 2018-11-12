@@ -375,7 +375,9 @@ AudioManager.createBuffer = function(folder, name) {
         else Html5Audio.setup(url);
         return Html5Audio;
     } else {
-        return new WebAudio(url);
+        var audio = new WebAudio(url);
+        this._callCreationHook(audio);
+        return audio;
     }
 };
 
@@ -388,7 +390,7 @@ AudioManager.updateBufferParameters = function(buffer, configVolume, audio) {
 };
 
 AudioManager.audioFileExt = function() {
-    if (WebAudio.canPlayOgg() && !Utils.isMobileDevice()) {
+    if (WebAudio.canPlayOgg()) {
         return '.ogg';
     } else {
         return '.m4a';
@@ -417,4 +419,12 @@ AudioManager.checkWebAudioError = function(webAudio) {
     if (webAudio && webAudio.isError()) {
         throw new Error('Failed to load: ' + webAudio.url);
     }
+};
+
+AudioManager.setCreationHook = function(hook){
+    this._creationHook = hook;
+};
+
+AudioManager._callCreationHook = function(audio){
+    if(this._creationHook) this._creationHook(audio);
 };

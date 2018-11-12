@@ -57,6 +57,8 @@ Window_Message.prototype.clearFlags = function() {
     this._showFast = false;
     this._lineShowFast = false;
     this._pauseSkip = false;
+    this._textSpeed = 0;
+    this._textSpeedCount = 0;
 };
 
 Window_Message.prototype.numVisibleRows = function() {
@@ -176,8 +178,13 @@ Window_Message.prototype.updateMessage = function() {
                 this.newPage(this._textState);
             }
             this.updateShowFast();
+            if (!this._showFast && !this._lineShowFast && this._textSpeedCount < this._textSpeed) {
+                this._textSpeedCount++;
+                break;
+            }
+            this._textSpeedCount = 0;
             this.processCharacter(this._textState);
-            if (!this._showFast && !this._lineShowFast) {
+            if (!this._showFast && !this._lineShowFast && this._textSpeed !== -1) {
                 break;
             }
             if (this.pause || this._waitCount > 0) {
@@ -312,6 +319,9 @@ Window_Message.prototype.processEscapeCharacter = function(code, textState) {
         break;
     case '^':
         this._pauseSkip = true;
+        break;
+    case 'S':
+        this._textSpeed = this.obtainEscapeParam(textState) - 1;
         break;
     default:
         Window_Base.prototype.processEscapeCharacter.call(this, code, textState);

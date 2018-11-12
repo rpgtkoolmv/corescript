@@ -99,7 +99,9 @@ ImageManager.loadNormalBitmap = function(path, hue) {
     var key = this._generateCacheKey(path, hue);
     var bitmap = this._imageCache.get(key);
     if (!bitmap) {
-        bitmap = Bitmap.load(decodeURIComponent(path));
+        bitmap = Bitmap.load(path);
+        this._callCreationHook(bitmap);
+
         bitmap.addLoadListener(function() {
             bitmap.rotateHue(hue);
         });
@@ -289,6 +291,8 @@ ImageManager.requestNormalBitmap = function(path, hue){
     var bitmap = this._imageCache.get(key);
     if(!bitmap){
         bitmap = Bitmap.request(path);
+        this._callCreationHook(bitmap);
+
         bitmap.addLoadListener(function(){
             bitmap.rotateHue(hue);
         });
@@ -307,4 +311,12 @@ ImageManager.update = function(){
 
 ImageManager.clearRequest = function(){
     this._requestQueue.clear();
+};
+
+ImageManager.setCreationHook = function(hook){
+    this._creationHook = hook;
+};
+
+ImageManager._callCreationHook = function(bitmap){
+    if(this._creationHook) this._creationHook(bitmap);
 };

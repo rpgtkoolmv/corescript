@@ -40,6 +40,7 @@ var $testEvent        = null;
 DataManager._globalId       = 'RPGMV';
 DataManager._lastAccessedId = 1;
 DataManager._errorUrl       = null;
+DataManager._autoSaveFileId = 0;
 
 DataManager._databaseFiles = [
     { name: '$dataActors',       src: 'Actors.json'       },
@@ -216,6 +217,7 @@ DataManager.setupNewGame = function() {
     $gamePlayer.reserveTransfer($dataSystem.startMapId,
         $dataSystem.startX, $dataSystem.startY);
     Graphics.frameCount = 0;
+    SceneManager.resetFrameCount();
 };
 
 DataManager.setupBattleTest = function() {
@@ -235,6 +237,9 @@ DataManager.setupEventTest = function() {
 };
 
 DataManager.loadGlobalInfo = function() {
+    if (this._globalInfo) {
+        return this._globalInfo;
+    }
     var json;
     try {
         json = StorageManager.load(0);
@@ -243,19 +248,20 @@ DataManager.loadGlobalInfo = function() {
         return [];
     }
     if (json) {
-        var globalInfo = JSON.parse(json);
+        this._globalInfo = JSON.parse(json);
         for (var i = 1; i <= this.maxSavefiles(); i++) {
             if (!StorageManager.exists(i)) {
-                delete globalInfo[i];
+                delete this._globalInfo[i];
             }
         }
-        return globalInfo;
+        return this._globalInfo;
     } else {
-        return [];
+        return this._globalInfo = [];
     }
 };
 
 DataManager.saveGlobalInfo = function(info) {
+    this._globalInfo = null;
     StorageManager.save(0, JSON.stringify(info));
 };
 
@@ -377,7 +383,6 @@ DataManager.saveGameWithoutRescue = function(savefileId) {
 };
 
 DataManager.loadGameWithoutRescue = function(savefileId) {
-    var globalInfo = this.loadGlobalInfo();
     if (this.isThisGameFile(savefileId)) {
         var json = StorageManager.load(savefileId);
         this.createGameObjects();
@@ -450,4 +455,21 @@ DataManager.extractSaveContents = function(contents) {
     $gameParty         = contents.party;
     $gameMap           = contents.map;
     $gamePlayer        = contents.player;
+};
+
+DataManager.setAutoSaveFileId = function(autoSaveFileId) {
+    this._autoSaveFileId = autoSaveFileId;
+};
+
+DataManager.isAutoSaveFileId = function(saveFileId) {
+    return this._autoSaveFileId !== 0 && this._autoSaveFileId === saveFileId;
+};
+
+DataManager.autoSaveGame = function() {
+    if (this._autoSaveFileId !== 0 && !this.isEventTest() && $gameSystem.isSaveEnabled()) {
+        $gameSystem.onBeforeSave();
+        if (this.saveGame(this._autoSaveFileId)) {
+            StorageManager.cleanBackup(this._autoSaveFileId);
+        }
+    }
 };

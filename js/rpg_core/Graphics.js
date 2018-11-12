@@ -8,7 +8,7 @@ function Graphics() {
     throw new Error('This is a static class');
 }
 
-Graphics._cssFontLoading =  document.fonts && document.fonts.ready;
+Graphics._cssFontLoading =  document.fonts && document.fonts.ready && document.fonts.ready.then;
 Graphics._fontLoaded = null;
 Graphics._videoVolume = 1;
 
@@ -62,6 +62,7 @@ Graphics.initialize = function(width, height, type) {
     this._disableContextMenu();
     this._setupEventHandlers();
     this._setupCssFontLoading();
+    this._setupProgress();
 };
 
 
@@ -160,7 +161,7 @@ Graphics.tickEnd = function() {
  * @param {Stage} stage The stage object to be rendered
  */
 Graphics.render = function(stage) {
-    if (this._skipCount === 0) {
+    if (this._skipCount <= 0) {
         var startTime = Date.now();
         if (stage) {
             this._renderer.render(stage);
@@ -240,6 +241,16 @@ Graphics.setLoadingImage = function(src) {
 };
 
 /**
+ * Sets whether the progress bar is enabled.
+ *
+ * @static
+ * @method setEnableProgress
+ */
+Graphics.setProgressEnabled = function(enable) {
+    this._progressEnabled = enable;
+};
+
+/**
  * Initializes the counter for displaying the "Now Loading" image.
  *
  * @static
@@ -247,6 +258,70 @@ Graphics.setLoadingImage = function(src) {
  */
 Graphics.startLoading = function() {
     this._loadingCount = 0;
+
+    ProgressWatcher.truncateProgress();
+    ProgressWatcher.setProgressListener(this._updateProgressCount.bind(this));
+    this._progressTimeout = setTimeout(function() {
+        Graphics._showProgress();
+    }, 1500);
+};
+
+Graphics._setupProgress = function(){
+    this._progressElement = document.createElement('div');
+    this._progressElement.id = 'loading-progress';
+    this._progressElement.width = 600;
+    this._progressElement.height = 300;
+    this._progressElement.style.visibility = 'hidden';
+
+    this._barElement = document.createElement('div');
+    this._barElement.id = 'loading-bar';
+    this._barElement.style.width = '100%';
+    this._barElement.style.height = '10%';
+    this._barElement.style.background = 'linear-gradient(to top, gray, lightgray)';
+    this._barElement.style.border = '5px solid white';
+    this._barElement.style.borderRadius = '15px';
+    this._barElement.style.marginTop = '40%';
+
+    this._filledBarElement = document.createElement('div');
+    this._filledBarElement.id = 'loading-filled-bar';
+    this._filledBarElement.style.width = '0%';
+    this._filledBarElement.style.height = '100%';
+    this._filledBarElement.style.background = 'linear-gradient(to top, lime, honeydew)';
+    this._filledBarElement.style.borderRadius = '10px';
+
+    this._progressElement.appendChild(this._barElement);
+    this._barElement.appendChild(this._filledBarElement);
+    this._updateProgress();
+
+    document.body.appendChild(this._progressElement);
+};
+
+Graphics._showProgress = function(){
+    if (this._progressEnabled) {
+        this._progressElement.value = 0;
+        this._progressElement.style.visibility = 'visible';
+        this._progressElement.style.zIndex = 98;
+    }
+};
+
+Graphics._hideProgress = function(){
+    this._progressElement.style.visibility = 'hidden';
+    clearTimeout(this._progressTimeout);
+};
+
+Graphics._updateProgressCount = function(countLoaded, countLoading){
+    var progressValue;
+    if(countLoading !== 0){
+        progressValue = (countLoaded/countLoading) * 100;
+    }else{
+        progressValue = 100;
+    }
+
+    this._filledBarElement.style.width = progressValue + '%';
+};
+
+Graphics._updateProgress = function(){
+    this._centerElement(this._progressElement);
 };
 
 /**
@@ -259,6 +334,7 @@ Graphics.updateLoading = function() {
     this._loadingCount++;
     this._paintUpperCanvas();
     this._upperCanvas.style.opacity = 1;
+    this._updateProgress();
 };
 
 /**
@@ -270,6 +346,7 @@ Graphics.updateLoading = function() {
 Graphics.endLoading = function() {
     this._clearUpperCanvas();
     this._upperCanvas.style.opacity = 0;
+    this._hideProgress();
 };
 
 /**
@@ -281,16 +358,19 @@ Graphics.endLoading = function() {
  */
 Graphics.printLoadingError = function(url) {
     if (this._errorPrinter && !this._errorShowed) {
+        this._updateErrorPrinter();
         this._errorPrinter.innerHTML = this._makeErrorHtml('Loading Error', 'Failed to load: ' + url);
         var button = document.createElement('button');
         button.innerHTML = 'Retry';
         button.style.fontSize = '24px';
         button.style.color = '#ffffff';
         button.style.backgroundColor = '#000000';
-        button.onmousedown = button.ontouchstart = function(event) {
-            ResourceHandler.retry();
+        button.addEventListener('touchstart', function(event) {
             event.stopPropagation();
-        };
+        });
+        button.addEventListener('click', function(event) {
+            ResourceHandler.retry();
+        });
         this._errorPrinter.appendChild(button);
         this._loadingCount = -Infinity;
     }
@@ -309,6 +389,7 @@ Graphics.eraseLoadingError = function() {
     }
 };
 
+// The following code is partly borrowed from triacontane.
 /**
  * Displays the error text to the screen.
  *
@@ -319,11 +400,43 @@ Graphics.eraseLoadingError = function() {
  */
 Graphics.printError = function(name, message) {
     this._errorShowed = true;
+    this._hideProgress();
+    this.hideFps();
     if (this._errorPrinter) {
+        this._updateErrorPrinter();
         this._errorPrinter.innerHTML = this._makeErrorHtml(name, message);
+        this._makeErrorMessage();
     }
     this._applyCanvasFilter();
     this._clearUpperCanvas();
+};
+
+/**
+ * Shows the stacktrace of error.
+ *
+ * @static
+ * @method printStackTrace
+ */
+Graphics.printStackTrace = function(stack) {
+    if (this._errorPrinter) {
+        stack = (stack || '')
+            .replace(/file:.*js\//g, '')
+            .replace(/http:.*js\//g, '')
+            .replace(/https:.*js\//g, '')
+            .replace(/chrome-extension:.*js\//g, '')
+            .replace(/\n/g, '<br>');
+        this._makeStackTrace(decodeURIComponent(stack));
+    }
+};
+
+/**
+ * Sets the error message.
+ *
+ * @static
+ * @method setErrorMessage
+ */
+Graphics.setErrorMessage = function(message) {
+    this._errorMessage = message;
 };
 
 /**
@@ -675,7 +788,7 @@ Graphics._updateRealScale = function() {
  */
 Graphics._makeErrorHtml = function(name, message) {
     return ('<font color="yellow"><b>' + name + '</b></font><br>' +
-            '<font color="white">' + message + '</font><br>');
+            '<font color="white">' + decodeURIComponent(message) + '</font><br>');
 };
 
 /**
@@ -749,12 +862,47 @@ Graphics._createErrorPrinter = function() {
  */
 Graphics._updateErrorPrinter = function() {
     this._errorPrinter.width = this._width * 0.9;
-    this._errorPrinter.height = 40;
+    this._errorPrinter.height = this._errorShowed ? this._height * 0.9 : 40;
     this._errorPrinter.style.textAlign = 'center';
     this._errorPrinter.style.textShadow = '1px 1px 3px #000';
     this._errorPrinter.style.fontSize = '20px';
     this._errorPrinter.style.zIndex = 99;
+    this._errorPrinter.style.userSelect       = 'text';
+    this._errorPrinter.style.webkitUserSelect = 'text';
+    this._errorPrinter.style.msUserSelect     = 'text';
+    this._errorPrinter.style.mozUserSelect    = 'text';
+    this._errorPrinter.oncontextmenu = null;    // enable context menu
     this._centerElement(this._errorPrinter);
+};
+
+/**
+ * @static
+ * @method _makeErrorMessage
+ * @private
+ */
+Graphics._makeErrorMessage = function() {
+    var mainMessage       = document.createElement('div');
+    var style             = mainMessage.style;
+    style.color           = 'white';
+    style.textAlign       = 'left';
+    style.fontSize        = '18px';
+    mainMessage.innerHTML = '<hr>' + (this._errorMessage || '');
+    this._errorPrinter.appendChild(mainMessage);
+};
+
+/**
+ * @static
+ * @method _makeStackTrace
+ * @private
+ */
+Graphics._makeStackTrace = function(stack) {
+    var stackTrace         = document.createElement('div');
+    var style              = stackTrace.style;
+    style.color            = 'white';
+    style.textAlign        = 'left';
+    style.fontSize         = '18px';
+    stackTrace.innerHTML   = '<br><hr>' + stack + '<hr>';
+    this._errorPrinter.appendChild(stackTrace);
 };
 
 /**
@@ -1190,9 +1338,9 @@ Graphics._switchStretchMode = function() {
  */
 Graphics._switchFullScreen = function() {
     if (this._isFullScreen()) {
-        this._requestFullScreen();
-    } else {
         this._cancelFullScreen();
+    } else {
+        this._requestFullScreen();
     }
 };
 
@@ -1203,9 +1351,10 @@ Graphics._switchFullScreen = function() {
  * @private
  */
 Graphics._isFullScreen = function() {
-    return ((document.fullScreenElement && document.fullScreenElement !== null) ||
-            (!document.mozFullScreen && !document.webkitFullscreenElement &&
-             !document.msFullscreenElement));
+    return document.fullscreenElement ||
+           document.mozFullScreen || 
+           document.webkitFullscreenElement ||
+           document.msFullscreenElement;
 };
 
 /**
@@ -1215,8 +1364,8 @@ Graphics._isFullScreen = function() {
  */
 Graphics._requestFullScreen = function() {
     var element = document.body;
-    if (element.requestFullScreen) {
-        element.requestFullScreen();
+    if (element.requestFullscreen) {
+        element.requestFullscreen();
     } else if (element.mozRequestFullScreen) {
         element.mozRequestFullScreen();
     } else if (element.webkitRequestFullScreen) {
@@ -1232,8 +1381,8 @@ Graphics._requestFullScreen = function() {
  * @private
  */
 Graphics._cancelFullScreen = function() {
-    if (document.cancelFullScreen) {
-        document.cancelFullScreen();
+    if (document.exitFullscreen) { 
+        document.exitFullscreen();
     } else if (document.mozCancelFullScreen) {
         document.mozCancelFullScreen();
     } else if (document.webkitCancelFullScreen) {

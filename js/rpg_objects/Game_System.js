@@ -18,6 +18,7 @@ Game_System.prototype.initialize = function() {
     this._saveCount = 0;
     this._versionId = 0;
     this._framesOnSave = 0;
+    this._sceneFramesOnSave = 0;
     this._bgmOnSave = null;
     this._bgsOnSave = null;
     this._windowTone = null;
@@ -168,18 +169,20 @@ Game_System.prototype.onBeforeSave = function() {
     this._saveCount++;
     this._versionId = $dataSystem.versionId;
     this._framesOnSave = Graphics.frameCount;
+    this._sceneFramesOnSave = SceneManager.frameCount();
     this._bgmOnSave = AudioManager.saveBgm();
     this._bgsOnSave = AudioManager.saveBgs();
 };
 
 Game_System.prototype.onAfterLoad = function() {
     Graphics.frameCount = this._framesOnSave;
+    SceneManager.setFrameCount(this._sceneFramesOnSave || this._framesOnSave);
     AudioManager.playBgm(this._bgmOnSave);
     AudioManager.playBgs(this._bgsOnSave);
 };
 
 Game_System.prototype.playtime = function() {
-    return Math.floor(Graphics.frameCount / 60);
+    return Math.floor(SceneManager.frameCount() / 60);
 };
 
 Game_System.prototype.playtimeText = function() {
