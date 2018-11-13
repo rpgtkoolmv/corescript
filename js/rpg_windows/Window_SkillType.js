@@ -53,7 +53,6 @@ Window_SkillType.prototype.update = function() {
 
 Window_SkillType.prototype.setSkillWindow = function(skillWindow) {
     this._skillWindow = skillWindow;
-    this.update();
 };
 
 Window_SkillType.prototype.selectLast = function() {
