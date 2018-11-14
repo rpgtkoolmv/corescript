@@ -71,6 +71,10 @@ Game_Character.prototype.initMembers = function() {
     this._waitCount = 0;
 };
 
+Game_Character.prototype.setMoveRouteLog = function(callLog){
+    this._moveRouteLog = callLog;
+};
+
 Game_Character.prototype.memorizeMoveRoute = function() {
     this._originalMoveRoute       = this._moveRoute;
     this._originalMoveRouteIndex  = this._moveRouteIndex;
@@ -80,6 +84,7 @@ Game_Character.prototype.restoreMoveRoute = function() {
     this._moveRoute          = this._originalMoveRoute;
     this._moveRouteIndex     = this._originalMoveRouteIndex;
     this._originalMoveRoute  = null;
+    this._moveRouteLog       = null;
 };
 
 Game_Character.prototype.isMoveRouteForcing = function() {
@@ -262,10 +267,39 @@ Game_Character.prototype.processMoveCommand = function(command) {
         AudioManager.playSe(params[0]);
         break;
     case gc.ROUTE_SCRIPT:
-        eval(params[0]);
+        this.evalRouteScript(params[0]);
         break;
     }
 };
+
+Game_Character.prototype.evalRouteScript = function(script){
+    var gc = Game_Character;
+    try {
+        eval(script);        
+    } catch (error) {
+        if(!!this){
+            error.message = ("target %1,sorce:%2 script:%3 %4").format(
+                this.debugName(),
+                this.moveRouteLogMessage(),
+                script,
+                error.message
+            );
+        }
+        throw(error);
+    }
+};
+
+Game_Character.prototype.debugName = function(){
+    return "Game_Character";
+};
+
+Game_Character.prototype.moveRouteLogMessage = function(){
+    if(this._moveRouteLog && this._moveRouteLog.createMessage){
+        return this._moveRouteLog.createMessage();
+    }
+    return "";
+};
+
 
 Game_Character.prototype.deltaXFrom = function(x) {
     return $gameMap.deltaX(this.x, x);
