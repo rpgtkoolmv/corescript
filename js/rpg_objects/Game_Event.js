@@ -43,10 +43,27 @@ Game_Event.prototype.event = function() {
 Game_Event.prototype.debugName = function(){
     var event = this.event();
     if(event){
-        return "event:"+ this._eventId +"("+ event.name+")";
+        return "MapEvent:"+ this._eventId +"("+ event.name+")";
     }
     return "";
 };
+
+Game_Event.prototype.createLogMessage = function(pageIndex){
+    return ( "MapID: %1,%2, page: %3").format(
+        this._mapId,
+        this.debugName(),
+        pageIndex
+    );
+};
+
+Game_Event.prototype.moveRouteLogMessage = function(){
+    if(!this._moveRouteLog){
+        return this.createLogMessage(this._pageIndex)+"(CustomRoute )";
+    }
+
+    return Game_Character.prototype.moveRouteLogMessage.call(this);
+};
+
 
 Game_Event.prototype.page = function() {
     return this.event().pages[this._pageIndex];
