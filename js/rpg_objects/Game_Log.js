@@ -20,23 +20,30 @@ Game_LogMapEvent.prototype.initialize =function(mapId,eventId,page){
     this._page =page;
 };
 
-Game_LogMapEvent.prototype.getEventName = function(){
+Game_LogMapEvent.prototype.event =function(){
     if($gameMap.mapId() ===this._mapId){
         var event = $gameMap.event(this._eventId);
         if(event){
-            return event.event().name;
+            return event;
         }
     }
-    return "";
+    return null;
 };
+
+Game_LogMapEvent.prototype.getEventName = function(){
+    var event = this.event();
+    if(event){
+        return event.debugName();
+    }
+    return "";
+}
 Game_LogMapEvent.prototype.createMessage = function(){
-    var name = this.getEventName();
-    return ( "MapID: %1, MapEventID: %2(%3), page: %4").format(
-        this._mapId,
-        this._eventId,
-        name,
-        this._page
-    );
+
+    var event = this.event();
+    if(event){
+        return event.createLogMessage(this._page);
+    }
+    return "";
 };
 
 function Game_LogEventPgaeMoveRoute(){
@@ -70,6 +77,7 @@ Game_LogCommonEvent.prototype.getEventName =function(){
 };
 Game_LogCommonEvent.prototype.createMessage =function(){
     var name = this.getEventName();
+    
     return ("CommonEvent: %1(%2)").format(
         this._eventId,
         name
