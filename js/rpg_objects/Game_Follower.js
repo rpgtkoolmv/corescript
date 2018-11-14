@@ -28,6 +28,10 @@ Game_Follower.prototype.actor = function() {
     return $gameParty.battleMembers()[this._memberIndex];
 };
 
+Game_Follower.prototype.debugName = function(){
+    return "follower[" + this._memberIndex+"]";
+};
+
 Game_Follower.prototype.isVisible = function() {
     return this.actor() && $gamePlayer.followers().isVisible();
 };
