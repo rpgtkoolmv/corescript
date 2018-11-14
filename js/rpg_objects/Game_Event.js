@@ -40,8 +40,20 @@ Game_Event.prototype.event = function() {
     return $dataMap.events[this._eventId];
 };
 
+Game_Event.prototype.debugName = function(){
+    var event = this.event();
+    if(event){
+        return "event:"+ this._eventId +"("+ event.name+")";
+    }
+    return "";
+};
+
 Game_Event.prototype.page = function() {
     return this.event().pages[this._pageIndex];
+};
+
+Game_Event.prototype.pageIndex = function(){
+    return this._pageIndex;
 };
 
 Game_Event.prototype.list = function() {
