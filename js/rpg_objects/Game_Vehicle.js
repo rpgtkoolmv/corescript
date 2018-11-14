@@ -39,6 +39,10 @@ Game_Vehicle.prototype.isAirship = function() {
     return this._type === 'airship';
 };
 
+Game_Vehicle.prototype.debugName = function(){
+    return "vehicle("+this._type+")";
+};
+
 Game_Vehicle.prototype.resetDirection = function() {
     this.setDirection(4);
 };
