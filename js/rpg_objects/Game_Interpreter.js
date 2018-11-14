@@ -86,14 +86,18 @@ Game_Interpreter.prototype.setEventCallLog = function(callLog){
     this._callLog = callLog;
 };
 
+Game_Interpreter.prototype.createCallLogMessage =function(){
+    return !!this._callLog ? this._callLog.createMessage() : "(callLog is null)";
+};
+
+
 Game_Interpreter.prototype.evalScript = function(script,line){
     try {
         return eval(script);        
     } catch (error) {
         if(!!this){
-            var callLogMssage = !!this._callLog ? this._callLog.createMessage() : "(callLog is null)";
             error.message = ("%1\n%2\n%3").format(
-                callLogMssage,
+                this.createCallLogMessage(),
                 this.createEventCodeErrorMessage(line),
                 error.message
             );    
@@ -1780,7 +1784,6 @@ Game_Interpreter.prototype.command355 = function() {
     return true;
 };
 
-
 // Plugin Command
 Game_Interpreter.prototype.command356 = function() {
     var args = this._params[0].split(" ");
@@ -1788,21 +1791,21 @@ Game_Interpreter.prototype.command356 = function() {
     try {
         this.pluginCommand(command, args);        
     } catch (error) {
-        
-        error.message = error.message + this.createPluginCommandErrorMessage(command,args);
+        if(!!this){
+            error.message = error.message +this.createCallLogMessage() + this.createPluginCommandErrorMessage(command,args);
+        }
         throw(error);
     }
     return true;
 };
 
-Game_Interpreter.prototype.pluginCommand = function(command, args) {
-    // to be overridden by plugins
-};
-
-Game_Interpreter.prototype.createPluginCommandErrorMessage =　function(command,args){
+Game_Interpreter.prototype.createPluginCommandErrorMessage =function(command,args){
     return ("PluginError:%1 args:%2").format(command,args);
 };
 
+Game_Interpreter.prototype.pluginCommand = function(command, args) {
+    // to be overridden by plugins
+};
 
 Game_Interpreter.requestImagesByPluginCommand = function(command,args){
 };
