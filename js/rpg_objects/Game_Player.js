@@ -85,6 +85,10 @@ Game_Player.prototype.fadeType = function() {
     return this._fadeType;
 };
 
+Game_Player.prototype.debugName = function(){
+    return "player";
+};
+
 Game_Player.prototype.performTransfer = function() {
     if (this.isTransferring()) {
         this.setDirection(this._newDirection);
