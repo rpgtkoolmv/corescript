@@ -95,6 +95,7 @@ Game_Interpreter.prototype.evalScript = function(script,line){
     try {
         return eval(script);        
     } catch (error) {
+        
         if(!!this){
             error.message = ("%1\n%2\n%3").format(
                 this.createCallLogMessage(),
@@ -1792,16 +1793,13 @@ Game_Interpreter.prototype.command356 = function() {
         this.pluginCommand(command, args);        
     } catch (error) {
         if(!!this){
-            error.message = error.message +this.createCallLogMessage() + this.createPluginCommandErrorMessage(command,args);
+            error.message =("%1,%2,%3").format( error.message ,this.createCallLogMessage() , this._params[0]);
         }
         throw(error);
     }
     return true;
 };
 
-Game_Interpreter.prototype.createPluginCommandErrorMessage =function(command,args){
-    return ("PluginError:%1 args:%2").format(command,args);
-};
 
 Game_Interpreter.prototype.pluginCommand = function(command, args) {
     // to be overridden by plugins
