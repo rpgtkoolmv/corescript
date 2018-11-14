@@ -7,6 +7,12 @@ function Game_Interpreter() {
     this.initialize.apply(this, arguments);
 }
 
+Game_Interpreter.codeName = {
+    111:"Conditional Branch",
+    122:"Control Variables",
+    355:"Script"
+};
+
 Game_Interpreter.prototype.initialize = function(depth) {
     this._depth = depth || 0;
     this.checkOverflow();
@@ -34,6 +40,7 @@ Game_Interpreter.prototype.clear = function() {
     this._comments = '';
     this._character = null;
     this._childInterpreter = null;
+    this._callLog = null;
 };
 
 Game_Interpreter.prototype.setup = function(list, eventId) {
@@ -64,6 +71,35 @@ Game_Interpreter.prototype.setupReservedCommonEvent = function() {
 
 Game_Interpreter.prototype.isRunning = function() {
     return !!this._list;
+};
+
+Game_Interpreter.prototype.createEventCodeErrorMessage = function(line){
+    var code = this._list[line];
+    if(!code){
+        return "code undefined";
+    }
+    var name = Game_Interpreter.codeName[code.code];
+    return "line:"+line+","+ name;
+};
+
+Game_Interpreter.prototype.setEventCallLog = function(callLog){
+    this._callLog = callLog;
+};
+
+Game_Interpreter.prototype.evalScript = function(script,line){
+    try {
+        return eval(script);        
+    } catch (error) {
+        if(!!this){
+            var callLogMssage = !!this._callLog ? this._callLog.createMessage() : "(callLog is null)";
+            error.message = ("%1\n%2\n%3").format(
+                callLogMssage,
+                this.createEventCodeErrorMessage(line),
+                error.message
+            );    
+        }
+        throw(error);        
+    }
 };
 
 Game_Interpreter.prototype.update = function() {
@@ -418,6 +454,7 @@ Game_Interpreter.prototype.command108 = function() {
     return true;
 };
 
+
 // Conditional Branch
 Game_Interpreter.prototype.command111 = function() {
     var result = false;
@@ -543,7 +580,7 @@ Game_Interpreter.prototype.command111 = function() {
             result = Input.isPressed(this._params[1]);
             break;
         case 12:  // Script
-            result = !!eval(this._params[1]);
+            result = !!this.evalScript(this._params[1],this._index);
             break;
         case 13:  // Vehicle
             result = ($gamePlayer.vehicle() === $gameMap.vehicle(this._params[1]));
@@ -659,6 +696,7 @@ Game_Interpreter.prototype.command121 = function() {
     return true;
 };
 
+
 // Control Variables
 Game_Interpreter.prototype.command122 = function() {
     var value = 0;
@@ -680,7 +718,7 @@ Game_Interpreter.prototype.command122 = function() {
             value = this.gameDataOperand(this._params[4], this._params[5], this._params[6]);
             break;
         case 4: // Script
-            value = eval(this._params[4]);
+            value = this.evalScript(this._params[4],this._index);
             break;
     }
     for (var i = this._params[0]; i <= this._params[1]; i++) {
@@ -1023,6 +1061,7 @@ Game_Interpreter.prototype.command205 = function() {
     $gameMap.refreshIfNeeded();
     this._character = this.character(this._params[0]);
     if (this._character) {
+        this._character.setMoveRouteLog(this._callLog);
         this._character.forceMoveRoute(this._params[1]);
         if (this._params[1].wait) {
             this.setWaitMode('route');
@@ -1731,12 +1770,13 @@ Game_Interpreter.prototype.command354 = function() {
 
 // Script
 Game_Interpreter.prototype.command355 = function() {
+    var line = this._index;
     var script = this.currentCommand().parameters[0] + '\n';
     while (this.nextEventCode() === 655) {
         this._index++;
         script += this.currentCommand().parameters[0] + '\n';
     }
-    eval(script);
+    this.evalScript(script,line);
     return true;
 };
 
