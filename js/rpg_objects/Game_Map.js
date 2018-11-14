@@ -756,6 +756,7 @@ Game_Map.prototype.setupStartingEvent = function() {
 Game_Map.prototype.setupTestEvent = function() {
     if ($testEvent) {
         this._interpreter.setup($testEvent, 0);
+        this._interpreter.setEventCallLog(new Game_LogEventTest());
         $testEvent = null;
         return true;
     }
@@ -769,6 +770,7 @@ Game_Map.prototype.setupStartingMapEvent = function() {
         if (event.isStarting()) {
             event.clearStartingFlag();
             this._interpreter.setup(event.list(), event.eventId());
+            this._interpreter.setEventCallLog(new Game_LogMapEvent(this._mapId, event.eventId(), event.pageIndex()));
             return true;
         }
     }
