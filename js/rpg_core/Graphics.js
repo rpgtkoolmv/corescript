@@ -360,6 +360,11 @@ Graphics.printLoadingError = function(url) {
     if (this._errorPrinter && !this._errorShowed) {
         this._updateErrorPrinter();
         this._errorPrinter.innerHTML = this._makeErrorHtml('Loading Error', 'Failed to load: ' + url);
+        this._errorPrinter.style.userSelect       = 'text';
+        this._errorPrinter.style.webkitUserSelect = 'text';
+        this._errorPrinter.style.msUserSelect     = 'text';
+        this._errorPrinter.style.mozUserSelect    = 'text';
+        this._errorPrinter.oncontextmenu = null;    // enable context menu
         var button = document.createElement('button');
         button.innerHTML = 'Retry';
         button.style.fontSize = '24px';
@@ -385,6 +390,11 @@ Graphics.printLoadingError = function(url) {
 Graphics.eraseLoadingError = function() {
     if (this._errorPrinter && !this._errorShowed) {
         this._errorPrinter.innerHTML = '';
+        this._errorPrinter.style.userSelect       = 'none';
+        this._errorPrinter.style.webkitUserSelect = 'none';
+        this._errorPrinter.style.msUserSelect     = 'none';
+        this._errorPrinter.style.mozUserSelect    = 'none';
+        this._errorPrinter.oncontextmenu = function() { return false; };
         this.startLoading();
     }
 };
@@ -891,11 +901,6 @@ Graphics._updateErrorPrinter = function() {
     this._errorPrinter.style.textShadow = '1px 1px 3px #000';
     this._errorPrinter.style.fontSize = '20px';
     this._errorPrinter.style.zIndex = 99;
-    this._errorPrinter.style.userSelect       = 'text';
-    this._errorPrinter.style.webkitUserSelect = 'text';
-    this._errorPrinter.style.msUserSelect     = 'text';
-    this._errorPrinter.style.mozUserSelect    = 'text';
-    this._errorPrinter.oncontextmenu = null;    // enable context menu
     this._centerElement(this._errorPrinter);
 };
 
