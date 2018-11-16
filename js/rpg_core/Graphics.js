@@ -359,7 +359,6 @@ Graphics.endLoading = function() {
 Graphics.printLoadingError = function(url) {
     if (this._errorPrinter && !this._errorShowed) {
         this._updateErrorPrinter();
-        this._errorPrinter.style.display = 'block';
         this._errorPrinter.innerHTML = this._makeErrorHtml('Loading Error', 'Failed to load: ' + url);
         var button = document.createElement('button');
         button.innerHTML = 'Retry';
@@ -385,7 +384,6 @@ Graphics.printLoadingError = function(url) {
  */
 Graphics.eraseLoadingError = function() {
     if (this._errorPrinter && !this._errorShowed) {
-        this._errorPrinter.style.display = 'none';
         this._errorPrinter.innerHTML = '';
         this.startLoading();
     }
@@ -406,8 +404,12 @@ Graphics.printError = function(name, message) {
     this.hideFps();
     if (this._errorPrinter) {
         this._updateErrorPrinter();
-        this._errorPrinter.style.display = 'block';
         this._errorPrinter.innerHTML = this._makeErrorHtml(name, message);
+        this._errorPrinter.style.userSelect       = 'text';
+        this._errorPrinter.style.webkitUserSelect = 'text';
+        this._errorPrinter.style.msUserSelect     = 'text';
+        this._errorPrinter.style.mozUserSelect    = 'text';
+        this._errorPrinter.oncontextmenu = null;    // enable context menu
         if (this._errorMessage) {
             this._makeErrorMessage();
         }
@@ -867,7 +869,6 @@ Graphics._modifyExistingElements = function() {
 Graphics._createErrorPrinter = function() {
     this._errorPrinter = document.createElement('p');
     this._errorPrinter.id = 'ErrorPrinter';
-    this._errorPrinter.style.display = 'none';
     this._updateErrorPrinter();
     document.body.appendChild(this._errorPrinter);
 };
