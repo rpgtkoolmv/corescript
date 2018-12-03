@@ -262,9 +262,14 @@ Game_Character.prototype.processMoveCommand = function(command) {
         AudioManager.playSe(params[0]);
         break;
     case gc.ROUTE_SCRIPT:
-        eval(params[0]);
+        this.evalRouteScript(params[0]);
         break;
     }
+};
+
+Game_Character.prototype.evalRouteScript = function(script){
+    var gc = Game_Character;
+    eval(script);
 };
 
 Game_Character.prototype.deltaXFrom = function(x) {
