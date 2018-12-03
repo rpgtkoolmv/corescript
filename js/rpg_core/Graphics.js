@@ -411,23 +411,34 @@ Graphics.printError = function(name, message) {
     this._clearUpperCanvas();
 };
 
-/**
- * Shows the stacktrace of error.
- *
- * @static
- * @method printStackTrace
- */
-Graphics.printStackTrace = function(stack) {
-    if (this._errorPrinter) {
-        stack = (stack || '')
-            .replace(/file:.*js\//g, '')
-            .replace(/http:.*js\//g, '')
-            .replace(/https:.*js\//g, '')
-            .replace(/chrome-extension:.*js\//g, '')
-            .replace(/\n/g, '<br>');
-        this._makeStackTrace(decodeURIComponent(stack));
+Graphics._makeErrorStackLog =function(e){
+    if(e.stack){
+        var log = e.stack.replace(/file:.*js\//g, '')
+        .replace(/http:.*js\//g, '')
+        .replace(/https:.*js\//g, '')
+        .replace(/chrome-extension:.*js\//g, '')
+        .replace(/\n/g, '<br>');
+        return log;
+    }
+    return '';
+};
+Graphics.createErrorHTML =function(error){
+    return this._makeErrorStackLog(error);
+};
+
+Graphics.printErrorDetail =function(e){
+    if (this._errorPrinter){
+        var html = this.createErrorHTML(e);
+        var detail             = document.createElement('div');
+        var style              = detail.style;
+        style.color            = 'white';
+        style.textAlign        = 'left';
+        style.fontSize         = '18px';
+        detail.innerHTML       =   html + '<br>' ;
+        this._errorPrinter.appendChild(detail);    
     }
 };
+
 
 /**
  * Sets the error message.
