@@ -543,7 +543,7 @@ Game_Interpreter.prototype.command111 = function() {
             result = Input.isPressed(this._params[1]);
             break;
         case 12:  // Script
-            result = !!eval(this._params[1]);
+            result = !!this.evalScript(this._params[1]);
             break;
         case 13:  // Vehicle
             result = ($gamePlayer.vehicle() === $gameMap.vehicle(this._params[1]));
@@ -680,7 +680,7 @@ Game_Interpreter.prototype.command122 = function() {
             value = this.gameDataOperand(this._params[4], this._params[5], this._params[6]);
             break;
         case 4: // Script
-            value = eval(this._params[4]);
+            value = this.evalScript(this._params[4]);
             break;
     }
     for (var i = this._params[0]; i <= this._params[1]; i++) {
@@ -688,6 +688,11 @@ Game_Interpreter.prototype.command122 = function() {
     }
     return true;
 };
+
+Game_Interpreter.prototype.evalScript = function(script){
+    return eval(script);
+};
+
 
 Game_Interpreter.prototype.gameDataOperand = function(type, param1, param2) {
     switch (type) {
@@ -1736,7 +1741,7 @@ Game_Interpreter.prototype.command355 = function() {
         this._index++;
         script += this.currentCommand().parameters[0] + '\n';
     }
-    eval(script);
+    this.evalScript(script);
     return true;
 };
 
