@@ -80,6 +80,7 @@ Game_Character.prototype.restoreMoveRoute = function() {
     this._moveRoute          = this._originalMoveRoute;
     this._moveRouteIndex     = this._originalMoveRouteIndex;
     this._originalMoveRoute  = null;
+    this._moveRouteLog       = null;
 };
 
 Game_Character.prototype.isMoveRouteForcing = function() {
@@ -269,7 +270,17 @@ Game_Character.prototype.processMoveCommand = function(command) {
 
 Game_Character.prototype.evalRouteScript = function(script){
     var gc = Game_Character;
-    eval(script);
+    try {
+        eval(script);        
+    } catch (error) {
+        if(this._moveRouteLog){
+            error.rpgmv = this;
+            this._moveRouteLog.addLog('moveRouteError');
+            this._moveRouteLog.addLog('target:'+this.debugName());
+            this._moveRouteLog.addLog("script:"+script);
+        }
+        throw(error);
+    }
 };
 
 Game_Character.prototype.deltaXFrom = function(x) {
