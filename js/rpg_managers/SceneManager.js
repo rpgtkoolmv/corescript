@@ -197,8 +197,16 @@ SceneManager.onKeyDown = function(event) {
     }
 };
 
-SceneManager.showErrorLog =function(e){
+SceneManager.showErrorLog = function(e){
     console.error(e.stack);
+    if(e.rpgmv){
+        if(e.rpgmv.getErrorLog){
+            var log = e.rpgmv.getErrorLog();
+            if(log){
+                console.error(log.createConsolMessage() );
+            }
+        }
+    }
 };
 
 SceneManager.catchException = function(e) {
