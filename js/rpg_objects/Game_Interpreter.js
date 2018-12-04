@@ -293,6 +293,14 @@ Game_Interpreter.prototype.changeHp = function(target, value, allowDeath) {
     }
 };
 
+Game_Interpreter.prototype.setEventCallLog = function(callLog){
+    this._callLog = callLog;
+};
+
+Game_Interpreter.prototype.getErrorLog = function(){
+    return this._callLog;
+};
+
 // Show Text
 Game_Interpreter.prototype.command101 = function() {
     if (!$gameMessage.isBusy()) {
@@ -616,6 +624,9 @@ Game_Interpreter.prototype.command117 = function() {
 Game_Interpreter.prototype.setupChild = function(list, eventId) {
     this._childInterpreter = new Game_Interpreter(this._depth + 1);
     this._childInterpreter.setup(list, eventId);
+    var log = new Game_LogCommonEvent(eventId);
+    log.setParent(this._callLog);
+    this._childInterpreter.setEventCallLog(log);
 };
 
 // Label
@@ -690,7 +701,16 @@ Game_Interpreter.prototype.command122 = function() {
 };
 
 Game_Interpreter.prototype.evalScript = function(script){
-    return eval(script);
+    try {
+        return eval(script);        
+    } catch (error) {
+        if(this._callLog){
+            error.rpgmv = this;
+            this._callLog.addLog("evalError");
+            this._callLog.addLog(script);
+        }
+        throw(error);
+    }
 };
 
 
@@ -1032,6 +1052,7 @@ Game_Interpreter.prototype.command205 = function() {
         if (this._params[1].wait) {
             this.setWaitMode('route');
         }
+        this._character.setMoveRouteLog(this._callLog);
     }
     return true;
 };
@@ -1749,7 +1770,16 @@ Game_Interpreter.prototype.command355 = function() {
 Game_Interpreter.prototype.command356 = function() {
     var args = this._params[0].split(" ");
     var command = args.shift();
-    this.pluginCommand(command, args);
+    try {
+        this.pluginCommand(command, args);            
+    } catch (error) {
+        if(this._callLog){
+            error.rpgmv = this;
+            this._callLog.addLog("command:"+command);
+            this._callLog.addLog("args:"+args);
+        }
+        throw(error);
+    }
     return true;
 };
 
