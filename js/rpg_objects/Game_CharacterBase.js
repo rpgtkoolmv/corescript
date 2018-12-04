@@ -588,3 +588,11 @@ Game_CharacterBase.prototype.endAnimation = function() {
 Game_CharacterBase.prototype.endBalloon = function() {
     this._balloonPlaying = false;
 };
+
+Game_CharacterBase.prototype.setMoveRouteLog = function(callLog){
+    this._moveRouteLog = callLog;
+};
+Game_CharacterBase.prototype.getErrorLog = function(){
+    return this._moveRouteLog;
+};
+
