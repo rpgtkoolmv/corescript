@@ -595,4 +595,7 @@ Game_CharacterBase.prototype.setMoveRouteLog = function(callLog){
 Game_CharacterBase.prototype.getErrorLog = function(){
     return this._moveRouteLog;
 };
+Game_CharacterBase.prototype.debugName = function(){
+    return "CharacterBase";
+};
 
