@@ -619,3 +619,7 @@ Game_Player.prototype.areFollowersGathering = function() {
 Game_Player.prototype.areFollowersGathered = function() {
     return this._followers.areGathered();
 };
+
+Game_Player.prototype.debugName = function(){
+    return "player";
+};
