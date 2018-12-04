@@ -422,8 +422,20 @@ Graphics._makeErrorStackLog =function(e){
     }
     return '';
 };
-Graphics.createErrorHTML =function(error){
-    return this._makeErrorStackLog(error);
+Graphics._makeEventInfo = function(e){
+    if(e.rpgmv){
+        if(e.rpgmv.getErrorLog){
+            var log = e.rpgmv.getErrorLog();
+            if(log){
+                return log.createErrorHTML();
+            }
+        }
+    }
+    return "";
+};
+
+Graphics.createErrorHTML = function(error){
+    return this._makeEventInfo(error)+ this._makeErrorStackLog(error);
 };
 
 Graphics.printErrorDetail =function(e){
