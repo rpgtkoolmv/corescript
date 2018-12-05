@@ -34,6 +34,7 @@ Game_Interpreter.prototype.clear = function() {
     this._comments = '';
     this._character = null;
     this._childInterpreter = null;
+    this._callLog = null;
 };
 
 Game_Interpreter.prototype.setup = function(list, eventId) {
@@ -706,7 +707,7 @@ Game_Interpreter.prototype.evalScript = function(script){
     } catch (error) {
         if(this._callLog){
             error.rpgmv = this;
-            this._callLog.addLog("evalError");
+            this._callLog.addLog("ScriptError");
             this._callLog.addLog(script);
         }
         throw(error);
