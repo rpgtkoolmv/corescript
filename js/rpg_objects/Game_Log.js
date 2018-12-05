@@ -66,7 +66,7 @@ Game_LogMapEvent.prototype.getEventName = function(){
 Game_LogMapEvent.prototype.createMessage = function(){
     var event = this.event();
     if(event){
-        return ( "MapID: %1,%2, page: %3").format(this._mapId,event.debugName(),this._page);
+        return ( "MapID: %1,%2, page: %3").format(this._mapId,event.debugName(),this._page+1);
     }
     return "";
 };
@@ -107,7 +107,7 @@ Game_LogCommonEvent.prototype.getEventName = function(){
 Game_LogCommonEvent.prototype.createMessage = function(){
     var name = this.getEventName();
     return ("CommonEvent: %1(%2)").format(
-        this._eventId,
+        this._eventId +1,
         name
     );
 };
@@ -137,7 +137,7 @@ Game_LogBattleEvent.prototype.getEventName = function(){
 
 Game_LogBattleEvent.prototype.createMessage = function(){
     var name = this.getEventName();
-    return ("TroopID: %1(%2), page: %3").format(
+    return ("BattleEvent TroopID: %1(%2), page: %3").format(
         this._troopId,
         name,
         1+this._page 
