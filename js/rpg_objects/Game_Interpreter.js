@@ -706,9 +706,12 @@ Game_Interpreter.prototype.evalScript = function(script){
         return eval(script);        
     } catch (error) {
         if(this._callLog){
-            error.rpgmv = this;
+            var command = this.currentCommand();
+            var code = command ? command.code :0;
+            this._callLog.addLog( Game_Interpreter.codeName(code)+" line:"+this._index );
             this._callLog.addLog("ScriptError");
             this._callLog.addLog(script);
+            error.rpgmv = this;
         }
         throw(error);
     }
@@ -1759,11 +1762,15 @@ Game_Interpreter.prototype.command354 = function() {
 // Script
 Game_Interpreter.prototype.command355 = function() {
     var script = this.currentCommand().parameters[0] + '\n';
-    while (this.nextEventCode() === 655) {
-        this._index++;
-        script += this.currentCommand().parameters[0] + '\n';
+    var index =this._index+1;
+
+    var eventCode = this._list[index];
+    while(eventCode && eventCode.code ===655){
+        script += eventCode.parameters[0]+'\n';
+        ++index;
     }
     this.evalScript(script);
+    this._index =index;
     return true;
 };
 
@@ -1776,6 +1783,7 @@ Game_Interpreter.prototype.command356 = function() {
     } catch (error) {
         if(this._callLog){
             error.rpgmv = this;
+            this._callLog.addLog("Plugin Command line:"+this._index);
             this._callLog.addLog("command:"+command);
             this._callLog.addLog("args:"+args);
         }
@@ -1786,6 +1794,26 @@ Game_Interpreter.prototype.command356 = function() {
 
 Game_Interpreter.prototype.pluginCommand = function(command, args) {
     // to be overridden by plugins
+};
+
+Game_Interpreter.prototype.lineCodeMessage =function(index){
+    return "";
+};
+
+
+Game_Interpreter.codeName =function(code){
+    switch (param.code) {
+        case 111:
+            return "Conditional Branch";
+        case 122:
+            return "Control Variables";
+        case 355:
+            return "Plugin Command";
+    }
+
+    return "";
+
+
 };
 
 Game_Interpreter.requestImagesByPluginCommand = function(command,args){
