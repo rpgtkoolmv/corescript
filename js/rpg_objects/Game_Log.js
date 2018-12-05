@@ -5,7 +5,7 @@ function Game_LogBase(){
 }
 
 Game_LogBase.prototype.createMessage = function(){
-    return 'unknow error';
+    return 'unknown error';
 };
 Game_LogBase.prototype.initialize = function(){
     this._additionalLog =[];
@@ -71,14 +71,14 @@ Game_LogMapEvent.prototype.createMessage = function(){
     return "";
 };
 
-function Game_LogEventPgaeMoveRoute(){
+function Game_LogEventPageMoveRoute(){
     this.initialize.apply(this,arguments);
 }
 
-Game_LogEventPgaeMoveRoute.prototype = Object.create(Game_LogMapEvent.prototype);
-Game_LogEventPgaeMoveRoute.prototype.constructor = Game_LogEventPgaeMoveRoute;
+Game_LogEventPageMoveRoute.prototype = Object.create(Game_LogMapEvent.prototype);
+Game_LogEventPageMoveRoute.prototype.constructor = Game_LogEventPageMoveRoute;
 
-Game_LogEventPgaeMoveRoute.prototype.createMessage =function(){
+Game_LogEventPageMoveRoute.prototype.createMessage =function(){
     return "(Move Route)"+ Game_LogMapEvent.prototype.createMessage.call(this) ;
 };
 
@@ -98,7 +98,7 @@ Game_LogCommonEvent.prototype.getEventName = function(){
     var event = $dataCommonEvents[this._eventId];
     if(event){
         if(event.name ===''){
-            return 'unnamede';
+            return 'unnamed';
         }
         return event.name;
     }
