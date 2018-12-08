@@ -700,6 +700,17 @@ Game_Interpreter.prototype.command122 = function() {
     }
     return true;
 };
+Game_Interpreter.codeName = function(code){
+    switch (param.code) {
+        case 111:
+            return "Conditional Branch";
+        case 122:
+            return "Control Variables";
+        case 355:
+            return "Plugin Command";
+    }
+    return "";
+};
 
 Game_Interpreter.prototype.evalScript = function(script){
     try {
@@ -1796,25 +1807,7 @@ Game_Interpreter.prototype.pluginCommand = function(command, args) {
     // to be overridden by plugins
 };
 
-Game_Interpreter.prototype.lineCodeMessage =function(index){
-    return "";
-};
 
-
-Game_Interpreter.codeName =function(code){
-    switch (param.code) {
-        case 111:
-            return "Conditional Branch";
-        case 122:
-            return "Control Variables";
-        case 355:
-            return "Plugin Command";
-    }
-
-    return "";
-
-
-};
 
 Game_Interpreter.requestImagesByPluginCommand = function(command,args){
 };
