@@ -56,6 +56,7 @@ Game_Interpreter.prototype.isOnCurrentMap = function() {
 Game_Interpreter.prototype.setupReservedCommonEvent = function() {
     if ($gameTemp.isCommonEventReserved()) {
         this.setup($gameTemp.reservedCommonEvent().list);
+        this.setEventCallLog(new Game_LogCommonEvent($gameTemp._commonEventId) );
         $gameTemp.clearCommonEvent();
         return true;
     } else {
