@@ -702,12 +702,14 @@ Game_Interpreter.prototype.command122 = function() {
     return true;
 };
 Game_Interpreter.codeName = function(code){
-    switch (param.code) {
+    switch (code) {
         case 111:
             return "Conditional Branch";
         case 122:
             return "Control Variables";
         case 355:
+            return "Script";
+        case 356:
             return "Plugin Command";
     }
     return "";
@@ -720,9 +722,9 @@ Game_Interpreter.prototype.evalScript = function(script){
         if(this._callLog){
             var command = this.currentCommand();
             var code = command ? command.code :0;
-            this._callLog.addLog( Game_Interpreter.codeName(code)+" line:"+this._index );
+            this._callLog.addLog( " line:"+this._index+" "+Game_Interpreter.codeName(code)  );
             this._callLog.addLog("ScriptError");
-            this._callLog.addLog(script);
+            this._callLog.addLog(script.replace("\n","<br>"));
             error.rpgmv = this;
         }
         throw(error);
@@ -1778,11 +1780,13 @@ Game_Interpreter.prototype.command355 = function() {
 
     var eventCode = this._list[index];
     while(eventCode && eventCode.code ===655){
-        script += eventCode.parameters[0]+'\n';
+
+        script += eventCode.parameters[0]+"\n";
         ++index;
+        eventCode = this._list[index];
     }
     this.evalScript(script);
-    this._index =index;
+    this._index = index;
     return true;
 };
 
@@ -1795,7 +1799,7 @@ Game_Interpreter.prototype.command356 = function() {
     } catch (error) {
         if(this._callLog){
             error.rpgmv = this;
-            this._callLog.addLog("Plugin Command line:"+this._index);
+            this._callLog.addLog("line:"+this._index+" Plugin Command");
             this._callLog.addLog("command:"+command);
             this._callLog.addLog("args:"+args);
         }
