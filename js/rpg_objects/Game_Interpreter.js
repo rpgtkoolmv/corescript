@@ -620,8 +620,8 @@ Game_Interpreter.prototype.command117 = function() {
     if (commonEvent) {
         var eventId = this.isOnCurrentMap() ? this._eventId : 0;
         this.setupChild(commonEvent.list, eventId);
-        var log = new Game_LogCommonEvent(commonEventId);
-        this._childInterpreter.setEventCallLog(log);
+        this._childInterpreter.setEventCallLog(new Game_LogCommonEvent(commonEventId));
+
     }
     return true;
 };
@@ -717,14 +717,14 @@ Game_Interpreter.codeName = function(code){
 
 Game_Interpreter.prototype.evalScript = function(script){
     try {
-        return eval(script);        
+        return eval(script);
     } catch (error) {
         if(this._callLog){
             var command = this.currentCommand();
             var code = command ? command.code :0;
-            this._callLog.addLog( " line:"+this._index+" "+Game_Interpreter.codeName(code)  );
+            this._callLog.addLog( " line:"+this._index+" "+Game_Interpreter.codeName(code) );
             this._callLog.addLog("ScriptError");
-            this._callLog.addLog(script.replace("\n","<br>"));
+            this._callLog.addLog(script);
             error.rpgmv = this;
         }
         throw(error);
