@@ -1,30 +1,32 @@
-
-
 function Game_LogBase(){
     this.initialize.apply(this,arguments);
 }
 
-Game_LogBase.prototype.createMessage = function(){
-    return 'unknown error';
-};
 Game_LogBase.prototype.initialize = function(){
     this._additionalLog =[];
 };
 
-Game_LogBase.prototype.createErrorHTML =function(){
+Game_LogBase.prototype.createMessage = function(){
+    return 'unknown error';
+};
+
+Game_LogBase.prototype.createErrorHTML = function(){
     var addError = this.createAdditionalError('<br>');
     return this.createMessage() +addError+ '<hr><br>';
 };
-Game_LogBase.prototype.createConsolMessage =function(){
+
+Game_LogBase.prototype.createConsolMessage = function(){
     return this.createMessage() + this.createAdditionalError("\n");
 };
-Game_LogBase.prototype.addLog =function(text){
+
+Game_LogBase.prototype.addLog = function(text){
     if(!this._additionalLog){
         this._additionalLog =[];
     }
     this._additionalLog.push(text);
 };
-Game_LogBase.prototype.createAdditionalError =function(brStr){
+
+Game_LogBase.prototype.createAdditionalError = function(brStr){
     if(!this._additionalLog){return "";}
     var result =brStr;
     for(var i=0; i < this._additionalLog.length; ++i){
@@ -63,6 +65,7 @@ Game_LogMapEvent.prototype.getEventName = function(){
     }
     return "";
 }
+
 Game_LogMapEvent.prototype.createMessage = function(){
     var event = this.event();
     if(event){
@@ -78,7 +81,7 @@ function Game_LogEventPageMoveRoute(){
 Game_LogEventPageMoveRoute.prototype = Object.create(Game_LogMapEvent.prototype);
 Game_LogEventPageMoveRoute.prototype.constructor = Game_LogEventPageMoveRoute;
 
-Game_LogEventPageMoveRoute.prototype.createMessage =function(){
+Game_LogEventPageMoveRoute.prototype.createMessage = function(){
     return "(Move Route)"+ Game_LogMapEvent.prototype.createMessage.call(this) ;
 };
 
@@ -91,6 +94,7 @@ Game_LogCommonEvent.prototype.constructor = Game_LogCommonEvent;
 
 Game_LogCommonEvent.prototype.initialize = function(eventId){
     this._eventId = eventId;
+    this._parent =null;
 };
 
 Game_LogCommonEvent.prototype.getEventName = function(){
@@ -103,14 +107,14 @@ Game_LogCommonEvent.prototype.getEventName = function(){
     }
     return "";
 };
+
 Game_LogCommonEvent.prototype.createMessage = function(){
     var name = this.getEventName();
-    return ("CommonEvent: %1(%2)").format(
+    return("CommonEvent: %1(%2)").format(
         this._eventId ,
         name
     );
 };
-
 
 function Game_LogBattleEvent(){
     this.initialize.apply(this,arguments);
@@ -146,6 +150,7 @@ function Game_LogEventTest(){
 
 Game_LogEventTest.prototype = Object.create(Game_LogBase.prototype);
 Game_LogEventTest.prototype.constructor = Game_LogBattleEvent;
+
 Game_LogEventTest.prototype.initialize = function(){
 };
 
