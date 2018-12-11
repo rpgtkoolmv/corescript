@@ -615,10 +615,13 @@ Game_Interpreter.prototype.command115 = function() {
 
 // Common Event
 Game_Interpreter.prototype.command117 = function() {
-    var commonEvent = $dataCommonEvents[this._params[0]];
+    var commonEventId =this._params[0];
+    var commonEvent = $dataCommonEvents[commonEventId];
     if (commonEvent) {
         var eventId = this.isOnCurrentMap() ? this._eventId : 0;
         this.setupChild(commonEvent.list, eventId);
+        var log = new Game_LogCommonEvent(commonEventId);
+        this._childInterpreter.setEventCallLog(log);
     }
     return true;
 };
@@ -626,9 +629,6 @@ Game_Interpreter.prototype.command117 = function() {
 Game_Interpreter.prototype.setupChild = function(list, eventId) {
     this._childInterpreter = new Game_Interpreter(this._depth + 1);
     this._childInterpreter.setup(list, eventId);
-    var log = new Game_LogCommonEvent(eventId);
-    log.setParent(this._callLog);
-    this._childInterpreter.setEventCallLog(log);
 };
 
 // Label
