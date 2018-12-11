@@ -107,7 +107,7 @@ Game_LogCommonEvent.prototype.getEventName = function(){
 Game_LogCommonEvent.prototype.createMessage = function(){
     var name = this.getEventName();
     return ("CommonEvent: %1(%2)").format(
-        this._eventId +1,
+        this._eventId ,
         name
     );
 };
