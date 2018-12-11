@@ -91,7 +91,6 @@ Game_LogCommonEvent.prototype.constructor = Game_LogCommonEvent;
 
 Game_LogCommonEvent.prototype.initialize = function(eventId){
     this._eventId = eventId;
-    this._parent =null;
 };
 
 Game_LogCommonEvent.prototype.getEventName = function(){
@@ -112,9 +111,6 @@ Game_LogCommonEvent.prototype.createMessage = function(){
     );
 };
 
-Game_LogCommonEvent.prototype.setParent = function(parent){
-    this._parent = parent;
-};
 
 function Game_LogBattleEvent(){
     this.initialize.apply(this,arguments);
