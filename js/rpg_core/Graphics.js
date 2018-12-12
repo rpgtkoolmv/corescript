@@ -65,6 +65,11 @@ Graphics.initialize = function(width, height, type) {
     this._setupProgress();
 };
 
+Graphics._setupOptionEnabled = function(){
+    this.setErrorDetailEnabled(false);
+    this.setProgressEnabled(false);
+    Graphics.setErrorMessage(errorMessage);
+};
 
 Graphics._setupCssFontLoading = function(){
     if(Graphics._cssFontLoading){
@@ -438,8 +443,12 @@ Graphics.createErrorHTML = function(error){
     return this._makeEventInfo(error)+ this._makeErrorStackLog(error);
 };
 
+Graphics.setErrorDetailEnabled =function(state){
+    this._showErrorDetailEnabled = !!state;
+};
+
 Graphics.printErrorDetail =function(e){
-    if (this._errorPrinter){
+    if ( this._showErrorDetailEnabled && this._errorPrinter){
         var html = this.createErrorHTML(e);
         var detail             = document.createElement('div');
         var style              = detail.style;
