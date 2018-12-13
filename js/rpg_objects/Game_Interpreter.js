@@ -701,36 +701,20 @@ Game_Interpreter.prototype.command122 = function() {
     }
     return true;
 };
-Game_Interpreter.codeName = function(code){
-    switch (code) {
-        case 111:
-            return "Conditional Branch";
-        case 122:
-            return "Control Variables";
-        case 355:
-            return "Script";
-        case 356:
-            return "Plugin Command";
-    }
-    return "";
-};
 
 Game_Interpreter.prototype.evalScript = function(script){
     try {
         return eval(script);
     } catch (error) {
         if(this._callLog){
-            var command = this.currentCommand();
-            var code = command ? command.code :0;
-            this._callLog.addLog( " line:"+this._index+" "+Game_Interpreter.codeName(code) );
+            this._callLog.addLog(this.errorCode(this._index));
             this._callLog.addLog("ScriptError");
             this._callLog.addLog(script);
-            error.rpgmv = this;
+            this.saveErrorCode(error);
         }
         throw(error);
     }
 };
-
 
 Game_Interpreter.prototype.gameDataOperand = function(type, param1, param2) {
     switch (type) {
@@ -1798,10 +1782,10 @@ Game_Interpreter.prototype.command356 = function() {
         this.pluginCommand(command, args);            
     } catch (error) {
         if(this._callLog){
-            error.rpgmv = this;
-            this._callLog.addLog("line:"+this._index+" Plugin Command");
+            this._callLog.addLog(this.errorCode(this._index));
             this._callLog.addLog("command:"+command);
             this._callLog.addLog("args:"+args);
+            this.saveErrorCode(error);
         }
         throw(error);
     }
@@ -1811,7 +1795,31 @@ Game_Interpreter.prototype.command356 = function() {
 Game_Interpreter.prototype.pluginCommand = function(command, args) {
     // to be overridden by plugins
 };
+Game_Interpreter.codeName = function(code){
+    switch (code) {
+        case 111:
+            return "Conditional Branch";
+        case 122:
+            return "Control Variables";
+        case 355:
+            return "Script";
+        case 356:
+            return "Plugin Command";
+    }
+    return "";
+};
+Game_Interpreter.prototype.errorCode = function(errorLine){
+    var data= this._list[errorLine];
+    var lineText = "line:"+(errorLine+1);
+    if(data){
+        return lineText + " " + Game_Interpreter.codeName(data.code);
+    }
+    return lineText +" Out of Code range";
+};
 
+Game_Interpreter.prototype.saveErrorCode =function(exeption){
+    exeption.rpgmvErrorLog = this._callLog;
+};
 
 
 Game_Interpreter.requestImagesByPluginCommand = function(command,args){
