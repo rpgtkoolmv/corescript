@@ -15,7 +15,7 @@ Game_LogBase.prototype.createErrorHTML = function(){
     return this.createMessage() +addError+ '<hr><br>';
 };
 
-Game_LogBase.prototype.createConsolMessage = function(){
+Game_LogBase.prototype.createConsoleMessage = function(){
     return this.createMessage() + this.createAdditionalError("\n");
 };
 
