@@ -11,6 +11,9 @@ function Graphics() {
 Graphics._cssFontLoading =  document.fonts && document.fonts.ready && document.fonts.ready.then;
 Graphics._fontLoaded = null;
 Graphics._videoVolume = 1;
+Graphics._showErrorDetailEnabled = false;
+Graphics._progressEnabled = false;
+Graphics._errorMessage = "";
 
 /**
  * Initializes the graphics system.
@@ -65,11 +68,6 @@ Graphics.initialize = function(width, height, type) {
     this._setupProgress();
 };
 
-Graphics._setupOptionEnabled = function(){
-    this.setErrorDetailEnabled(false);
-    this.setProgressEnabled(false);
-    Graphics.setErrorMessage(errorMessage);
-};
 
 Graphics._setupCssFontLoading = function(){
     if(Graphics._cssFontLoading){
@@ -428,13 +426,8 @@ Graphics._makeErrorStackLog =function(e){
     return '';
 };
 Graphics._makeEventInfo = function(e){
-    if(e.rpgmv){
-        if(e.rpgmv.getErrorLog){
-            var log = e.rpgmv.getErrorLog();
-            if(log){
-                return log.createErrorHTML();
-            }
-        }
+    if(e.rpgmvErrorLog){
+        return e.rpgmvErrorLog.createErrorHTML();
     }
     return "";
 };
