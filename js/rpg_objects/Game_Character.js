@@ -274,13 +274,16 @@ Game_Character.prototype.evalRouteScript = function(script){
         eval(script);        
     } catch (error) {
         if(this._moveRouteLog){
-            error.rpgmv = this;
             this._moveRouteLog.addLog('moveRouteError');
             this._moveRouteLog.addLog('target:'+this.debugName());
             this._moveRouteLog.addLog("script:"+script);
+            this.saveErrorCode(error);
         }
         throw(error);
     }
+};
+Game_Character.prototype.saveErrorCode =function(exeption){
+    exeption.rpgmvErrorLog = this._moveRouteLog;
 };
 
 Game_Character.prototype.deltaXFrom = function(x) {
