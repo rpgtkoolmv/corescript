@@ -1050,7 +1050,9 @@ Game_Interpreter.prototype.command205 = function() {
         if (this._params[1].wait) {
             this.setWaitMode('route');
         }
-        this._character.setMoveRouteLog(this._callLog);
+        var log =new Game_LogMoveRoute(this._callLog);
+        log.setEventCommandLine(this._index);
+        this._character.setMoveRouteLog(log);
     }
     return true;
 };
