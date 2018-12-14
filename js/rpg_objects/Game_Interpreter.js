@@ -45,6 +45,10 @@ Game_Interpreter.prototype.setup = function(list, eventId) {
     Game_Interpreter.requestImages(list);
 };
 
+Game_Interpreter.prototype.setEventCallLog = function(callLog){
+    this._callLog = callLog;
+};
+
 Game_Interpreter.prototype.eventId = function() {
     return this._eventId;
 };
@@ -293,14 +297,6 @@ Game_Interpreter.prototype.changeHp = function(target, value, allowDeath) {
             target.performCollapse();
         }
     }
-};
-
-Game_Interpreter.prototype.setEventCallLog = function(callLog){
-    this._callLog = callLog;
-};
-
-Game_Interpreter.prototype.getErrorLog = function(){
-    return this._callLog;
 };
 
 // Show Text
