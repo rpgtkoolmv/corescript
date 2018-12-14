@@ -782,6 +782,7 @@ Game_Map.prototype.setupAutorunCommonEvent = function() {
         var event = $dataCommonEvents[i];
         if (event && event.trigger === 1 && $gameSwitches.value(event.switchId)) {
             this._interpreter.setup(event.list);
+            this._interpreter.setEventCallLog( new Game_LogCommonEvent(i));
             return true;
         }
     }
