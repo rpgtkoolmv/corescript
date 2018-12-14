@@ -343,6 +343,7 @@ Game_Event.prototype.updateParallel = function() {
     if (this._interpreter) {
         if (!this._interpreter.isRunning()) {
             this._interpreter.setup(this.list(), this._eventId);
+            this._interpreter.setEventCallLog(this.createLogClass());
         }
         this._interpreter.update();
     }
