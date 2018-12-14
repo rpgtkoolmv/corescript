@@ -48,6 +48,7 @@ Game_CharacterBase.prototype.initMembers = function() {
     this._jumpCount = 0;
     this._jumpPeak = 0;
     this._movementSuccess = true;
+    this._moveRouteLog =null;
 };
 
 Game_CharacterBase.prototype.pos = function(x, y) {
