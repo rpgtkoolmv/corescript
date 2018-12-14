@@ -1760,7 +1760,6 @@ Game_Interpreter.prototype.command355 = function() {
 
     var eventCode = this._list[index];
     while(eventCode && eventCode.code ===655){
-
         script += eventCode.parameters[0]+"\n";
         ++index;
         eventCode = this._list[index];
@@ -1792,6 +1791,8 @@ Game_Interpreter.prototype.pluginCommand = function(command, args) {
     // to be overridden by plugins
 };
 Game_Interpreter.codeName = function(code){
+
+
     switch (code) {
         case 111:
             return "Conditional Branch";
@@ -1808,6 +1809,16 @@ Game_Interpreter.prototype.errorCode = function(errorLine){
     var data= this._list[errorLine];
     var lineText = "line:"+(errorLine+1);
     if(data){
+
+        if(data.code ===355){
+            for(var i = errorLine+1; i< this._list.length;++i){
+                var scriptData = this._list[i];
+                if(scriptData && scriptData.code !==655){
+                    lineText +="-"+i-1;
+                    break;
+                }
+            }
+        }
         return lineText + " " + Game_Interpreter.codeName(data.code);
     }
     return lineText +" Out of Code range";
