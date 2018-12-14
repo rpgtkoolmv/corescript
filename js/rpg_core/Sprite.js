@@ -459,7 +459,7 @@ Sprite.prototype._renderWebGL = function(renderer) {
         //copy of pixi-v4 internal code
         this.calculateVertices();
 
-        if (this._isPicture) {
+        if (this.pluginName === 'sprite' && this._isPicture) {
             // use heavy renderer, which reduces artifacts and applies corrent blendMode,
             // but does not use multitexture optimization
             this._speedUpCustomBlendModes(renderer);
@@ -467,8 +467,8 @@ Sprite.prototype._renderWebGL = function(renderer) {
             renderer.plugins.picture.render(this);
         } else {
             // use pixi super-speed renderer
-            renderer.setObjectRenderer(renderer.plugins.sprite);
-            renderer.plugins.sprite.render(this);
+            renderer.setObjectRenderer(renderer.plugins[this.pluginName]);
+			renderer.plugins[this.pluginName].render(this);
         }
     }
 };
