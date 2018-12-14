@@ -1810,20 +1810,22 @@ Game_Interpreter.codeName = function(code){
 Game_Interpreter.prototype.errorCode = function(errorLine){
     var data= this._list[errorLine];
     var lineText = "line:"+(errorLine+1);
-    if(data){
+    if(!data){
+        return lineText +" Out of Code range"
+    }
 
-        if(data.code ===355){
-            for(var i = errorLine+1; i< this._list.length;++i){
-                var scriptData = this._list[i];
-                if(scriptData && scriptData.code !==655){
-                    lineText +="-"+i-1;
-                    break;
+    if(data.code ===355){
+        for(var i = errorLine+1; i< this._list.length;++i){
+            var scriptData = this._list[i];
+            if(scriptData && scriptData.code !==655){
+                if( errorLine < (i-1) ){
+                    lineText +="-"+i;
                 }
+                break;
             }
         }
-        return lineText + " " + Game_Interpreter.codeName(data.code);
     }
-    return lineText +" Out of Code range";
+    return lineText + " " + Game_Interpreter.codeName(data.code);
 };
 
 Game_Interpreter.prototype.saveErrorCode =function(exeption){
