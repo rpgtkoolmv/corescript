@@ -267,14 +267,14 @@ Game_Character.prototype.processMoveCommand = function(command) {
         break;
     }
 };
-
 Game_Character.prototype.evalRouteScript = function(script){
     var gc = Game_Character;
     try {
-        eval(script);        
+        eval(script);
     } catch (error) {
+
         if(this._moveRouteLog){
-            this._moveRouteLog.addLog('moveRouteError line:'+(this._moveRouteIndex+1));
+            this._moveRouteLog.setMoveRouteIndex(this._moveRouteIndex);
             this._moveRouteLog.addLog('target:'+this.debugName());
             this._moveRouteLog.addLog("script:"+script);
             this.saveErrorCode(error);
