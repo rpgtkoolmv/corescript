@@ -420,32 +420,27 @@ Graphics.printError = function(name, message) {
         this._errorPrinter.style.msUserSelect     = 'text';
         this._errorPrinter.style.mozUserSelect    = 'text';
         this._errorPrinter.oncontextmenu = null;    // enable context menu
-        if (this._errorMessage) {
-            this._makeErrorMessage();
-        }
+        this._makeErrorMessage();
     }
     this._applyCanvasFilter();
     this._clearUpperCanvas();
 };
 
 /**
- * Shows the detail of error.
+ * Shows the stacktrace of error.
  *
  * @static
- * @method printErrorDetail
+ * @method printStackTrace
  */
-Graphics.printErrorDetail = function(error) {
-    if (this._errorPrinter && this._showErrorDetail) {
-        var eventInfo = this._formatEventInfo(error);
-        var eventCommandInfo = this._formatEventCommandInfo(error);
-        var info = eventCommandInfo ? eventInfo + ", " + eventCommandInfo : eventInfo;
-        var stack = (error.stack || '')
+Graphics.printStackTrace = function(stack) {
+    if (this._errorPrinter) {
+        stack = (stack || '')
             .replace(/file:.*js\//g, '')
             .replace(/http:.*js\//g, '')
             .replace(/https:.*js\//g, '')
             .replace(/chrome-extension:.*js\//g, '')
             .replace(/\n/g, '<br>');
-        this._makeErrorDetail(info, decodeURIComponent(stack));
+        this._makeStackTrace(decodeURIComponent(stack));
     }
 };
 
@@ -457,16 +452,6 @@ Graphics.printErrorDetail = function(error) {
  */
 Graphics.setErrorMessage = function(message) {
     this._errorMessage = message;
-};
-
-/**
- * Sets whether shows the detail of error.
- *
- * @static
- * @method setShowErrorDetail
- */
-Graphics.setShowErrorDetail = function(showErrorDetail) {
-    this._showErrorDetail = showErrorDetail;
 };
 
 /**
@@ -890,13 +875,7 @@ Graphics._createErrorPrinter = function() {
  */
 Graphics._updateErrorPrinter = function() {
     this._errorPrinter.width = this._width * 0.9;
-    if (this._errorShowed && this._showErrorDetail) {
-        this._errorPrinter.height = this._height * 0.9;
-    } else if (this._errorShowed && this._errorMessage) {
-        this._errorPrinter.height = 100;
-    } else {
-        this._errorPrinter.height = 40;
-    }
+    this._errorPrinter.height = this._errorShowed ? this._height * 0.9 : 40;
     this._errorPrinter.style.textAlign = 'center';
     this._errorPrinter.style.textShadow = '1px 1px 3px #000';
     this._errorPrinter.style.fontSize = '20px';
@@ -915,66 +894,23 @@ Graphics._makeErrorMessage = function() {
     style.color           = 'white';
     style.textAlign       = 'left';
     style.fontSize        = '18px';
-    mainMessage.innerHTML = '<hr>' + this._errorMessage;
+    mainMessage.innerHTML = '<hr>' + (this._errorMessage || '');
     this._errorPrinter.appendChild(mainMessage);
 };
 
 /**
  * @static
- * @method _makeErrorDetail
+ * @method _makeStackTrace
  * @private
  */
-Graphics._makeErrorDetail = function(info, stack) {
-    var detail             = document.createElement('div');
-    var style              = detail.style;
+Graphics._makeStackTrace = function(stack) {
+    var stackTrace         = document.createElement('div');
+    var style              = stackTrace.style;
     style.color            = 'white';
     style.textAlign        = 'left';
     style.fontSize         = '18px';
-    detail.innerHTML       = '<br><hr>' + info + '<br><br>' + stack;
-    this._errorPrinter.appendChild(detail);
-};
-
-/**
- * @static
- * @method _formatEventInfo
- * @private
- */
-Graphics._formatEventInfo = function(error) {
-    switch (String(error.eventType)) {
-    case "map_event":
-        return "MapID: %1, MapEventID: %2, page: %3, line: %4".format(error.mapId, error.mapEventId, error.page, error.line);
-    case "common_event":
-        return "CommonEventID: %1, line: %2".format(error.commonEventId, error.line);
-    case "battle_event":
-        return "TroopID: %1, page: %2, line: %3".format(error.troopId, error.page, error.line);
-    case "test_event":
-        return "TestEvent, line: %1".format(error.line);
-    default:
-        return "No information";
-    }
-};
-
-/**
- * @static
- * @method _formatEventCommandInfo
- * @private
- */
-Graphics._formatEventCommandInfo = function(error) {
-    switch (String(error.eventCommand)) {
-    case "plugin_command":
-        return "◆Plugin Command: " + error.content;
-    case "script":
-        return "◆Script: " + error.content;
-    case "conditional_branch_script":
-        return "◆Conditional Branch(Script): " + error.content;
-    case "set_route_script":
-        return "◆Set Movement Route(Script): " + error.content;
-    case "auto_route_script":
-        return "Autonomous Movement Custom Route(Script): " + error.content;
-    case "other":
-    default:
-        return "";
-    }
+    stackTrace.innerHTML   = '<br><hr>' + stack + '<hr>';
+    this._errorPrinter.appendChild(stackTrace);
 };
 
 /**
