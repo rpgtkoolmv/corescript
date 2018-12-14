@@ -298,7 +298,8 @@ Game_Event.prototype.setupPageSettings = function() {
     this._moveType = page.moveType;
 
     if(this._moveType === 3){
-        this.setMoveRouteLog( new Game_LogEventPageMoveRoute(this._mapId,this._eventId,this._pageIndex));
+        var log =new Game_LogMoveRoute(this.createLogClass());
+        this.setMoveRouteLog( log);
     }
 
     this._trigger = page.trigger;
