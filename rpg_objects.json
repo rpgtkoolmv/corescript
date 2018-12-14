@@ -29,5 +29,6 @@
   "js/rpg_objects/Game_Followers.js",
   "js/rpg_objects/Game_Vehicle.js",
   "js/rpg_objects/Game_Event.js",
+  "js/rpg_objects/Game_Log.js",
   "js/rpg_objects/Game_Interpreter.js"
 ]

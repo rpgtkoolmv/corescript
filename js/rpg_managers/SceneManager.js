@@ -197,11 +197,18 @@ SceneManager.onKeyDown = function(event) {
     }
 };
 
+SceneManager.showErrorLog = function(e){
+    console.error(e.stack);
+    if(e.rpgmvErrorLog){
+        console.error(e.rpgmvErrorLog.createConsoleMessage() );
+    }
+};
+
 SceneManager.catchException = function(e) {
     if (e instanceof Error) {
         Graphics.printError(e.name, e.message);
-        Graphics.printStackTrace(e.stack);
-        console.error(e.stack);
+        Graphics.printErrorDetail(e);
+        this.showErrorLog(e);
     } else {
         Graphics.printError('UnknownError', e);
     }

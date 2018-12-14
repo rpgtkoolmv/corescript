@@ -36,10 +36,14 @@ Game_CommonEvent.prototype.isActive = function() {
     return event.trigger === 2 && $gameSwitches.value(event.switchId);
 };
 
+Game_CommonEvent.prototype.setupEvent = function(){
+    this._interpreter.setup(this.list());
+    this._interpreter.setEventCallLog(new Game_LogCommonEvent(this._commonEventId));
+};
 Game_CommonEvent.prototype.update = function() {
     if (this._interpreter) {
         if (!this._interpreter.isRunning()) {
-            this._interpreter.setup(this.list());
+            this.setupEvent();
         }
         this._interpreter.update();
     }

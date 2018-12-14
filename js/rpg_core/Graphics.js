@@ -11,6 +11,9 @@ function Graphics() {
 Graphics._cssFontLoading =  document.fonts && document.fonts.ready && document.fonts.ready.then;
 Graphics._fontLoaded = null;
 Graphics._videoVolume = 1;
+Graphics._showErrorDetailEnabled = false;
+Graphics._progressEnabled = false;
+Graphics._errorMessage = "";
 
 /**
  * Initializes the graphics system.
@@ -426,23 +429,45 @@ Graphics.printError = function(name, message) {
     this._clearUpperCanvas();
 };
 
-/**
- * Shows the stacktrace of error.
- *
- * @static
- * @method printStackTrace
- */
-Graphics.printStackTrace = function(stack) {
-    if (this._errorPrinter) {
-        stack = (stack || '')
-            .replace(/file:.*js\//g, '')
-            .replace(/http:.*js\//g, '')
-            .replace(/https:.*js\//g, '')
-            .replace(/chrome-extension:.*js\//g, '')
-            .replace(/\n/g, '<br>');
-        this._makeStackTrace(decodeURIComponent(stack));
+Graphics._makeErrorStackLog =function(e){
+    if(e.stack){
+        var log = e.stack.replace(/file:.*js\//g, '')
+        .replace(/http:.*js\//g, '')
+        .replace(/https:.*js\//g, '')
+        .replace(/chrome-extension:.*js\//g, '')
+        .replace(/\n/g, '<br>');
+        return log;
+    }
+    return '';
+};
+Graphics._makeEventInfo = function(e){
+    if(e.rpgmvErrorLog){
+        return e.rpgmvErrorLog.createErrorHTML();
+    }
+    return "";
+};
+
+Graphics.createErrorHTML = function(error){
+    return this._makeEventInfo(error)+ this._makeErrorStackLog(error);
+};
+
+Graphics.setErrorDetailEnabled =function(state){
+    this._showErrorDetailEnabled = !!state;
+};
+
+Graphics.printErrorDetail =function(e){
+    if ( this._showErrorDetailEnabled && this._errorPrinter){
+        var html = this.createErrorHTML(e);
+        var detail             = document.createElement('div');
+        var style              = detail.style;
+        style.color            = 'white';
+        style.textAlign        = 'left';
+        style.fontSize         = '18px';
+        detail.innerHTML       =   html + '<br>' ;
+        this._errorPrinter.appendChild(detail);    
     }
 };
+
 
 /**
  * Sets the error message.

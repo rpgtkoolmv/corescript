@@ -55,3 +55,8 @@ Game_Follower.prototype.chaseCharacter = function(character) {
     }
     this.setMoveSpeed($gamePlayer.realMoveSpeed());
 };
+
+Game_Follower.prototype.debugName = function(){
+    return "follower[" + this._memberIndex+"]";
+};
+
