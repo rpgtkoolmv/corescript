@@ -74,17 +74,47 @@ Game_LogMapEvent.prototype.createMessage = function(){
     return "";
 };
 
-function Game_LogEventPageMoveRoute(){
+
+function Game_LogMoveRoute(){
     this.initialize.apply(this,arguments);
 }
-
-Game_LogEventPageMoveRoute.prototype = Object.create(Game_LogMapEvent.prototype);
-Game_LogEventPageMoveRoute.prototype.constructor = Game_LogEventPageMoveRoute;
-
-Game_LogEventPageMoveRoute.prototype.createMessage = function(){
-    return "(Move Route)"+ Game_LogMapEvent.prototype.createMessage.call(this) ;
+Game_LogMoveRoute.prototype = Object.create(Game_LogBase.prototype);
+Game_LogMoveRoute.prototype.constructor = Game_LogCommonEvent;
+Game_LogMoveRoute.prototype.initialize =function(sorce){
+    this._moveRouteSorce =sorce;
+    this._eventCommandLine =NaN;
+    this._moveRouteIndex =NaN;
+};
+Game_LogMoveRoute.prototype.sorceMessage =function(){
+    if(this._moveRouteSorce){
+        return this._moveRouteSorce.createMessage();
+    }
+    return 'unknown';
+};
+Game_LogMoveRoute.prototype.createMessage =function(){
+    return 'moveRouteError';
+};
+Game_LogMoveRoute.prototype.setEventCommandLine =function(index){
+    this._eventCommandLine = index;
 };
 
+Game_LogMoveRoute.prototype.setMoveRouteIndex = function(index){
+    this._moveRouteIndex = index;
+};
+Game_LogMoveRoute.prototype.createLineMassage =function(){
+    var moveRouteIndex =(this._moveRouteIndex || 0) +1;
+    if(isNaN(this._eventCommandLine)){
+        return '(MoveRouteCostom) line:'+moveRouteIndex;
+    }
+    return 'line:'+( this._eventCommandLine+ 1 + moveRouteIndex);
+};
+
+Game_LogMoveRoute.prototype.createAdditionalError =function(brStr){
+    var origin= Game_LogBase.prototype.createAdditionalError.call(this,brStr);
+    return (brStr+'sorce:'+this.sorceMessage() +
+            brStr +this.createLineMassage() +
+            origin);
+};
 function Game_LogCommonEvent(){
     this.initialize.apply(this,arguments);
 }
