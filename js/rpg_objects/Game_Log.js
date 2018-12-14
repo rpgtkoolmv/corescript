@@ -28,9 +28,9 @@ Game_LogBase.prototype.addLog = function(text){
 
 Game_LogBase.prototype.createAdditionalError = function(brStr){
     if(!this._additionalLog){return "";}
-    var result =brStr;
+    var result = "";
     for(var i=0; i < this._additionalLog.length; ++i){
-        result +=  this._additionalLog[i] + brStr;
+        result +=  this._additionalLog[i].replace("\n", brStr) + brStr;
     }
     return result;
 };
@@ -69,7 +69,7 @@ Game_LogMapEvent.prototype.getEventName = function(){
 Game_LogMapEvent.prototype.createMessage = function(){
     var event = this.event();
     if(event){
-        return ( "MapID: %1,%2, page: %3").format(this._mapId,event.debugName(),this._page+1);
+        return ("MapID: %1, %2, page: %3, ").format(this._mapId,event.debugName(),this._page+1);
     }
     return "";
 };
@@ -80,14 +80,14 @@ function Game_LogMoveRoute(){
 }
 Game_LogMoveRoute.prototype = Object.create(Game_LogBase.prototype);
 Game_LogMoveRoute.prototype.constructor = Game_LogCommonEvent;
-Game_LogMoveRoute.prototype.initialize =function(sorce){
-    this._moveRouteSorce =sorce;
+Game_LogMoveRoute.prototype.initialize =function(source){
+    this._moveRouteSource =source;
     this._eventCommandLine =NaN;
     this._moveRouteIndex =NaN;
 };
-Game_LogMoveRoute.prototype.sorceMessage =function(){
-    if(this._moveRouteSorce){
-        return this._moveRouteSorce.createMessage();
+Game_LogMoveRoute.prototype.sourceMessage =function(){
+    if(this._moveRouteSource){
+        return this._moveRouteSource.createMessage();
     }
     return 'unknown';
 };
@@ -104,14 +104,14 @@ Game_LogMoveRoute.prototype.setMoveRouteIndex = function(index){
 Game_LogMoveRoute.prototype.createLineMassage =function(){
     var moveRouteIndex =(this._moveRouteIndex || 0) +1;
     if(isNaN(this._eventCommandLine)){
-        return '(MoveRouteCostom) line:'+moveRouteIndex;
+        return 'line: '+moveRouteIndex;
     }
-    return 'line:'+( this._eventCommandLine+ 1 + moveRouteIndex);
+    return 'line: '+( this._eventCommandLine+ 1 + moveRouteIndex);
 };
 
 Game_LogMoveRoute.prototype.createAdditionalError =function(brStr){
     var origin= Game_LogBase.prototype.createAdditionalError.call(this,brStr);
-    return (brStr+'sorce:'+this.sorceMessage() +
+    return (brStr+'source:'+this.sourceMessage() +
             brStr +this.createLineMassage() +
             origin);
 };
@@ -140,7 +140,7 @@ Game_LogCommonEvent.prototype.getEventName = function(){
 
 Game_LogCommonEvent.prototype.createMessage = function(){
     var name = this.getEventName();
-    return("CommonEvent: %1(%2)").format(
+    return("CommonEvent: %1(%2), ").format(
         this._eventId ,
         name
     );
@@ -167,7 +167,7 @@ Game_LogBattleEvent.prototype.getEventName = function(){
 
 Game_LogBattleEvent.prototype.createMessage = function(){
     var name = this.getEventName();
-    return ("BattleEvent TroopID: %1(%2), page: %3").format(
+    return ("BattleEvent TroopID: %1(%2), page: %3, ").format(
         this._troopId,
         name,
         1+this._page 

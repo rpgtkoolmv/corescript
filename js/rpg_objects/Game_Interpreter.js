@@ -703,9 +703,7 @@ Game_Interpreter.prototype.evalScript = function(script){
         return eval(script);
     } catch (error) {
         if(this._callLog){
-            this._callLog.addLog(this.errorCode(this._index));
-            this._callLog.addLog("ScriptError");
-            this._callLog.addLog(script);
+            this._callLog.addLog(this.errorCode(this._index) + script);
             this.saveErrorCode(error);
         }
         throw(error);
@@ -1779,9 +1777,7 @@ Game_Interpreter.prototype.command356 = function() {
         this.pluginCommand(command, args);            
     } catch (error) {
         if(this._callLog){
-            this._callLog.addLog(this.errorCode(this._index));
-            this._callLog.addLog("command:"+command);
-            this._callLog.addLog("args:"+args);
+            this._callLog.addLog(this.errorCode(this._index) + this._params[0]);
             this.saveErrorCode(error);
         }
         throw(error);
@@ -1797,19 +1793,19 @@ Game_Interpreter.codeName = function(code){
 
     switch (code) {
         case 111:
-            return "Conditional Branch";
+            return "◆If：Script：";
         case 122:
-            return "Control Variables";
+            return "◆Control Variables：Script：";
         case 355:
-            return "Script";
+            return "◆Script：";
         case 356:
-            return "Plugin Command";
+            return "◆Plugin Command：";
     }
     return "";
 };
 Game_Interpreter.prototype.errorCode = function(errorLine){
     var data= this._list[errorLine];
-    var lineText = "line:"+(errorLine+1);
+    var lineText = "line: "+(errorLine+1);
     if(!data){
         return lineText +" Out of Code range"
     }
@@ -1825,7 +1821,7 @@ Game_Interpreter.prototype.errorCode = function(errorLine){
             }
         }
     }
-    return lineText + " " + Game_Interpreter.codeName(data.code);
+    return lineText + "\n" + Game_Interpreter.codeName(data.code);
 };
 
 Game_Interpreter.prototype.saveErrorCode =function(exeption){

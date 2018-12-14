@@ -66,9 +66,7 @@
  *
  * @param showErrorLogDetail
  * @type boolean
- * @text Detailed error display
- * @desc When set to ON,
- * details are displayed on the screen when the game stops due to an error.
+ * @desc When set to ON, details are displayed on the screen when the game stops due to an error.
  * @default true
  * 
  * @param enableProgressBar
@@ -194,10 +192,8 @@
     var maxRenderingFps = toNumber(parameters['maxRenderingFps'], 0);
     var autoSaveFileId = toNumber(parameters['autoSaveFileId'], 0);
     var errorMessage = parameters['errorMessage'];
+    var showErrorLogDetail = parameters['showErrorLogDetail'] === 'true';
     var enableProgressBar = parameters['enableProgressBar'] === 'true';
-
-    var showErrorLogDetail = parameters['showErrorLogDetail']==='true';
-
 
     var windowWidth;
     var windowHeight;
@@ -279,6 +275,6 @@
 
     DataManager.setAutoSaveFileId(autoSaveFileId);
     Graphics.setErrorMessage(errorMessage);
-    Graphics.setProgressEnabled(enableProgressBar);
     Graphics.setErrorDetailEnabled(showErrorLogDetail);
+    Graphics.setProgressEnabled(enableProgressBar);
 })();

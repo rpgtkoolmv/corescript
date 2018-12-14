@@ -11,9 +11,9 @@ function Graphics() {
 Graphics._cssFontLoading =  document.fonts && document.fonts.ready && document.fonts.ready.then;
 Graphics._fontLoaded = null;
 Graphics._videoVolume = 1;
+Graphics._errorMessage = "";
 Graphics._showErrorDetailEnabled = false;
 Graphics._progressEnabled = false;
-Graphics._errorMessage = "";
 
 /**
  * Initializes the graphics system.
@@ -923,21 +923,6 @@ Graphics._makeErrorMessage = function() {
     style.fontSize        = '18px';
     mainMessage.innerHTML = '<hr>' + (this._errorMessage || '');
     this._errorPrinter.appendChild(mainMessage);
-};
-
-/**
- * @static
- * @method _makeStackTrace
- * @private
- */
-Graphics._makeStackTrace = function(stack) {
-    var stackTrace         = document.createElement('div');
-    var style              = stackTrace.style;
-    style.color            = 'white';
-    style.textAlign        = 'left';
-    style.fontSize         = '18px';
-    stackTrace.innerHTML   = '<br><hr>' + stack + '<hr>';
-    this._errorPrinter.appendChild(stackTrace);
 };
 
 /**

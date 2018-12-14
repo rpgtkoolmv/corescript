@@ -51,7 +51,7 @@ Game_Event.prototype.list = function() {
 Game_Event.prototype.debugName = function(){
     var event = this.event();
     if(event){
-        return "MapEvent:"+ this._eventId +"("+ event.name+")";
+        return "MapEvent: "+ this._eventId +"("+ event.name+")";
     }
     return "";
 };
