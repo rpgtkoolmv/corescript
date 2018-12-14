@@ -1766,7 +1766,7 @@ Game_Interpreter.prototype.command355 = function() {
         eventCode = this._list[index];
     }
     this.evalScript(script);
-    this._index = index;
+    this._index = index-1;
     return true;
 };
 
