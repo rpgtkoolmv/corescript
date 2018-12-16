@@ -159,6 +159,7 @@ Game_Troop.prototype.setupBattleEvent = function() {
             var page = pages[i];
             if (this.meetsConditions(page) && !this._eventFlags[i]) {
                 this._interpreter.setup(page.list);
+                this._interpreter.setEventInfo({ eventType: 'battle_event', troopId: this._troopId, page: i + 1 });
                 if (page.span <= 1) {
                     this._eventFlags[i] = true;
                 }

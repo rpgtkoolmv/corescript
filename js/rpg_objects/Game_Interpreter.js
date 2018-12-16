@@ -32,6 +32,7 @@ Game_Interpreter.prototype.clear = function() {
     this._waitCount = 0;
     this._waitMode = '';
     this._comments = '';
+    this._eventInfo = null;
     this._character = null;
     this._childInterpreter = null;
 };
@@ -52,9 +53,14 @@ Game_Interpreter.prototype.isOnCurrentMap = function() {
     return this._mapId === $gameMap.mapId();
 };
 
+Game_Interpreter.prototype.setEventInfo = function(eventInfo) {
+    this._eventInfo = eventInfo;
+};
+
 Game_Interpreter.prototype.setupReservedCommonEvent = function() {
     if ($gameTemp.isCommonEventReserved()) {
         this.setup($gameTemp.reservedCommonEvent().list);
+        this.setEventInfo({ eventType: 'common_event', commonEventId: $gameTemp.reservedCommonEventId() });
         $gameTemp.clearCommonEvent();
         return true;
     } else {
@@ -166,8 +172,17 @@ Game_Interpreter.prototype.executeCommand = function() {
         this._indent = command.indent;
         var methodName = 'command' + command.code;
         if (typeof this[methodName] === 'function') {
-            if (!this[methodName]()) {
-                return false;
+            try {
+                if (!this[methodName]()) {
+                    return false;
+                }
+            } catch (error) {
+                for (var key in this._eventInfo) {
+                    error[key] = this._eventInfo[key];
+                }
+                error.eventCommand = error.eventCommand || "other";
+                error.line = error.line || this._index + 1;
+                throw error;
             }
         }
         this._index++;
@@ -543,7 +558,13 @@ Game_Interpreter.prototype.command111 = function() {
             result = Input.isPressed(this._params[1]);
             break;
         case 12:  // Script
-            result = !!eval(this._params[1]);
+            try {
+                result = !!eval(this._params[1]);
+            } catch (error) {
+                error.eventCommand = "conditional_branch_script";
+                error.content = this._params[1];
+                throw error;
+            }
             break;
         case 13:  // Vehicle
             result = ($gamePlayer.vehicle() === $gameMap.vehicle(this._params[1]));
@@ -616,6 +637,7 @@ Game_Interpreter.prototype.command117 = function() {
 Game_Interpreter.prototype.setupChild = function(list, eventId) {
     this._childInterpreter = new Game_Interpreter(this._depth + 1);
     this._childInterpreter.setup(list, eventId);
+    this._childInterpreter.setEventInfo({ eventType: 'common_event', commonEventId: this._params[0] });
 };
 
 // Label
@@ -1024,6 +1046,9 @@ Game_Interpreter.prototype.command205 = function() {
     this._character = this.character(this._params[0]);
     if (this._character) {
         this._character.forceMoveRoute(this._params[1]);
+        var eventInfo = JsonEx.makeDeepCopy(this._eventInfo);
+        eventInfo.line = this._index + 1;
+        this._character.setCallerEventInfo(eventInfo);
         if (this._params[1].wait) {
             this.setWaitMode('route');
         }
@@ -1731,12 +1756,22 @@ Game_Interpreter.prototype.command354 = function() {
 
 // Script
 Game_Interpreter.prototype.command355 = function() {
+    var startLine = this._index + 1;
+    var postfix = this.nextEventCode() === 655 ? "..." : "";
     var script = this.currentCommand().parameters[0] + '\n';
     while (this.nextEventCode() === 655) {
         this._index++;
         script += this.currentCommand().parameters[0] + '\n';
     }
-    eval(script);
+    var endLine = this._index + 1;
+    try {
+        eval(script);
+    } catch (error) {
+        error.line = startLine + "-" + endLine;
+        error.eventCommand = "script";
+        error.content = this._params[0] + postfix;
+        throw error;
+    }
     return true;
 };
 
@@ -1744,7 +1779,13 @@ Game_Interpreter.prototype.command355 = function() {
 Game_Interpreter.prototype.command356 = function() {
     var args = this._params[0].split(" ");
     var command = args.shift();
-    this.pluginCommand(command, args);
+    try {
+        this.pluginCommand(command, args);
+    } catch (error) {
+        error.eventCommand = "plugin_command";
+        error.content = this._params[0];
+        throw error;
+    }
     return true;
 };
 
