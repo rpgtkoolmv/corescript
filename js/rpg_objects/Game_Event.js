@@ -48,22 +48,6 @@ Game_Event.prototype.list = function() {
     return this.page().list;
 };
 
-Game_Event.prototype.debugName = function(){
-    var event = this.event();
-    if(event){
-        return "MapEvent: "+ this._eventId +"("+ event.name+")";
-    }
-    return "";
-};
-
-Game_Event.prototype.createLogClass = function(){
-    return new Game_LogMapEvent(
-        this._mapId,
-        this._eventId,
-        this._pageIndex
-    );
-};
-
 Game_Event.prototype.isCollidedWithCharacters = function(x, y) {
     return (Game_Character.prototype.isCollidedWithCharacters.call(this, x, y) ||
             this.isCollidedWithPlayerCharacters(x, y));
@@ -296,12 +280,6 @@ Game_Event.prototype.setupPageSettings = function() {
     this.setThrough(page.through);
     this.setMoveRoute(page.moveRoute);
     this._moveType = page.moveType;
-
-    if(this._moveType === 3){
-        var log =new Game_LogMoveRoute(this.createLogClass());
-        this.setMoveRouteLog( log);
-    }
-
     this._trigger = page.trigger;
     if (this._trigger === 4) {
         this._interpreter = new Game_Interpreter();
@@ -309,6 +287,7 @@ Game_Event.prototype.setupPageSettings = function() {
         this._interpreter = null;
     }
 };
+
 Game_Event.prototype.isOriginalPattern = function() {
     return this.pattern() === this._originalPattern;
 };
@@ -343,7 +322,6 @@ Game_Event.prototype.updateParallel = function() {
     if (this._interpreter) {
         if (!this._interpreter.isRunning()) {
             this._interpreter.setup(this.list(), this._eventId);
-            this._interpreter.setEventCallLog(this.createLogClass());
         }
         this._interpreter.update();
     }

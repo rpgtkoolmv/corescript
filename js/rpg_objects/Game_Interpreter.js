@@ -34,7 +34,6 @@ Game_Interpreter.prototype.clear = function() {
     this._comments = '';
     this._character = null;
     this._childInterpreter = null;
-    this._callLog = null;
 };
 
 Game_Interpreter.prototype.setup = function(list, eventId) {
@@ -43,10 +42,6 @@ Game_Interpreter.prototype.setup = function(list, eventId) {
     this._eventId = eventId || 0;
     this._list = list;
     Game_Interpreter.requestImages(list);
-};
-
-Game_Interpreter.prototype.setEventCallLog = function(callLog){
-    this._callLog = callLog;
 };
 
 Game_Interpreter.prototype.eventId = function() {
@@ -60,7 +55,6 @@ Game_Interpreter.prototype.isOnCurrentMap = function() {
 Game_Interpreter.prototype.setupReservedCommonEvent = function() {
     if ($gameTemp.isCommonEventReserved()) {
         this.setup($gameTemp.reservedCommonEvent().list);
-        this.setEventCallLog(new Game_LogCommonEvent($gameTemp._commonEventId) );
         $gameTemp.clearCommonEvent();
         return true;
     } else {
@@ -549,7 +543,7 @@ Game_Interpreter.prototype.command111 = function() {
             result = Input.isPressed(this._params[1]);
             break;
         case 12:  // Script
-            result = !!this.evalScript(this._params[1]);
+            result = !!eval(this._params[1]);
             break;
         case 13:  // Vehicle
             result = ($gamePlayer.vehicle() === $gameMap.vehicle(this._params[1]));
@@ -611,13 +605,10 @@ Game_Interpreter.prototype.command115 = function() {
 
 // Common Event
 Game_Interpreter.prototype.command117 = function() {
-    var commonEventId =this._params[0];
-    var commonEvent = $dataCommonEvents[commonEventId];
+    var commonEvent = $dataCommonEvents[this._params[0]];
     if (commonEvent) {
         var eventId = this.isOnCurrentMap() ? this._eventId : 0;
         this.setupChild(commonEvent.list, eventId);
-        this._childInterpreter.setEventCallLog(new Game_LogCommonEvent(commonEventId));
-
     }
     return true;
 };
@@ -689,25 +680,13 @@ Game_Interpreter.prototype.command122 = function() {
             value = this.gameDataOperand(this._params[4], this._params[5], this._params[6]);
             break;
         case 4: // Script
-            value = this.evalScript(this._params[4]);
+            value = eval(this._params[4]);
             break;
     }
     for (var i = this._params[0]; i <= this._params[1]; i++) {
         this.operateVariable(i, this._params[2], value);
     }
     return true;
-};
-
-Game_Interpreter.prototype.evalScript = function(script){
-    try {
-        return eval(script);
-    } catch (error) {
-        if(this._callLog){
-            this._callLog.addLog(this.errorCode(this._index) + script);
-            this.saveErrorCode(error);
-        }
-        throw(error);
-    }
 };
 
 Game_Interpreter.prototype.gameDataOperand = function(type, param1, param2) {
@@ -1048,9 +1027,6 @@ Game_Interpreter.prototype.command205 = function() {
         if (this._params[1].wait) {
             this.setWaitMode('route');
         }
-        var log =new Game_LogMoveRoute(this._callLog);
-        log.setEventCommandLine(this._index);
-        this._character.setMoveRouteLog(log);
     }
     return true;
 };
@@ -1756,16 +1732,11 @@ Game_Interpreter.prototype.command354 = function() {
 // Script
 Game_Interpreter.prototype.command355 = function() {
     var script = this.currentCommand().parameters[0] + '\n';
-    var index =this._index+1;
-
-    var eventCode = this._list[index];
-    while(eventCode && eventCode.code ===655){
-        script += eventCode.parameters[0]+"\n";
-        ++index;
-        eventCode = this._list[index];
+    while (this.nextEventCode() === 655) {
+        this._index++;
+        script += this.currentCommand().parameters[0] + '\n';
     }
-    this.evalScript(script);
-    this._index = index-1;
+    eval(script);
     return true;
 };
 
@@ -1773,61 +1744,13 @@ Game_Interpreter.prototype.command355 = function() {
 Game_Interpreter.prototype.command356 = function() {
     var args = this._params[0].split(" ");
     var command = args.shift();
-    try {
-        this.pluginCommand(command, args);            
-    } catch (error) {
-        if(this._callLog){
-            this._callLog.addLog(this.errorCode(this._index) + this._params[0]);
-            this.saveErrorCode(error);
-        }
-        throw(error);
-    }
+    this.pluginCommand(command, args);
     return true;
 };
 
 Game_Interpreter.prototype.pluginCommand = function(command, args) {
     // to be overridden by plugins
 };
-Game_Interpreter.codeName = function(code){
-
-
-    switch (code) {
-        case 111:
-            return "◆If：Script：";
-        case 122:
-            return "◆Control Variables：Script：";
-        case 355:
-            return "◆Script：";
-        case 356:
-            return "◆Plugin Command：";
-    }
-    return "";
-};
-Game_Interpreter.prototype.errorCode = function(errorLine){
-    var data= this._list[errorLine];
-    var lineText = "line: "+(errorLine+1);
-    if(!data){
-        return lineText +" Out of Code range"
-    }
-
-    if(data.code ===355){
-        for(var i = errorLine+1; i< this._list.length;++i){
-            var scriptData = this._list[i];
-            if(scriptData && scriptData.code !==655){
-                if( errorLine < (i-1) ){
-                    lineText +="-"+i;
-                }
-                break;
-            }
-        }
-    }
-    return lineText + "\n" + Game_Interpreter.codeName(data.code);
-};
-
-Game_Interpreter.prototype.saveErrorCode =function(exeption){
-    exeption.rpgmvErrorLog = this._callLog;
-};
-
 
 Game_Interpreter.requestImagesByPluginCommand = function(command,args){
 };

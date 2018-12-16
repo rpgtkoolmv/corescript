@@ -231,7 +231,3 @@ Game_Vehicle.prototype.isLandOk = function(x, y, d) {
     }
     return true;
 };
-
-Game_Vehicle.prototype.debugName = function(){
-    return "vehicle("+this._type+")";
-};

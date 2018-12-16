@@ -64,11 +64,6 @@
  * @desc The message when error occurred
  * @default Error occurred. Please ask to the creator of this game.
  *
- * @param showErrorLogDetail
- * @type boolean
- * @desc When set to ON, details are displayed on the screen when the game stops due to an error.
- * @default true
- * 
  * @param enableProgressBar
  * @type boolean
  * @desc Show progress bar when it takes a long time to load resources
@@ -151,12 +146,6 @@
  * @text エラーメッセージ
  * @default エラーが発生しました。ゲームの作者にご連絡ください。
  *
- * @param showErrorLogDetail
- * @type boolean
- * @text エラーの詳細表示
- * @desc ONにすると、ゲームがエラーで停止したときに画面に詳細を表示します。
- * @default true
- * 
  * @param enableProgressBar
  * @type boolean
  * @text ロード進捗バー有効化
@@ -192,7 +181,6 @@
     var maxRenderingFps = toNumber(parameters['maxRenderingFps'], 0);
     var autoSaveFileId = toNumber(parameters['autoSaveFileId'], 0);
     var errorMessage = parameters['errorMessage'];
-    var showErrorLogDetail = parameters['showErrorLogDetail'] === 'true';
     var enableProgressBar = parameters['enableProgressBar'] === 'true';
 
     var windowWidth;
@@ -275,6 +263,5 @@
 
     DataManager.setAutoSaveFileId(autoSaveFileId);
     Graphics.setErrorMessage(errorMessage);
-    Graphics.setErrorDetailEnabled(showErrorLogDetail);
     Graphics.setProgressEnabled(enableProgressBar);
 })();

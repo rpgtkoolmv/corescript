@@ -159,7 +159,6 @@ Game_Troop.prototype.setupBattleEvent = function() {
             var page = pages[i];
             if (this.meetsConditions(page) && !this._eventFlags[i]) {
                 this._interpreter.setup(page.list);
-                this._interpreter.setEventCallLog(new Game_LogBattleEvent(this._troopId,i));
                 if (page.span <= 1) {
                     this._eventFlags[i] = true;
                 }
