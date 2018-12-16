@@ -702,7 +702,13 @@ Game_Interpreter.prototype.command122 = function() {
             value = this.gameDataOperand(this._params[4], this._params[5], this._params[6]);
             break;
         case 4: // Script
-            value = eval(this._params[4]);
+            try {
+                value = eval(this._params[4]);
+            } catch (error) {
+                error.eventCommand = "control_variables";
+                error.content = this._params[4];
+                throw error;
+            }
             break;
     }
     for (var i = this._params[0]; i <= this._params[1]; i++) {
@@ -1757,7 +1763,6 @@ Game_Interpreter.prototype.command354 = function() {
 // Script
 Game_Interpreter.prototype.command355 = function() {
     var startLine = this._index + 1;
-    var postfix = this.nextEventCode() === 655 ? "..." : "";
     var script = this.currentCommand().parameters[0] + '\n';
     while (this.nextEventCode() === 655) {
         this._index++;
@@ -1769,7 +1774,7 @@ Game_Interpreter.prototype.command355 = function() {
     } catch (error) {
         error.line = startLine + "-" + endLine;
         error.eventCommand = "script";
-        error.content = this._params[0] + postfix;
+        error.content = script;
         throw error;
     }
     return true;

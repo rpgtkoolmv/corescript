@@ -439,13 +439,8 @@ Graphics.printErrorDetail = function(error) {
         var eventInfo = this._formatEventInfo(error);
         var eventCommandInfo = this._formatEventCommandInfo(error);
         var info = eventCommandInfo ? eventInfo + ", " + eventCommandInfo : eventInfo;
-        var stack = (error.stack || '')
-            .replace(/file:.*js\//g, '')
-            .replace(/http:.*js\//g, '')
-            .replace(/https:.*js\//g, '')
-            .replace(/chrome-extension:.*js\//g, '')
-            .replace(/\n/g, '<br>');
-        this._makeErrorDetail(info, decodeURIComponent(stack));
+        var stack = this._formatStackTrace(error);
+        this._makeErrorDetail(info, stack);
     }
 };
 
@@ -967,16 +962,32 @@ Graphics._formatEventCommandInfo = function(error) {
         return "◆Plugin Command: " + error.content;
     case "script":
         return "◆Script: " + error.content;
+    case "control_variables":
+        return "◆Control Variables: Script: " + error.content;
     case "conditional_branch_script":
-        return "◆Conditional Branch(Script): " + error.content;
+        return "◆If: Script: " + error.content;
     case "set_route_script":
-        return "◆Set Movement Route(Script): " + error.content;
+        return "◆Set Movement Route: ◇Script: " + error.content;
     case "auto_route_script":
-        return "Autonomous Movement Custom Route(Script): " + error.content;
+        return "Autonomous Movement Custom Route: ◇Script: " + error.content;
     case "other":
     default:
         return "";
     }
+};
+
+/**
+ * @static
+ * @method _formatStackTrace
+ * @private
+ */
+Graphics._formatStackTrace = function(error) {
+    return decodeURIComponent((error.stack || '')
+        .replace(/file:.*js\//g, '')
+        .replace(/http:.*js\//g, '')
+        .replace(/https:.*js\//g, '')
+        .replace(/chrome-extension:.*js\//g, '')
+        .replace(/\n/g, '<br>'));
 };
 
 /**

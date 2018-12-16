@@ -155,7 +155,7 @@
  * @param showErrorDetail
  * @type boolean
  * @text エラー詳細表示
- * @desc ONにすると、エラー時にどこでエラーが発生したか及びスタックトレースを表示します
+ * @desc ONにすると、エラー時にエラーを発生させたイベントの情報とスタックトレースを表示します
  * @default true
  *
  * @param enableProgressBar
