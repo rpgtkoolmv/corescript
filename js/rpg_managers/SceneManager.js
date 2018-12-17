@@ -200,7 +200,7 @@ SceneManager.onKeyDown = function(event) {
 SceneManager.catchException = function(e) {
     if (e instanceof Error) {
         Graphics.printError(e.name, e.message);
-        Graphics.printStackTrace(e.stack);
+        Graphics.printErrorDetail(e);
         console.error(e.stack);
     } else {
         Graphics.printError('UnknownError', e);

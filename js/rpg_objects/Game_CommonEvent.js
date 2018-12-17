@@ -40,6 +40,7 @@ Game_CommonEvent.prototype.update = function() {
     if (this._interpreter) {
         if (!this._interpreter.isRunning()) {
             this._interpreter.setup(this.list());
+            this._interpreter.setEventInfo({ eventType: 'common_event', commonEventId: this._commonEventId });
         }
         this._interpreter.update();
     }
