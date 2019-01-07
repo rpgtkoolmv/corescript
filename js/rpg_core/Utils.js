@@ -100,27 +100,6 @@ Utils.isAndroidChrome = function() {
 };
 
 /**
- * Checks whether the browser can read files in the game folder.
- *
- * @static
- * @method canReadGameFiles
- * @return {Boolean} True if the browser can read files in the game folder
- */
-Utils.canReadGameFiles = function() {
-    var scripts = document.getElementsByTagName('script');
-    var lastScript = scripts[scripts.length - 1];
-    var xhr = new XMLHttpRequest();
-    try {
-        xhr.open('GET', lastScript.src);
-        xhr.overrideMimeType('text/javascript');
-        xhr.send();
-        return true;
-    } catch (e) {
-        return false;
-    }
-};
-
-/**
  * Makes a CSS color string from RGB values.
  *
  * @static

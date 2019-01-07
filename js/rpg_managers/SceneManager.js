@@ -45,7 +45,6 @@ SceneManager.run = function(sceneClass) {
 SceneManager.initialize = function() {
     this.initProgressWatcher();
     this.initGraphics();
-    this.checkFileAccess();
     this.initAudio();
     this.initInput();
     this.initNwjs();
@@ -88,12 +87,6 @@ SceneManager.shouldUseCanvasRenderer = function() {
 SceneManager.checkWebGL = function() {
     if (!Graphics.hasWebGL()) {
         throw new Error('Your browser does not support WebGL.');
-    }
-};
-
-SceneManager.checkFileAccess = function() {
-    if (!Utils.canReadGameFiles()) {
-        throw new Error('Your browser does not allow to read local files.');
     }
 };
 
