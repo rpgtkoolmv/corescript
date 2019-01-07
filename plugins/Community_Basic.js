@@ -47,6 +47,8 @@
  * @param alwaysDash
  * @type boolean
  * @desc The initial value whether the player always dashes (on/off)
+ * @on ON
+ * @off OFF
  * @default false
  *
  * @param textSpeed
@@ -132,6 +134,8 @@
  * @param alwaysDash
  * @type boolean
  * @text 「常時ダッシュ」の初期値
+ * @on ON
+ * @off OFF
  * @default false
  *
  * @param textSpeed
@@ -186,7 +190,7 @@
     var screenWidth = toNumber(parameters['screenWidth'], 816);
     var screenHeight = toNumber(parameters['screenHeight'], 624);
     var renderingMode = parameters['renderingMode'].toLowerCase();
-    var alwaysDash = parameters['alwaysDash'] === 'true';
+    var alwaysDash = (parameters['alwaysDash'] === 'true') ||(parameters['alwaysDash'] === 'on');
     var textSpeed = toNumber(parameters['textSpeed'], 1);
     var windowWidthTo = toNumber(parameters['changeWindowWidthTo'], 0);
     var windowHeightTo = toNumber(parameters['changeWindowHeightTo'], 0);
