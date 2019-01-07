@@ -1,9 +1,9 @@
 /*:
- * @plugindesc Basic plugin for manipulating important parameters..
+ * @plugindesc Basic plugin for manipulating important parameters.
  * @author RM CoreScript team
  *
  * @help
- * Basic plugin for manipulating important parameters..
+ * Basic plugin for manipulating important parameters.
  * There is no plugin command.
  *
  * Caching images improves performance but increases memory allocation.
