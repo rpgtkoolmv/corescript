@@ -784,6 +784,7 @@ Graphics._updateAllElements = function() {
     this._updateUpperCanvas();
     this._updateRenderer();
     this._paintUpperCanvas();
+    this._updateProgress();
 };
 
 /**
