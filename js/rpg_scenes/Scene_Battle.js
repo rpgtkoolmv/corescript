@@ -1,404 +1,325 @@
-//-----------------------------------------------------------------------------
-// Scene_Battle
-//
-// The scene class of the battle screen.
-
-function Scene_Battle() {
+/**
+ * The Superclass of all scene within the game.
+ * 
+ * @class Scene_Base
+ * @constructor 
+ * @extends Stage
+ */
+function Scene_Base() {
     this.initialize.apply(this, arguments);
 }
 
-Scene_Battle.prototype = Object.create(Scene_Base.prototype);
-Scene_Battle.prototype.constructor = Scene_Battle;
+Scene_Base.prototype = Object.create(Stage.prototype);
+Scene_Base.prototype.constructor = Scene_Base;
 
-Scene_Battle.prototype.initialize = function() {
-    Scene_Base.prototype.initialize.call(this);
+
+/**
+ * Create a instance of Scene_Base.
+ * 
+ * @instance 
+ * @memberof Scene_Base
+ */
+Scene_Base.prototype.initialize = function() {
+    Stage.prototype.initialize.call(this);
+    this._active = false;
+    this._fadeSign = 0;
+    this._fadeDuration = 0;
+    this._fadeSprite = null;
+    this._imageReservationId = Utils.generateRuntimeId();
 };
 
-Scene_Battle.prototype.create = function() {
-    Scene_Base.prototype.create.call(this);
-    this.createDisplayObjects();
+/**
+ * Attach a reservation to the reserve queue.
+ * 
+ * @method attachReservation
+ * @instance 
+ * @memberof Scene_Base
+ */
+Scene_Base.prototype.attachReservation = function() {
+    ImageManager.setDefaultReservationId(this._imageReservationId);
 };
 
-Scene_Battle.prototype.start = function() {
-    Scene_Base.prototype.start.call(this);
-    this.startFadeIn(this.fadeSpeed(), false);
-    BattleManager.playBattleBgm();
-    BattleManager.startBattle();
+/**
+ * Remove the reservation from the Reserve queue.
+ * 
+ * @method detachReservation
+ * @instance 
+ * @memberof Scene_Base
+ */
+Scene_Base.prototype.detachReservation = function() {
+    ImageManager.releaseReservation(this._imageReservationId);
 };
 
-Scene_Battle.prototype.update = function() {
-    var active = this.isActive();
-    $gameTimer.update(active);
-    $gameScreen.update();
-    this.updateStatusWindow();
-    this.updateWindowPositions();
-    if (active && !this.isBusy()) {
-        this.updateBattleProcess();
+/**
+ * Create the components and add them to the rendering process.
+ * 
+ * @method create
+ * @instance 
+ * @memberof Scene_Base
+ */
+Scene_Base.prototype.create = function() {
+};
+
+/**
+ * Returns whether the scene is active or not.
+ * 
+ * @method isActive
+ * @instance 
+ * @memberof Scene_Base
+ * @return {Boolean} return true if the scene is active
+ */
+Scene_Base.prototype.isActive = function() {
+    return this._active;
+};
+
+/**
+ * Return whether the scene is ready to start or not.
+ * 
+ * @method isReady
+ * @instance 
+ * @memberof Scene_Base
+ * @return {Boolean} Return true if the scene is ready to start
+ */
+Scene_Base.prototype.isReady = function() {
+    return ImageManager.isReady();
+};
+
+/**
+ * Start the scene processing.
+ * 
+ * @method start
+ * @instance 
+ * @memberof Scene_Base
+ */
+Scene_Base.prototype.start = function() {
+    this._active = true;
+};
+
+/**
+ * Update the scene processing each new frame.
+ * 
+ * @method update
+ * @instance 
+ * @memberof Scene_Base
+ */
+Scene_Base.prototype.update = function() {
+    this.updateFade();
+    this.updateChildren();
+    AudioManager.checkErrors();
+};
+
+/**
+ * Stop the scene processing.
+ * 
+ * @method stop
+ * @instance 
+ * @memberof Scene_Base
+ */
+Scene_Base.prototype.stop = function() {
+    this._active = false;
+};
+
+
+/**
+ * Return whether the scene is busy or not.
+ * 
+ * @method isBusy
+ * @instance
+ * @memberof Scene_Base
+ * @return {Boolean} Return true if the scene is currently busy
+ */
+Scene_Base.prototype.isBusy = function() {
+    return this._fadeDuration > 0;
+};
+
+/**
+ * Terminate the scene before switching to a another scene.
+ * 
+ * @method terminate
+ * @instance 
+ * @memberof Scene_Base
+ */
+Scene_Base.prototype.terminate = function() {
+};
+
+/**
+ * Create the layer for the windows children
+ * and add it to the rendering process.
+ * 
+ * @method createWindowLayer
+ * @instance 
+ * @memberof Scene_Base
+ */
+Scene_Base.prototype.createWindowLayer = function() {
+    var width = Graphics.boxWidth;
+    var height = Graphics.boxHeight;
+    var x = (Graphics.width - width) / 2;
+    var y = (Graphics.height - height) / 2;
+    this._windowLayer = new WindowLayer();
+    this._windowLayer.move(x, y, width, height);
+    this.addChild(this._windowLayer);
+};
+
+/**
+ * Add the children window to the windowLayer processing.
+ * 
+ * @method addWindow
+ * @instance 
+ * @memberof Scene_Base
+ */
+Scene_Base.prototype.addWindow = function(window) {
+    this._windowLayer.addChild(window);
+};
+
+/**
+ * Request a fadeIn screen process.
+ * 
+ * @method startFadeIn
+ * @param {Number} [duration=30] The time the process will take for fadeIn the screen
+ * @param {Boolean} [white=false] If true the fadein will be process with a white color else it's will be black
+ * 
+ * @instance 
+ * @memberof Scene_Base
+ */
+Scene_Base.prototype.startFadeIn = function(duration, white) {
+    this.createFadeSprite(white);
+    this._fadeSign = 1;
+    this._fadeDuration = duration || 30;
+    this._fadeSprite.opacity = 255;
+};
+
+/**
+ * Request a fadeOut screen process.
+ * 
+ * @method startFadeOut
+ * @param {Number} [duration=30] The time the process will take for fadeOut the screen
+ * @param {Boolean} [white=false] If true the fadeOut will be process with a white color else it's will be black
+ * 
+ * @instance 
+ * @memberof Scene_Base
+ */
+Scene_Base.prototype.startFadeOut = function(duration, white) {
+    this.createFadeSprite(white);
+    this._fadeSign = -1;
+    this._fadeDuration = duration || 30;
+    this._fadeSprite.opacity = 0;
+};
+
+/**
+ * Create a Screen sprite for the fadein and fadeOut purpose and
+ * add it to the rendering process.
+ * 
+ * @method createFadeSprite
+ * @instance 
+ * @memberof Scene_Base
+ */
+Scene_Base.prototype.createFadeSprite = function(white) {
+    if (!this._fadeSprite) {
+        this._fadeSprite = new ScreenSprite();
+        this.addChild(this._fadeSprite);
     }
-    Scene_Base.prototype.update.call(this);
-};
-
-Scene_Battle.prototype.updateBattleProcess = function() {
-    if (!this.isAnyInputWindowActive() || BattleManager.isAborting() ||
-            BattleManager.isBattleEnd()) {
-        BattleManager.update();
-        this.changeInputWindow();
+    if (white) {
+        this._fadeSprite.setWhite();
+    } else {
+        this._fadeSprite.setBlack();
     }
 };
 
-Scene_Battle.prototype.isAnyInputWindowActive = function() {
-    return (this._partyCommandWindow.active ||
-            this._actorCommandWindow.active ||
-            this._skillWindow.active ||
-            this._itemWindow.active ||
-            this._actorWindow.active ||
-            this._enemyWindow.active);
-};
-
-Scene_Battle.prototype.changeInputWindow = function() {
-    if (BattleManager.isInputting()) {
-        if (BattleManager.actor()) {
-            this.startActorCommandSelection();
+/**
+ * Update the screen fade processing.
+ * 
+ * @method updateFade
+ * @instance 
+ * @memberof Scene_Base
+ */
+Scene_Base.prototype.updateFade = function() {
+    if (this._fadeDuration > 0) {
+        var d = this._fadeDuration;
+        if (this._fadeSign > 0) {
+            this._fadeSprite.opacity -= this._fadeSprite.opacity / d;
         } else {
-            this.startPartyCommandSelection();
+            this._fadeSprite.opacity += (255 - this._fadeSprite.opacity) / d;
         }
-    } else {
-        this.endCommandSelection();
+        this._fadeDuration--;
     }
 };
 
-Scene_Battle.prototype.stop = function() {
-    Scene_Base.prototype.stop.call(this);
-    if (this.needsSlowFadeOut()) {
-        this.startFadeOut(this.slowFadeSpeed(), false);
-    } else {
-        this.startFadeOut(this.fadeSpeed(), false);
-    }
-    this._statusWindow.close();
-    this._partyCommandWindow.close();
-    this._actorCommandWindow.close();
-};
-
-Scene_Battle.prototype.terminate = function() {
-    Scene_Base.prototype.terminate.call(this);
-    $gameParty.onBattleEnd();
-    $gameTroop.onBattleEnd();
-    AudioManager.stopMe();
-
-    ImageManager.clearRequest();
-};
-
-Scene_Battle.prototype.needsSlowFadeOut = function() {
-    return (SceneManager.isNextScene(Scene_Title) ||
-            SceneManager.isNextScene(Scene_Gameover));
-};
-
-Scene_Battle.prototype.updateStatusWindow = function() {
-    if ($gameMessage.isBusy()) {
-        this._statusWindow.close();
-        this._partyCommandWindow.close();
-        this._actorCommandWindow.close();
-    } else if (this.isActive() && !this._messageWindow.isClosing()) {
-        this._statusWindow.open();
-    }
-};
-
-Scene_Battle.prototype.updateWindowPositions = function() {
-    var statusX = 0;
-    if (BattleManager.isInputting()) {
-        statusX = this._partyCommandWindow.width;
-    } else {
-        statusX = this._partyCommandWindow.width / 2;
-    }
-    if (this._statusWindow.x < statusX) {
-        this._statusWindow.x += 16;
-        if (this._statusWindow.x > statusX) {
-            this._statusWindow.x = statusX;
+/**
+ * Update the children of the scene EACH frame.
+ * 
+ * @method updateChildren
+ * @instance 
+ * @memberof Scene_Base
+ */
+Scene_Base.prototype.updateChildren = function() {
+    this.children.forEach(function(child) {
+        if (child.update) {
+            child.update();
         }
-    }
-    if (this._statusWindow.x > statusX) {
-        this._statusWindow.x -= 16;
-        if (this._statusWindow.x < statusX) {
-            this._statusWindow.x = statusX;
-        }
-    }
+    });
 };
 
-Scene_Battle.prototype.createDisplayObjects = function() {
-    this.createSpriteset();
-    this.createWindowLayer();
-    this.createAllWindows();
-    BattleManager.setLogWindow(this._logWindow);
-    BattleManager.setStatusWindow(this._statusWindow);
-    BattleManager.setSpriteset(this._spriteset);
-    this._logWindow.setSpriteset(this._spriteset);
+/**
+ * Pop the scene from the stack array and switch to the
+ * previous scene.
+ * 
+ * @method popScene
+ * @instance 
+ * @memberof Scene_Base
+ */
+Scene_Base.prototype.popScene = function() {
+    SceneManager.pop();
 };
 
-Scene_Battle.prototype.createSpriteset = function() {
-    this._spriteset = new Spriteset_Battle();
-    this.addChild(this._spriteset);
-};
-
-Scene_Battle.prototype.createAllWindows = function() {
-    this.createLogWindow();
-    this.createStatusWindow();
-    this.createPartyCommandWindow();
-    this.createActorCommandWindow();
-    this.createHelpWindow();
-    this.createSkillWindow();
-    this.createItemWindow();
-    this.createActorWindow();
-    this.createEnemyWindow();
-    this.createMessageWindow();
-    this.createScrollTextWindow();
-};
-
-Scene_Battle.prototype.createLogWindow = function() {
-    this._logWindow = new Window_BattleLog();
-    this.addWindow(this._logWindow);
-};
-
-Scene_Battle.prototype.createStatusWindow = function() {
-    this._statusWindow = new Window_BattleStatus();
-    this.addWindow(this._statusWindow);
-};
-
-Scene_Battle.prototype.createPartyCommandWindow = function() {
-    this._partyCommandWindow = new Window_PartyCommand();
-    this._partyCommandWindow.setHandler('fight',  this.commandFight.bind(this));
-    this._partyCommandWindow.setHandler('escape', this.commandEscape.bind(this));
-    this._partyCommandWindow.deselect();
-    this.addWindow(this._partyCommandWindow);
-};
-
-Scene_Battle.prototype.createActorCommandWindow = function() {
-    this._actorCommandWindow = new Window_ActorCommand();
-    this._actorCommandWindow.setHandler('attack', this.commandAttack.bind(this));
-    this._actorCommandWindow.setHandler('skill',  this.commandSkill.bind(this));
-    this._actorCommandWindow.setHandler('guard',  this.commandGuard.bind(this));
-    this._actorCommandWindow.setHandler('item',   this.commandItem.bind(this));
-    this._actorCommandWindow.setHandler('cancel', this.selectPreviousCommand.bind(this));
-    this.addWindow(this._actorCommandWindow);
-};
-
-Scene_Battle.prototype.createHelpWindow = function() {
-    this._helpWindow = new Window_Help();
-    this._helpWindow.visible = false;
-    this.addWindow(this._helpWindow);
-};
-
-Scene_Battle.prototype.createSkillWindow = function() {
-    var wy = this._helpWindow.y + this._helpWindow.height;
-    var wh = this._statusWindow.y - wy;
-    this._skillWindow = new Window_BattleSkill(0, wy, Graphics.boxWidth, wh);
-    this._skillWindow.setHelpWindow(this._helpWindow);
-    this._skillWindow.setHandler('ok',     this.onSkillOk.bind(this));
-    this._skillWindow.setHandler('cancel', this.onSkillCancel.bind(this));
-    this.addWindow(this._skillWindow);
-};
-
-Scene_Battle.prototype.createItemWindow = function() {
-    var wy = this._helpWindow.y + this._helpWindow.height;
-    var wh = this._statusWindow.y - wy;
-    this._itemWindow = new Window_BattleItem(0, wy, Graphics.boxWidth, wh);
-    this._itemWindow.setHelpWindow(this._helpWindow);
-    this._itemWindow.setHandler('ok',     this.onItemOk.bind(this));
-    this._itemWindow.setHandler('cancel', this.onItemCancel.bind(this));
-    this.addWindow(this._itemWindow);
-};
-
-Scene_Battle.prototype.createActorWindow = function() {
-    this._actorWindow = new Window_BattleActor(0, this._statusWindow.y);
-    this._actorWindow.setHandler('ok',     this.onActorOk.bind(this));
-    this._actorWindow.setHandler('cancel', this.onActorCancel.bind(this));
-    this.addWindow(this._actorWindow);
-};
-
-Scene_Battle.prototype.createEnemyWindow = function() {
-    this._enemyWindow = new Window_BattleEnemy(0, this._statusWindow.y);
-    this._enemyWindow.x = Graphics.boxWidth - this._enemyWindow.width;
-    this._enemyWindow.setHandler('ok',     this.onEnemyOk.bind(this));
-    this._enemyWindow.setHandler('cancel', this.onEnemyCancel.bind(this));
-    this.addWindow(this._enemyWindow);
-};
-
-Scene_Battle.prototype.createMessageWindow = function() {
-    this._messageWindow = new Window_Message();
-    this.addWindow(this._messageWindow);
-    this._messageWindow.subWindows().forEach(function(window) {
-        this.addWindow(window);
-    }, this);
-};
-
-Scene_Battle.prototype.createScrollTextWindow = function() {
-    this._scrollTextWindow = new Window_ScrollText();
-    this.addWindow(this._scrollTextWindow);
-};
-
-Scene_Battle.prototype.refreshStatus = function() {
-    this._statusWindow.refresh();
-};
-
-Scene_Battle.prototype.startPartyCommandSelection = function() {
-    this.refreshStatus();
-    this._statusWindow.deselect();
-    this._statusWindow.open();
-    this._actorCommandWindow.close();
-    this._partyCommandWindow.setup();
-};
-
-Scene_Battle.prototype.commandFight = function() {
-    this.selectNextCommand();
-};
-
-Scene_Battle.prototype.commandEscape = function() {
-    BattleManager.processEscape();
-    this.changeInputWindow();
-};
-
-Scene_Battle.prototype.startActorCommandSelection = function() {
-    this._statusWindow.select(BattleManager.actor().index());
-    this._partyCommandWindow.close();
-    this._actorCommandWindow.setup(BattleManager.actor());
-};
-
-Scene_Battle.prototype.commandAttack = function() {
-    BattleManager.inputtingAction().setAttack();
-    this.selectEnemySelection();
-};
-
-Scene_Battle.prototype.commandSkill = function() {
-    this._skillWindow.setActor(BattleManager.actor());
-    this._skillWindow.setStypeId(this._actorCommandWindow.currentExt());
-    this._skillWindow.refresh();
-    this._skillWindow.show();
-    this._skillWindow.activate();
-};
-
-Scene_Battle.prototype.commandGuard = function() {
-    BattleManager.inputtingAction().setGuard();
-    this.selectNextCommand();
-};
-
-Scene_Battle.prototype.commandItem = function() {
-    this._itemWindow.refresh();
-    this._itemWindow.show();
-    this._itemWindow.activate();
-};
-
-Scene_Battle.prototype.selectNextCommand = function() {
-    BattleManager.selectNextCommand();
-    this.changeInputWindow();
-};
-
-Scene_Battle.prototype.selectPreviousCommand = function() {
-    BattleManager.selectPreviousCommand();
-    this.changeInputWindow();
-};
-
-Scene_Battle.prototype.selectActorSelection = function() {
-    this._actorWindow.refresh();
-    this._actorWindow.show();
-    this._actorWindow.activate();
-};
-
-Scene_Battle.prototype.onActorOk = function() {
-    var action = BattleManager.inputtingAction();
-    action.setTarget(this._actorWindow.index());
-    this._actorWindow.hide();
-    this._skillWindow.hide();
-    this._itemWindow.hide();
-    this.selectNextCommand();
-};
-
-Scene_Battle.prototype.onActorCancel = function() {
-    this._actorWindow.hide();
-    switch (this._actorCommandWindow.currentSymbol()) {
-    case 'skill':
-        this._skillWindow.show();
-        this._skillWindow.activate();
-        break;
-    case 'item':
-        this._itemWindow.show();
-        this._itemWindow.activate();
-        break;
+/**
+ * Check whether the game should be triggering a gameover.
+ * 
+ * @method checkGameover
+ * @instance 
+ * @memberof Scene_Base
+ */
+Scene_Base.prototype.checkGameover = function() {
+    if ($gameParty.isAllDead()) {
+        SceneManager.goto(Scene_Gameover);
     }
 };
 
-Scene_Battle.prototype.selectEnemySelection = function() {
-    this._enemyWindow.refresh();
-    this._enemyWindow.show();
-    this._enemyWindow.select(0);
-    this._enemyWindow.activate();
+/**
+ * Slowly fade out all the visual and audio of the scene.
+ * 
+ * @method fadeOutAll
+ * @instance 
+ * @memberof Scene_Base
+ */
+Scene_Base.prototype.fadeOutAll = function() {
+    var time = this.slowFadeSpeed() / 60;
+    AudioManager.fadeOutBgm(time);
+    AudioManager.fadeOutBgs(time);
+    AudioManager.fadeOutMe(time);
+    this.startFadeOut(this.slowFadeSpeed());
 };
 
-Scene_Battle.prototype.onEnemyOk = function() {
-    var action = BattleManager.inputtingAction();
-    action.setTarget(this._enemyWindow.enemyIndex());
-    this._enemyWindow.hide();
-    this._skillWindow.hide();
-    this._itemWindow.hide();
-    this.selectNextCommand();
+/**
+ * Return the screen fade speed value.
+ * 
+ * @method fadeSpeed
+ * @instance 
+ * @memberof Scene_Base
+ * @return {Number} Return the fade speed
+ */
+Scene_Base.prototype.fadeSpeed = function() {
+    return 24;
 };
 
-Scene_Battle.prototype.onEnemyCancel = function() {
-    this._enemyWindow.hide();
-    switch (this._actorCommandWindow.currentSymbol()) {
-    case 'attack':
-        this._actorCommandWindow.activate();
-        break;
-    case 'skill':
-        this._skillWindow.show();
-        this._skillWindow.activate();
-        break;
-    case 'item':
-        this._itemWindow.show();
-        this._itemWindow.activate();
-        break;
-    }
+/**
+ * Return a slow screen fade speed value.
+ * 
+ * @method slowFadeSpeed
+ * @instance 
+ * @memberof Scene_Base
+ * @return {Number} Return the fade speed.
+ */
+Scene_Base.prototype.slowFadeSpeed = function() {
+    return this.fadeSpeed() * 2;
 };
 
-Scene_Battle.prototype.onSkillOk = function() {
-    var skill = this._skillWindow.item();
-    var action = BattleManager.inputtingAction();
-    action.setSkill(skill.id);
-    BattleManager.actor().setLastBattleSkill(skill);
-    this.onSelectAction();
-};
-
-Scene_Battle.prototype.onSkillCancel = function() {
-    this._skillWindow.hide();
-    this._actorCommandWindow.activate();
-};
-
-Scene_Battle.prototype.onItemOk = function() {
-    var item = this._itemWindow.item();
-    var action = BattleManager.inputtingAction();
-    action.setItem(item.id);
-    $gameParty.setLastItem(item);
-    this.onSelectAction();
-};
-
-Scene_Battle.prototype.onItemCancel = function() {
-    this._itemWindow.hide();
-    this._actorCommandWindow.activate();
-};
-
-Scene_Battle.prototype.onSelectAction = function() {
-    var action = BattleManager.inputtingAction();
-    this._skillWindow.hide();
-    this._itemWindow.hide();
-    if (!action.needsSelection()) {
-        this.selectNextCommand();
-    } else if (action.isForOpponent()) {
-        this.selectEnemySelection();
-    } else {
-        this.selectActorSelection();
-    }
-};
-
-Scene_Battle.prototype.endCommandSelection = function() {
-    this._partyCommandWindow.close();
-    this._actorCommandWindow.close();
-    this._statusWindow.deselect();
-};
