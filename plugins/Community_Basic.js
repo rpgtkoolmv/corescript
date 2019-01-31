@@ -1,9 +1,9 @@
 /*:
- * @plugindesc Basic plugin for manipulating important parameters..
+ * @plugindesc Basic plugin for manipulating important parameters.
  * @author RM CoreScript team
  *
  * @help
- * Basic plugin for manipulating important parameters..
+ * Basic plugin for manipulating important parameters.
  * There is no plugin command.
  *
  * Caching images improves performance but increases memory allocation.
@@ -47,6 +47,8 @@
  * @param alwaysDash
  * @type boolean
  * @desc The initial value whether the player always dashes (on/off)
+ * @on ON
+ * @off OFF
  * @default false
  *
  * @param textSpeed
@@ -63,6 +65,11 @@
  * @type string
  * @desc The message when error occurred
  * @default Error occurred. Please ask to the creator of this game.
+ *
+ * @param showErrorDetail
+ * @type boolean
+ * @desc Show where the error is caused and stack trace when error
+ * @default true
  *
  * @param enableProgressBar
  * @type boolean
@@ -127,6 +134,8 @@
  * @param alwaysDash
  * @type boolean
  * @text 「常時ダッシュ」の初期値
+ * @on ON
+ * @off OFF
  * @default false
  *
  * @param textSpeed
@@ -144,7 +153,14 @@
  * @param errorMessage
  * @type string
  * @text エラーメッセージ
+ * @desc エラー時にプレイヤーに向けて表示するメッセージです
  * @default エラーが発生しました。ゲームの作者にご連絡ください。
+ *
+ * @param showErrorDetail
+ * @type boolean
+ * @text エラー詳細表示
+ * @desc ONにすると、エラー時にエラーを発生させたイベントの情報とスタックトレースを表示します
+ * @default true
  *
  * @param enableProgressBar
  * @type boolean
@@ -174,13 +190,14 @@
     var screenWidth = toNumber(parameters['screenWidth'], 816);
     var screenHeight = toNumber(parameters['screenHeight'], 624);
     var renderingMode = parameters['renderingMode'].toLowerCase();
-    var alwaysDash = parameters['alwaysDash'] === 'true';
+    var alwaysDash = (parameters['alwaysDash'] === 'true') ||(parameters['alwaysDash'] === 'on');
     var textSpeed = toNumber(parameters['textSpeed'], 1);
     var windowWidthTo = toNumber(parameters['changeWindowWidthTo'], 0);
     var windowHeightTo = toNumber(parameters['changeWindowHeightTo'], 0);
     var maxRenderingFps = toNumber(parameters['maxRenderingFps'], 0);
     var autoSaveFileId = toNumber(parameters['autoSaveFileId'], 0);
     var errorMessage = parameters['errorMessage'];
+    var showErrorDetail = parameters['showErrorDetail'] === 'true';
     var enableProgressBar = parameters['enableProgressBar'] === 'true';
 
     var windowWidth;
@@ -263,5 +280,6 @@
 
     DataManager.setAutoSaveFileId(autoSaveFileId);
     Graphics.setErrorMessage(errorMessage);
+    Graphics.setShowErrorDetail(showErrorDetail);
     Graphics.setProgressEnabled(enableProgressBar);
 })();

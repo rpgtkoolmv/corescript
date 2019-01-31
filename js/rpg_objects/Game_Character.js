@@ -69,6 +69,7 @@ Game_Character.prototype.initMembers = function() {
     this._originalMoveRoute = null;
     this._originalMoveRouteIndex = 0;
     this._waitCount = 0;
+    this._callerEventInfo = null;
 };
 
 Game_Character.prototype.memorizeMoveRoute = function() {
@@ -80,6 +81,7 @@ Game_Character.prototype.restoreMoveRoute = function() {
     this._moveRoute          = this._originalMoveRoute;
     this._moveRouteIndex     = this._originalMoveRouteIndex;
     this._originalMoveRoute  = null;
+    this._callerEventInfo    = null;
 };
 
 Game_Character.prototype.isMoveRouteForcing = function() {
@@ -100,6 +102,10 @@ Game_Character.prototype.forceMoveRoute = function(moveRoute) {
     this._moveRouteIndex = 0;
     this._moveRouteForcing = true;
     this._waitCount = 0;
+};
+
+Game_Character.prototype.setCallerEventInfo = function(callerEventInfo) {
+    this._callerEventInfo = callerEventInfo;
 };
 
 Game_Character.prototype.updateStop = function() {
@@ -262,7 +268,27 @@ Game_Character.prototype.processMoveCommand = function(command) {
         AudioManager.playSe(params[0]);
         break;
     case gc.ROUTE_SCRIPT:
-        eval(params[0]);
+        try {
+            eval(params[0]);
+        } catch (error) {
+            if (this._callerEventInfo) {
+                for (var key in this._callerEventInfo) {
+                    error[key] = this._callerEventInfo[key];
+                }
+                error.line += this._moveRouteIndex + 1;
+                error.eventCommand = "set_route_script";
+                error.content = command.parameters[0];
+            } else {
+                error.eventType = "map_event";
+                error.mapId = this._mapId;
+                error.mapEventId = this._eventId;
+                error.page = this._pageIndex + 1;
+                error.line = this._moveRouteIndex + 1;
+                error.eventCommand = "auto_route_script";
+                error.content = command.parameters[0];
+            }
+            throw error;
+        }
         break;
     }
 };
