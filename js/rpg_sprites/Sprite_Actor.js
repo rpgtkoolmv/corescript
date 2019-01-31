@@ -81,7 +81,7 @@ Sprite_Actor.prototype.setBattler = function(battler) {
     if (changed) {
         this._actor = battler;
         if (battler) {
-            this.setActorHome(battler.index());
+            this.setHome(battler.screenX(),battler.screenY());
         }
         this.startEntryMotion();
         this._stateSprite.setup(battler);

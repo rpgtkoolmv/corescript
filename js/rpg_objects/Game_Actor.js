@@ -107,6 +107,13 @@ Game_Actor.prototype.faceIndex = function() {
     return this._faceIndex;
 };
 
+Game_Actor.prototype.screenX = function(){
+    return 600 + this.index() * 32;
+};
+Game_Actor.prototype.screenY = function(){
+    return 280 + this.index() * 48;
+};
+
 Game_Actor.prototype.battlerName = function() {
     return this._battlerName;
 };
