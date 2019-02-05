@@ -365,10 +365,13 @@ Window_Selectable.prototype.isTouchedInsideFrame = function() {
     return x >= 0 && y >= 0 && x < this.width && y < this.height;
 };
 
-Window_Selectable.prototype.onTouch = function(triggered) {
+Window_Selectable.prototype.onTouch = function(triggered,
+        isTouch) {
     var lastIndex = this.index();
     var x = this.canvasToLocalX(TouchInput.x);
     var y = this.canvasToLocalY(TouchInput.y);
+    var isTouch = TouchInput.isTouch;
+    var muteSelect = false;
     var hitIndex = this.hitTest(x, y);
     if (hitIndex >= 0) {
         if (hitIndex === this.index()) {
@@ -376,7 +379,17 @@ Window_Selectable.prototype.onTouch = function(triggered) {
                 this.processOk();
             }
         } else if (this.isCursorMovable()) {
+            // Select new entry:
             this.select(hitIndex);
+
+            // If not a touch event, trigger new entry immediately
+            // (since that's expected by a mouse user)
+            if (!isTouch && triggered && this.isTouchOkEnabled()) {
+                // Mute select since trigger sound will play:
+                muteSelect = true;
+
+                this.processOk();
+            }
         }
     } else if (this._stayCount >= 10) {
         if (y < this.padding) {
@@ -385,7 +398,7 @@ Window_Selectable.prototype.onTouch = function(triggered) {
             this.cursorDown();
         }
     }
-    if (this.index() !== lastIndex) {
+    if (this.index() !== lastIndex && !muteSelect) {
         SoundManager.playCursor();
     }
 };
