@@ -12,7 +12,7 @@ ProgressWatcher._bitmapListener = function(bitmap){
     this._countLoading++;
     bitmap.addLoadListener(function(){
         this._countLoaded++;
-        this._progressListener(this._countLoaded, this._countLoading);
+        this._progressListener && this._progressListener(this._countLoaded, this._countLoading);
     }.bind(this));
 };
 
@@ -20,7 +20,7 @@ ProgressWatcher._audioListener = function(audio){
     this._countLoading++;
     audio.addLoadListener(function(){
         this._countLoaded++;
-        this._progressListener(this._countLoaded, this._countLoading);
+        this._progressListener && this._progressListener(this._countLoaded, this._countLoading);
     }.bind(this));
 };
 
