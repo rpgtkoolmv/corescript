@@ -269,7 +269,6 @@ Graphics.startLoading = function() {
 Graphics._setupProgress = function(){
     this._progressElement = document.createElement('div');
     this._progressElement.id = 'loading-progress';
-    this._progressElement.width = 600;
     this._progressElement.height = 300;
     this._progressElement.style.visibility = 'hidden';
 
@@ -281,6 +280,7 @@ Graphics._setupProgress = function(){
     this._barElement.style.border = '5px solid white';
     this._barElement.style.borderRadius = '15px';
     this._barElement.style.marginTop = '40%';
+    this._barElement.style.boxSizing = 'border-box';
 
     this._filledBarElement = document.createElement('div');
     this._filledBarElement.id = 'loading-filled-bar';
@@ -321,6 +321,7 @@ Graphics._updateProgressCount = function(countLoaded, countLoading){
 };
 
 Graphics._updateProgress = function(){
+    this._progressElement.width = Math.min(this._width * 0.9, 600);
     this._centerElement(this._progressElement);
 };
 
