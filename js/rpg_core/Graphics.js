@@ -395,7 +395,7 @@ Graphics.eraseLoadingError = function() {
         this._errorPrinter.style.msUserSelect     = 'none';
         this._errorPrinter.style.mozUserSelect    = 'none';
         this._errorPrinter.oncontextmenu = function() { return false; };
-        this.startLoading();
+        this._loadingCount = 0;
     }
 };
 
