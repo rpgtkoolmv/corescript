@@ -149,7 +149,7 @@ DataManager.onLoad = function(object) {
 
 DataManager.extractMetadata = function(data) {
     var re = /<([^<>:]+)(:?)([^>]*)>/g;
-    data.meta = {};
+    data.meta = data.meta || {};
     for (;;) {
         var match = re.exec(data.note);
         if (match) {
