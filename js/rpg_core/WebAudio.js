@@ -211,7 +211,7 @@ WebAudio._onHide = function() {
  */
 WebAudio._onShow = function() {
     if (this._shouldMuteOnHide()) {
-        this._fadeIn(0.5);
+        this._fadeIn(1);
     }
 };
 
