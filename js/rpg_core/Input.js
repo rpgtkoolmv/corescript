@@ -108,6 +108,7 @@ Input.clear = function() {
     this._dir8 = 0;
     this._preferredAxis = '';
     this._date = 0;
+    this._isReleased = {};
 };
 
 /**
@@ -128,10 +129,30 @@ Input.update = function() {
             this._latestButton = name;
             this._pressedTime = 0;
             this._date = Date.now();
+        } else if (this._previousState[name] && !this._currentState[name]) {
+            this._isReleased[name] = true;
+        } else {
+            this._isReleased[name] = false;
         }
         this._previousState[name] = this._currentState[name];
     }
     this._updateDirection();
+};
+
+/**
+ * Checks whether a key is just released.
+ *
+ * @static
+ * @method isTriggered
+ * @param {String} keyName The mapped name of the key
+ * @return {Boolean} True if the key is released
+ */
+Input.isReleased = function(keyName) {
+    if (this._isEscapeCompatible(keyName) && this.isTriggered('escape')) {
+        return true;
+    } else {
+        return !!this._isReleased[keyName];
+    }
 };
 
 /**
