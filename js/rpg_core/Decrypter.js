@@ -27,7 +27,7 @@ Decrypter.decryptImg = function(url, bitmap) {
     url = this.extToEncryptExt(url);
 
     var requestFile = new XMLHttpRequest();
-    requestFile.open("GET", url);
+    requestFile.open("GET", decodeURIComponent(url));
     requestFile.responseType = "arraybuffer";
     requestFile.send();
 
