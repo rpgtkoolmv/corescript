@@ -35,7 +35,7 @@ Window_NameEdit.prototype.windowHeight = function() {
 };
 
 Window_NameEdit.prototype.name = function() {
-    return this._name;
+    return this._name.trim();
 };
 
 Window_NameEdit.prototype.restoreDefault = function() {
